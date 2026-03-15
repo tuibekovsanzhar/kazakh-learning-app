@@ -1,7 +1,10 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { useRouter } from 'expo-router';
+
 
 export default function HomeScreen() {
+  const router = useRouter(); 
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
@@ -23,10 +26,10 @@ export default function HomeScreen() {
       <View style={styles.lessonsSection}>
         <Text style={styles.sectionTitle}>Start Learning</Text>
 
-        <TouchableOpacity style={styles.lessonButton}>
-          <Text style={styles.lessonEmoji}>🔤</Text>
-          <Text style={styles.lessonText}>Kazakh Alphabet</Text>
-          <Text style={styles.lessonArrow}>→</Text>
+        <TouchableOpacity style={styles.lessonButton} onPress={() => router.push('/alphabet')}>
+        <Text style={styles.lessonEmoji}>🔤</Text>
+        <Text style={styles.lessonText}>Kazakh Alphabet</Text>
+        <Text style={styles.lessonArrow}>→</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.lessonButton}>
