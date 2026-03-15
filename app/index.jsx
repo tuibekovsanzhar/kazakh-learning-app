@@ -32,10 +32,10 @@ export default function HomeScreen() {
         <Text style={styles.lessonArrow}>→</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.lessonButton}>
-          <Text style={styles.lessonEmoji}>👋</Text>
-          <Text style={styles.lessonText}>Greetings</Text>
-          <Text style={styles.lessonArrow}>→</Text>
+        <TouchableOpacity style={styles.lessonButton} onPress={() => router.push('/greetings')}>
+        <Text style={styles.lessonEmoji}>👋</Text>
+        <Text style={styles.lessonText}>Greetings</Text>
+        <Text style={styles.lessonArrow}>→</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.lessonButton}>

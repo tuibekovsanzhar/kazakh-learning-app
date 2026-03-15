@@ -70,53 +70,66 @@ kazakh-learning-app/
 ---
 
 ## Current project status
-**Last updated:** March 2026
-**Current phase:** Setup complete — building Home screen next
+
+**Last updated:** March 15, 2026
+**Current phase:** Building core screens
 
 **Completed:**
-- Expo project initialized
-- Full folder structure created
-- CLAUDE.md created
-- Git initialized + connected to GitHub
+- Project setup with Expo SDK 54 + React Native
+- Git initialized and pushed to GitHub (github.com/tuibekovsanzhar/kazakh-learning-app)
+- Home screen (dark theme, streak card, 3 lesson buttons)
+- Kazakh Alphabet screen (4-column grid, 42 letters, Cyrillic + Latin)
+- Letter modal popup (pronunciation, example word, meaning)
+- Back button on Alphabet screen
+- Navigation between Home → Alphabet working
+
+**In progress:**
+- Nothing currently
 
 **To do next session:**
-- Build Home screen (app/index.jsx)
-- Connect screens with navigation
-- Start Alphabet screen
+- Build Vocabulary lesson screen (Greetings first)
+- Make Greetings and Numbers buttons on Home screen navigate somewhere
+- Eventually: Flashcard system, Quiz, Progress tracking, Streaks
+
+**Important file locations:**
+- Real project: ~/Desktop/kazakh-learning-app
+- Delete ~/Desktop/kazakh-learning-app-2 (no longer needed)
+- Main screens live in app/ folder
+- Alphabet data lives in data/alphabet.js
 
 ---
 
 ## Last session summary
-Session 1 — March 15, 2026
+Session 2 — March 15, 2026
 
 ### What we completed today
-- Created Expo project with `npx create-expo-app@latest`
-- Set up full folder structure (app/, components/, data/, utils/, assets/)
-- Created CLAUDE.md project memory file
-- Initialized Git and pushed to GitHub at github.com/tuibekovsanzhar/kazakh-learning-app
-- Wrote Home screen code in App.js (dark theme, streak card, lesson buttons)
-- Got app running on iPhone via Expo Go ✅
+- Fixed home screen showing in Expo Go (was running wrong folder kazakh-learning-app-2)
+- Moved home screen code from App.js → app/index.jsx (Expo Router structure)
+- Built Kazakh Alphabet screen (app/alphabet.tsx)
+  - 4-column grid, 42 letters, Cyrillic + Latin side by side
+  - Tap any letter → modal popup with pronunciation, example word, meaning
+- Created alphabet data file (data/alphabet.js) with all 42 letters
+- Added back button to Alphabet screen
+- Built Greetings screen (app/greetings.tsx)
+  - List of 20 phrases, Kazakh + Latin + English
+  - Tap any phrase → modal popup with "When to use" explanation
+- Created greetings data file (data/greetings.js)
+- Wired up navigation: Home → Alphabet, Home → Greetings
 
-### Key problem we solved
-Original project was SDK 53, Expo Go on phone was SDK 54/55 — incompatible.
-Fixed by copying package.json from a fresh `npx create-expo-app@latest` project.
-kazakh-learning-app-2 on Desktop is a working temp project — can be deleted once real project is confirmed working.
-
-### Current status
-- Real project: ~/Desktop/kazakh-learning-app
-- Temp working project: ~/Desktop/kazakh-learning-app-2
-- App.js has full home screen code written and ready
-- npm install may need to be re-run in real project after clean reset
+### Current file structure
+- app/index.jsx — Home screen
+- app/alphabet.tsx — Alphabet screen
+- app/greetings.tsx — Greetings screen
+- data/alphabet.js — 42 Kazakh letters with pronunciations
+- data/greetings.js — 20 greeting phrases
 
 ### To do next session
-1. Confirm real project (kazakh-learning-app) runs on phone via Expo Go
-2. If still broken — copy files from kazakh-learning-app-2 and use that as real project
-3. Delete kazakh-learning-app-2 once real project works
-4. Push working home screen to GitHub
-5. Start building the Kazakh Alphabet screen
+1. Build Numbers lesson screen (same pattern as Greetings)
+2. Wire up Numbers button on Home screen
+3. Eventually: Flashcard system, Quiz, Progress tracking
 
 ### Important notes
-- Always run `npx expo start` from ~/Desktop/kazakh-learning-app
-- Phone and Mac must be on same WiFi to scan QR code
-- Use iPhone Camera app to scan QR code — opens Expo Go automatically
-- SDK version must match between project and Expo Go app
+- Always run `npx expo start` from ~/Desktop/kazakh-learning-app (NOT kazakh-learning-app-2)
+- Delete ~/Desktop/kazakh-learning-app-2 — no longer needed
+- Phone and Mac must be on same WiFi
+- index.jsx uses useRouter from expo-router for navigation

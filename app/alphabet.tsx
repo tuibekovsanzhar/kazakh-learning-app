@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useRouter } from 'expo-router';
 import {
   StyleSheet, Text, View, TouchableOpacity,
   FlatList, Modal, SafeAreaView, Pressable
@@ -7,11 +8,14 @@ import { kazakhAlphabet } from '../data/alphabet';
 
 export default function AlphabetScreen() {
   const [selectedLetter, setSelectedLetter] = useState<typeof kazakhAlphabet[0] | null>(null);
-
+  const router = useRouter();
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            <Text style={styles.backArrow}>←</Text>
+        </TouchableOpacity>
         <Text style={styles.title}>Kazakh Alphabet</Text>
         <Text style={styles.subtitle}>{kazakhAlphabet.length} letters • tap any to learn</Text>
       </View>
@@ -202,5 +206,14 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  backButton: {
+  position: 'absolute',
+  left: 0,
+  padding: 8,
+  },
+  backArrow: {
+  fontSize: 28,
+  color: '#ffffff',
   },
 });
