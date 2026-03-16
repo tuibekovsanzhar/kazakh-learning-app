@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 
@@ -23,7 +23,7 @@ export default function HomeScreen() {
       </View>
 
       {/* Lesson buttons */}
-      <View style={styles.lessonsSection}>
+      <ScrollView style={styles.lessonsSection} showsVerticalScrollIndicator={false}>
         <Text style={styles.sectionTitle}>Start Learning</Text>
 
         <TouchableOpacity style={styles.lessonButton} onPress={() => router.push('/alphabet')}>
@@ -38,12 +38,24 @@ export default function HomeScreen() {
         <Text style={styles.lessonArrow}>→</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.lessonButton}>
+        <TouchableOpacity style={styles.lessonButton} onPress={() => router.push('/numbers')}>
           <Text style={styles.lessonEmoji}>🔢</Text>
           <Text style={styles.lessonText}>Numbers</Text>
           <Text style={styles.lessonArrow}>→</Text>
         </TouchableOpacity>
-      </View>
+
+        <TouchableOpacity style={styles.lessonButton} onPress={() => router.push('/colors')}>
+          <Text style={styles.lessonEmoji}>🎨</Text>
+          <Text style={styles.lessonText}>Colors</Text>
+          <Text style={styles.lessonArrow}>→</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.lessonButton} onPress={() => router.push('/flashcards')}>
+          <Text style={styles.lessonEmoji}>🃏</Text>
+          <Text style={styles.lessonText}>Flashcards</Text>
+          <Text style={styles.lessonArrow}>→</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </View>
   );
 }
@@ -126,4 +138,5 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#e94560',
   },
+
 });

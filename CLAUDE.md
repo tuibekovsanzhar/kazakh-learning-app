@@ -71,24 +71,26 @@ kazakh-learning-app/
 
 ## Current project status
 
-**Last updated:** March 15, 2026
+**Last updated:** March 17, 2026
 **Current phase:** Building core screens
 
 **Completed:**
 - Project setup with Expo SDK 54 + React Native
 - Git initialized and pushed to GitHub (github.com/tuibekovsanzhar/kazakh-learning-app)
-- Home screen (dark theme, streak card, 3 lesson buttons)
+- Home screen (dark theme, streak card, lesson buttons)
 - Kazakh Alphabet screen (4-column grid, 42 letters, Cyrillic + Latin)
 - Letter modal popup (pronunciation, example word, meaning)
 - Back button on Alphabet screen
 - Navigation between Home → Alphabet working
+- Greetings screen (20 phrases, Kazakh + Latin + English, modal with "When to use")
+- Numbers screen (21 numbers 0–1000, digit swatch, Cyrillic + Latin + English, modal)
+- Colors screen (15 colors, circular color swatch per row, modal with matching button color)
 
 **In progress:**
 - Nothing currently
 
 **To do next session:**
-- Build Vocabulary lesson screen (Greetings first)
-- Make Greetings and Numbers buttons on Home screen navigate somewhere
+- Build more vocabulary screens (e.g. Family, Food, Animals)
 - Eventually: Flashcard system, Quiz, Progress tracking, Streaks
 
 **Important file locations:**
@@ -115,6 +117,13 @@ Session 2 — March 15, 2026
   - Tap any phrase → modal popup with "When to use" explanation
 - Created greetings data file (data/greetings.js)
 - Wired up navigation: Home → Alphabet, Home → Greetings
+
+### Session 3 — March 17, 2026
+- Built Colors screen (app/colors.tsx)
+  - List of 15 colors with circular color swatch, Cyrillic + Latin + English
+  - Tap any row → modal with large color circle + "Got it" button colored to match
+- Created colors data file (data/colors.js) with 15 colors and hex codes
+- Added Colors button (🎨) to Home screen
 
 ### Current file structure
 - app/index.jsx — Home screen
