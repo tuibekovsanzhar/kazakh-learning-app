@@ -26,13 +26,13 @@ Mobile app for learning the Kazakh language interactively, similar to Duolingo b
 ---
 
 ## MVP features (in priority order)
-- [ ] Project setup + folder structure ✅ DONE
-- [ ] Home screen with progress overview
-- [ ] Kazakh alphabet screen with pronunciations
-- [ ] Vocabulary lessons by topic
-- [ ] Flashcard system with spaced repetition
-- [ ] Quiz / multiple choice exercises
-- [ ] User progress tracking + streaks
+- [x] Project setup + folder structure ✅ DONE
+- [x] Home screen with progress overview ✅ DONE
+- [x] Kazakh alphabet screen with pronunciations ✅ DONE
+- [x] Vocabulary lessons by topic ✅ DONE (Greetings, Numbers, Colors)
+- [x] Flashcard system ✅ DONE
+- [x] Quiz / multiple choice exercises ✅ DONE
+- [x] User progress tracking + streaks ✅ DONE (AsyncStorage persistence)
 - [ ] User authentication (Firebase)
 - [ ] AI-powered personalized exercises (Claude API)
 
@@ -42,28 +42,29 @@ Mobile app for learning the Kazakh language interactively, similar to Duolingo b
 ```
 kazakh-learning-app/
 ├── CLAUDE.md                 ← this file
+├── README.md                 ← GitHub readme
 ├── App.js                    ← entry point
 ├── app.json                  ← Expo config
 ├── package.json
 ├── app/
-│   ├── index.jsx             ← Home screen
-│   ├── lessons.jsx
-│   ├── flashcards.jsx
-│   └── progress.jsx
-├── components/
-│   ├── Button.jsx
-│   ├── FlashCard.jsx
-│   └── ProgressBar.jsx
+│   ├── index.jsx             ← Home screen (streak, lesson buttons)
+│   ├── alphabet.tsx          ← Alphabet screen (42 letters, modal)
+│   ├── greetings.tsx         ← Greetings vocabulary (20 phrases, modal)
+│   ├── numbers.tsx           ← Numbers vocabulary (0–1000, modal)
+│   ├── colors.tsx            ← Colors vocabulary (15 colors, swatches, modal)
+│   ├── flashcards.tsx        ← Flashcard practice (flip animation, mastery)
+│   └── quiz.tsx              ← Multiple-choice quiz (10 questions, scoring)
 ├── data/
-│   ├── alphabet.js
-│   ├── vocabulary.js
-│   └── lessons.js
+│   ├── alphabet.js           ← 42 Kazakh letters
+│   ├── greetings.js          ← 20 greeting phrases
+│   ├── numbers.js            ← 21 numbers
+│   └── colors.js             ← 15 colors with hex codes
 ├── assets/
 │   ├── images/
 │   ├── sounds/
 │   └── fonts/
 └── utils/
-    ├── storage.js
+    ├── storage.js            ← AsyncStorage helpers (progress, scores, streak)
     └── helpers.js
 ```
 
@@ -72,73 +73,70 @@ kazakh-learning-app/
 ## Current project status
 
 **Last updated:** March 17, 2026
-**Current phase:** Building core screens
+**Current phase:** MVP feature-complete — polish + Firebase next
 
 **Completed:**
 - Project setup with Expo SDK 54 + React Native
-- Git initialized and pushed to GitHub (github.com/tuibekovsanzhar/kazakh-learning-app)
-- Home screen (dark theme, streak card, lesson buttons)
-- Kazakh Alphabet screen (4-column grid, 42 letters, Cyrillic + Latin)
-- Letter modal popup (pronunciation, example word, meaning)
-- Back button on Alphabet screen
-- Navigation between Home → Alphabet working
+- Git + GitHub (github.com/tuibekovsanzhar/kazakh-learning-app)
+- Home screen (dark theme, live streak counter, scrollable lesson buttons)
+- Kazakh Alphabet screen (4-column grid, 42 letters, Cyrillic + Latin, modal popup)
 - Greetings screen (20 phrases, Kazakh + Latin + English, modal with "When to use")
-- Numbers screen (21 numbers 0–1000, digit swatch, Cyrillic + Latin + English, modal)
-- Colors screen (15 colors, circular color swatch per row, modal with matching button color)
+- Numbers screen (21 numbers 0–1000, digit badge, modal)
+- Colors screen (15 colors, circular swatches, modal with color-matched button)
+- Flashcard screen (spring flip animation, "I know this" / "Still learning", progress bar, summary)
+- Quiz screen (10 random questions, 4 choices, instant feedback, results + personal best)
+- AsyncStorage persistence: flashcard mastery marks, quiz best scores, streak system
+- README.md for GitHub
 
 **In progress:**
 - Nothing currently
 
 **To do next session:**
-- Build more vocabulary screens (e.g. Family, Food, Animals)
-- Eventually: Flashcard system, Quiz, Progress tracking, Streaks
+- More vocabulary decks (Family, Food, Animals)
+- Firebase authentication (sign up / log in)
+- Cloud sync of progress
 
 **Important file locations:**
-- Real project: ~/Desktop/kazakh-learning-app
-- Delete ~/Desktop/kazakh-learning-app-2 (no longer needed)
-- Main screens live in app/ folder
-- Alphabet data lives in data/alphabet.js
+- Project: ~/Desktop/kazakh-learning-app
+- Main screens: app/
+- Lesson data: data/
+- Storage helpers: utils/storage.js
 
 ---
 
-## Last session summary
-Session 2 — March 15, 2026
+## Session history
 
-### What we completed today
-- Fixed home screen showing in Expo Go (was running wrong folder kazakh-learning-app-2)
-- Moved home screen code from App.js → app/index.jsx (Expo Router structure)
-- Built Kazakh Alphabet screen (app/alphabet.tsx)
-  - 4-column grid, 42 letters, Cyrillic + Latin side by side
-  - Tap any letter → modal popup with pronunciation, example word, meaning
-- Created alphabet data file (data/alphabet.js) with all 42 letters
-- Added back button to Alphabet screen
-- Built Greetings screen (app/greetings.tsx)
-  - List of 20 phrases, Kazakh + Latin + English
-  - Tap any phrase → modal popup with "When to use" explanation
-- Created greetings data file (data/greetings.js)
-- Wired up navigation: Home → Alphabet, Home → Greetings
+### Session 4 — March 17, 2026
+- Built Quiz screen (app/quiz.tsx)
+  - 10 random questions per session drawn from greetings deck
+  - 4 multiple-choice answers (1 correct + 3 random wrong), shuffled each time
+  - Instant green/red feedback on tap; auto-advances after 1.5 s
+  - Results screen with score, emoji rating, score bar, "Try Again"
+  - Personal best shown on quiz screen and results screen
+- Added AsyncStorage persistence via utils/storage.js
+  - `saveFlashcardProgress` / `loadFlashcardProgress` — persists "I know this" / "Still learning" marks per deck
+  - `saveQuizScore` / `loadQuizScores` — saves last score and best score per deck
+  - `loadStreak` / `updateStreak` — streak increments on consecutive days, resets on a gap
+  - Streak on home screen now reads from storage (was hardcoded 0)
+  - Flashcard mastery marks survive app restarts; progress bar loads correctly
+- Fixed two bugs on previous screens:
+  - Home screen lesson buttons were cut off → wrapped in ScrollView
+  - Flashcard flip was one-way → tap flipped card again to flip back
+- Created README.md for the GitHub repository
 
 ### Session 3 — March 17, 2026
-- Built Colors screen (app/colors.tsx)
-  - List of 15 colors with circular color swatch, Cyrillic + Latin + English
-  - Tap any row → modal with large color circle + "Got it" button colored to match
-- Created colors data file (data/colors.js) with 15 colors and hex codes
-- Added Colors button (🎨) to Home screen
+- Built Colors screen (app/colors.tsx) with circular swatches and color-matched modal button
+- Built Numbers screen (app/numbers.tsx) with digit badge and modal
+- Built Flashcard screen (app/flashcards.tsx) with spring flip animation,
+  mastery buttons, progress bar, and session summary screen
+- Added Colors, Numbers, Flashcards buttons to Home screen
 
-### Current file structure
-- app/index.jsx — Home screen
-- app/alphabet.tsx — Alphabet screen
-- app/greetings.tsx — Greetings screen
-- data/alphabet.js — 42 Kazakh letters with pronunciations
-- data/greetings.js — 20 greeting phrases
-
-### To do next session
-1. Build Numbers lesson screen (same pattern as Greetings)
-2. Wire up Numbers button on Home screen
-3. Eventually: Flashcard system, Quiz, Progress tracking
+### Session 2 — March 15, 2026
+- Built Kazakh Alphabet screen (app/alphabet.tsx) — 42 letters, 4-column grid, modal
+- Built Greetings screen (app/greetings.tsx) — 20 phrases, modal with "When to use"
+- Wired up navigation: Home → Alphabet, Home → Greetings
 
 ### Important notes
-- Always run `npx expo start` from ~/Desktop/kazakh-learning-app (NOT kazakh-learning-app-2)
-- Delete ~/Desktop/kazakh-learning-app-2 — no longer needed
-- Phone and Mac must be on same WiFi
-- index.jsx uses useRouter from expo-router for navigation
+- Always run `npx expo start` from ~/Desktop/kazakh-learning-app
+- Phone and Mac must be on same WiFi to use Expo Go
+- All screens follow the same dark theme: background #0f0f1a or #1a1a2e, accent #a78bfa

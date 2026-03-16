@@ -3,7 +3,7 @@
 // Front: Kazakh Cyrillic. Tap to flip → Latin + English.
 // "I know this" / "Still learning" buttons track mastery.
 
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
@@ -16,6 +16,11 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { greetings } from '../data/greetings';
+import {
+  saveFlashcardProgress,
+  loadFlashcardProgress,
+  updateStreak,
+} from '../utils/storage';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const CARD_WIDTH = SCREEN_WIDTH - 48;
@@ -38,6 +43,19 @@ export default function FlashcardsScreen() {
 
   // Whether we've shown a "summary" after going through all cards
   const [showSummary, setShowSummary] = useState(false);
+
+  // Load saved mastery marks from storage when the screen first opens
+  useEffect(() => {
+    loadFlashcardProgress('greetings').then(({ known, stillLearning }) => {
+      setKnown(known);
+      setStillLearning(stillLearning);
+    });
+  }, []);
+
+  // Update streak whenever the deck summary appears (session completed)
+  useEffect(() => {
+    if (showSummary) updateStreak();
+  }, [showSummary]);
 
   // Animated value: 0 = front, 180 = back
   const flipAnim = useRef(new Animated.Value(0)).current;
@@ -129,22 +147,22 @@ export default function FlashcardsScreen() {
   // ─── Mastery buttons ──────────────────────────────────────────────────────
 
   const markKnown = () => {
-    setKnown((prev) => new Set(prev).add(currentIndex));
-    setStillLearning((prev) => {
-      const next = new Set(prev);
-      next.delete(currentIndex);
-      return next;
-    });
+    const newKnown = new Set(known).add(currentIndex);
+    const newStillLearning = new Set(stillLearning);
+    newStillLearning.delete(currentIndex);
+    setKnown(newKnown);
+    setStillLearning(newStillLearning);
+    saveFlashcardProgress('greetings', newKnown, newStillLearning);
     goNext();
   };
 
   const markStillLearning = () => {
-    setStillLearning((prev) => new Set(prev).add(currentIndex));
-    setKnown((prev) => {
-      const next = new Set(prev);
-      next.delete(currentIndex);
-      return next;
-    });
+    const newStillLearning = new Set(stillLearning).add(currentIndex);
+    const newKnown = new Set(known);
+    newKnown.delete(currentIndex);
+    setStillLearning(newStillLearning);
+    setKnown(newKnown);
+    saveFlashcardProgress('greetings', newKnown, newStillLearning);
     goNext();
   };
 

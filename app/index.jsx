@@ -1,10 +1,18 @@
+import { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
+import { loadStreak } from '../utils/storage';
 
 
 export default function HomeScreen() {
-  const router = useRouter(); 
+  const router = useRouter();
+  const [streakCount, setStreakCount] = useState(0);
+
+  useEffect(() => {
+    loadStreak().then(({ count }) => setStreakCount(count));
+  }, []);
+
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
@@ -18,7 +26,7 @@ export default function HomeScreen() {
       {/* Streak card */}
       <View style={styles.streakCard}>
         <Text style={styles.streakEmoji}>🔥</Text>
-        <Text style={styles.streakNumber}>0</Text>
+        <Text style={styles.streakNumber}>{streakCount}</Text>
         <Text style={styles.streakLabel}>Day Streak</Text>
       </View>
 
@@ -53,6 +61,12 @@ export default function HomeScreen() {
         <TouchableOpacity style={styles.lessonButton} onPress={() => router.push('/flashcards')}>
           <Text style={styles.lessonEmoji}>🃏</Text>
           <Text style={styles.lessonText}>Flashcards</Text>
+          <Text style={styles.lessonArrow}>→</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.lessonButton} onPress={() => router.push('/quiz')}>
+          <Text style={styles.lessonEmoji}>🧠</Text>
+          <Text style={styles.lessonText}>Quiz</Text>
           <Text style={styles.lessonArrow}>→</Text>
         </TouchableOpacity>
       </ScrollView>
