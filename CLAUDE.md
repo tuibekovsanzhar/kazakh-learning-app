@@ -33,7 +33,8 @@ Mobile app for learning the Kazakh language interactively, similar to Duolingo b
 - [x] Flashcard system ✅ DONE
 - [x] Quiz / multiple choice exercises ✅ DONE
 - [x] User progress tracking + streaks ✅ DONE (AsyncStorage persistence)
-- [ ] User authentication (Firebase)
+- [x] User authentication (Firebase) ✅ DONE (login + signup screens, auth gate)
+- [ ] Cloud sync of progress (Firestore)
 - [ ] AI-powered personalized exercises (Claude API)
 
 ---
@@ -53,18 +54,28 @@ kazakh-learning-app/
 │   ├── numbers.tsx           ← Numbers vocabulary (0–1000, modal)
 │   ├── colors.tsx            ← Colors vocabulary (15 colors, swatches, modal)
 │   ├── flashcards.tsx        ← Flashcard practice (flip animation, mastery)
-│   └── quiz.tsx              ← Multiple-choice quiz (10 questions, scoring)
+│   ├── quiz.tsx              ← Multiple-choice quiz (10 questions, scoring)
+│   ├── family.tsx            ← Family vocabulary (19 words, modal)
+│   ├── food.tsx              ← Food vocabulary (modal)
+│   ├── animals.tsx           ← Animals vocabulary (modal)
+│   ├── login.tsx             ← Login screen (Firebase Auth)
+│   ├── signup.tsx            ← Signup screen (Firebase Auth)
+│   └── _layout.tsx           ← Root layout (auth gate, onAuthStateChanged)
 ├── data/
 │   ├── alphabet.js           ← 42 Kazakh letters
 │   ├── greetings.js          ← 20 greeting phrases
 │   ├── numbers.js            ← 21 numbers
-│   └── colors.js             ← 15 colors with hex codes
+│   ├── colors.js             ← 15 colors with hex codes
+│   ├── family.js             ← 19 family words
+│   ├── food.js               ← food words
+│   └── animals.js            ← animal words
 ├── assets/
 │   ├── images/
 │   ├── sounds/
 │   └── fonts/
 └── utils/
     ├── storage.js            ← AsyncStorage helpers (progress, scores, streak)
+    ├── firebase.js           ← Firebase app init + auth export
     └── helpers.js
 ```
 
@@ -72,7 +83,7 @@ kazakh-learning-app/
 
 ## Current project status
 
-**Last updated:** March 17, 2026
+**Last updated:** March 19, 2026
 **Current phase:** MVP feature-complete — polish + Firebase next
 
 **Completed:**
@@ -87,14 +98,17 @@ kazakh-learning-app/
 - Quiz screen (10 random questions, 4 choices, instant feedback, results + personal best)
 - AsyncStorage persistence: flashcard mastery marks, quiz best scores, streak system
 - README.md for GitHub
+- Family, Food, Animals vocabulary screens with back button and modal
+- Firebase Authentication: login screen, signup screen, auth gate in root layout
 
 **In progress:**
 - Nothing currently
 
 **To do next session:**
-- More vocabulary decks (Family, Food, Animals)
-- Firebase authentication (sign up / log in)
-- Cloud sync of progress
+- Add a logout button to the home screen (call `signOut(auth)` from firebase/auth)
+- Save user progress to Firestore (cloud sync) instead of only AsyncStorage
+- Build a Progress screen showing mastered flashcard counts and quiz best scores per deck
+- Add spaced repetition to flashcards (show "Still learning" cards more often)
 
 **Important file locations:**
 - Project: ~/Desktop/kazakh-learning-app
@@ -106,30 +120,59 @@ kazakh-learning-app/
 
 ## Session history
 
-### Session 4 — March 17, 2026
-- Built Quiz screen (app/quiz.tsx)
-  - 10 random questions per session drawn from greetings deck
-  - 4 multiple-choice answers (1 correct + 3 random wrong), shuffled each time
-  - Instant green/red feedback on tap; auto-advances after 1.5 s
-  - Results screen with score, emoji rating, score bar, "Try Again"
-  - Personal best shown on quiz screen and results screen
-- Added AsyncStorage persistence via utils/storage.js
-  - `saveFlashcardProgress` / `loadFlashcardProgress` — persists "I know this" / "Still learning" marks per deck
-  - `saveQuizScore` / `loadQuizScores` — saves last score and best score per deck
-  - `loadStreak` / `updateStreak` — streak increments on consecutive days, resets on a gap
-  - Streak on home screen now reads from storage (was hardcoded 0)
-  - Flashcard mastery marks survive app restarts; progress bar loads correctly
-- Fixed two bugs on previous screens:
-  - Home screen lesson buttons were cut off → wrapped in ScrollView
-  - Flashcard flip was one-way → tap flipped card again to flip back
-- Created README.md for the GitHub repository
+### Session 4 — March 19, 2026
+- Fixed home screen button styling (app/index.jsx)
+  - Family, Food, Animals buttons were using missing style names (`lessonBtn`/`lessonBtnText`)
+  - Corrected to `lessonButton`, `lessonEmoji`, `lessonText`, `lessonArrow` — matches all other buttons
+- Edited data/family.js
+  - Deleted last entry "Отбасым" (My family) — deck is now 19 words
+  - Updated "Жиен": english → "Nephew / Niece (sister's children)", expanded note
+- Added back button to app/family.tsx, app/food.tsx, app/animals.tsx
+  - Added `useRouter` import and `router.back()` handler to all three
+  - `← Back` button in purple above the title, `backBtn`/`backBtnText` styles added
+- Fixed TypeScript errors in family.tsx, food.tsx, animals.tsx
+  - `useState(null)` was typed as `null`-only, making all `selected?.kazakh` etc. red
+  - Added `type WordItem = { kazakh: string; latin: string; english: string; note: string }`
+  - Changed to `useState<WordItem | null>(null)` in all three files
+- Created .vscode/settings.json — disabled cSpell spell checker for the project
+- Set up Firebase Authentication
+  - Ran `npx expo install firebase` (66 packages)
+  - Created utils/firebase.js — initializes Firebase app, exports `auth`
+  - Created app/login.tsx — email + password login, error handling, link to signup
+  - Created app/signup.tsx — email + password + confirm, validation, link to login
+  - Both screens use dark theme (#0f0f1a background, #a78bfa accent), spinner on submit
+- Created app/_layout.tsx — Expo Router root layout with auth gate
+  - `onAuthStateChanged` listener checks Firebase session on app start
+  - Shows purple spinner on dark screen while checking (~200ms)
+  - Redirects to /login if not logged in, to / if already logged in
+  - Prevents redirect loops by checking current route with `useSegments`
 
 ### Session 3 — March 17, 2026
-- Built Colors screen (app/colors.tsx) with circular swatches and color-matched modal button
-- Built Numbers screen (app/numbers.tsx) with digit badge and modal
-- Built Flashcard screen (app/flashcards.tsx) with spring flip animation,
-  mastery buttons, progress bar, and session summary screen
-- Added Colors, Numbers, Flashcards buttons to Home screen
+- Built Numbers screen (app/numbers.tsx)
+  - 21 numbers from 0–1000, digit badge on each row, Cyrillic + Latin + English
+  - Tap any row → modal popup
+- Built Colors screen (app/colors.tsx)
+  - 15 colors with circular color swatch per row
+  - Modal shows a large color circle; "Got it" button tinted to match the color
+- Built Flashcard screen (app/flashcards.tsx)
+  - Spring-animated card flip (tap to reveal, tap again to flip back)
+  - "I know this ✓" (green) and "Still learning" (amber) mastery buttons
+  - Green progress bar fills as cards are mastered
+  - Session summary screen at the end with counts and "Practice Again"
+- Built Quiz screen (app/quiz.tsx)
+  - 10 random questions per session from the Greetings deck
+  - 4 multiple-choice answers (1 correct + 3 random wrong), shuffled each time
+  - Instant green/red highlight feedback; auto-advances after 1.5 s
+  - Results screen with big score display, emoji rating, score bar, "Try Again"
+  - Personal best score shown below the progress bar and on the results screen
+- Added full AsyncStorage persistence (utils/storage.js)
+  - Flashcard mastery marks survive app restarts; progress bar restores on reopen
+  - Quiz last score + best score saved per deck
+  - Streak system: increments on consecutive days, resets after a gap
+  - Home screen 🔥 streak counter now reads the real saved value
+- Fixed bugs: home screen lesson list now scrollable; flashcard flip now two-way
+- Added Numbers, Colors, Flashcards, and Quiz buttons to Home screen
+- Created README.md for the GitHub repository
 
 ### Session 2 — March 15, 2026
 - Built Kazakh Alphabet screen (app/alphabet.tsx) — 42 letters, 4-column grid, modal

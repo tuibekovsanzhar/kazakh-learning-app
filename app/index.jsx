@@ -69,6 +69,24 @@ export default function HomeScreen() {
           <Text style={styles.lessonText}>Quiz</Text>
           <Text style={styles.lessonArrow}>→</Text>
         </TouchableOpacity>
+        
+        <TouchableOpacity style={styles.lessonButton} onPress={() => router.push('/family')}>
+          <Text style={styles.lessonEmoji}>👨‍👩‍👧</Text>
+          <Text style={styles.lessonText}>Family</Text>
+          <Text style={styles.lessonArrow}>→</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.lessonButton} onPress={() => router.push('/food')}>
+          <Text style={styles.lessonEmoji}>🍽️</Text>
+          <Text style={styles.lessonText}>Food</Text>
+          <Text style={styles.lessonArrow}>→</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.lessonButton} onPress={() => router.push('/animals')}>
+          <Text style={styles.lessonEmoji}>🐴</Text>
+          <Text style={styles.lessonText}>Animals</Text>
+          <Text style={styles.lessonArrow}>→</Text>
+        </TouchableOpacity>
       </ScrollView>
     </View>
   );
