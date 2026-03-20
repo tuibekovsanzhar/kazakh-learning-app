@@ -14,6 +14,8 @@ export default function SignupScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleSignup = async () => {
     if (!email.trim() || !password || !confirmPassword) {
@@ -75,28 +77,38 @@ export default function SignupScreen() {
         />
 
         <Text style={styles.label}>Password</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="At least 6 characters"
-          placeholderTextColor="#4a4a6a"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          autoComplete="new-password"
-          textContentType="newPassword"
-        />
+        <View style={styles.inputRow}>
+          <TextInput
+            style={styles.inputFlex}
+            placeholder="At least 6 characters"
+            placeholderTextColor="#4a4a6a"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={!showPassword}
+            autoComplete="new-password"
+            textContentType="newPassword"
+          />
+          <TouchableOpacity onPress={() => setShowPassword(v => !v)} style={styles.eyeBtn}>
+            <Text style={styles.eyeText}>{showPassword ? 'Hide' : 'Show'}</Text>
+          </TouchableOpacity>
+        </View>
 
         <Text style={styles.label}>Confirm Password</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Repeat your password"
-          placeholderTextColor="#4a4a6a"
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          secureTextEntry
-          autoComplete="new-password"
-          textContentType="newPassword"
-        />
+        <View style={styles.inputRow}>
+          <TextInput
+            style={styles.inputFlex}
+            placeholder="Repeat your password"
+            placeholderTextColor="#4a4a6a"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            secureTextEntry={!showConfirmPassword}
+            autoComplete="new-password"
+            textContentType="newPassword"
+          />
+          <TouchableOpacity onPress={() => setShowConfirmPassword(v => !v)} style={styles.eyeBtn}>
+            <Text style={styles.eyeText}>{showConfirmPassword ? 'Hide' : 'Show'}</Text>
+          </TouchableOpacity>
+        </View>
 
         <TouchableOpacity
           style={[styles.btn, loading && styles.btnDisabled]}
@@ -133,6 +145,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#1a1a2e', color: '#fff', borderRadius: 12,
     paddingHorizontal: 16, paddingVertical: 14, fontSize: 15,
     borderWidth: 1, borderColor: '#2a2a4a', marginBottom: 18,
+  },
+  inputRow: {
+    flexDirection: 'row', alignItems: 'center',
+    backgroundColor: '#1a1a2e', borderRadius: 12,
+    borderWidth: 1, borderColor: '#2a2a4a', marginBottom: 18,
+  },
+  inputFlex: {
+    flex: 1, color: '#fff',
+    paddingHorizontal: 16, paddingVertical: 14, fontSize: 15,
+  },
+  eyeBtn: {
+    paddingHorizontal: 14, paddingVertical: 14,
+  },
+  eyeText: {
+    color: '#a78bfa', fontSize: 13, fontWeight: '600',
   },
   btn: {
     backgroundColor: '#a78bfa', borderRadius: 12,

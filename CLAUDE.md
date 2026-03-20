@@ -4,14 +4,13 @@
 Mobile app for learning the Kazakh language interactively, similar to Duolingo but built specifically for Kazakh with AI-powered personalization.
 
 **Target platforms:** iOS (App Store) + Android (Google Play Market)
-**Goal:** Ship working MVP within 3 months
+**Goal:** Ship working MVP within 2 months
 **Launch strategy:** Android first, then iOS
 
 ---
 
 ## About the developer
 - **Name:** Sanzhar, startup founder based in Kazakhstan
-- **Coding level:** Beginner — always explain what you do and why
 - **Language:** English
 
 ---
@@ -110,10 +109,9 @@ kazakh-learning-app/
 - Nothing currently
 
 **To do next session:**
-1. ~~Fix password reset bug on signup screen~~ ✅ DONE
-2. ~~Add latin transcription on flashcard front face~~ ✅ DONE
-3. Update Firestore security rules before April 18 expiry
-4. AI personalized exercises (Claude API)
+1. Add $5 credits at console.anthropic.com → test AI exercises end-to-end
+2. Test signup password fix on a real device
+3. Submit app to Google Play Store (first launch!)
 
 **Important file locations:**
 - Project: ~/Desktop/kazakh-learning-app
@@ -126,15 +124,13 @@ kazakh-learning-app/
 ## Session history
 
 ### Session 6 — March 20, 2026
-- Fixed password reset bug on signup screen (app/signup.tsx)
-  - Password field: `autoComplete="off"` → `"new-password"`, `textContentType="oneTimeCode"` → `"newPassword"`, removed `selectTextOnFocus={false}`
-  - Confirm Password field: same changes
-  - These props were confusing iOS into treating the field as a one-time code input, causing it to reset text on focus
-- Added latin transcription to flashcard front face (app/flashcards.tsx)
-  - Added `<Text style={styles.frontLatin}>{card.latin}</Text>` below the Kazakh word
-  - Added `frontLatin` style: gray (#6b7280), 16px, weight 500, letter-spacing 0.5
-  - Now the front of every card shows: Kazakh (large white) + Latin (small gray) + "tap to reveal →"
-- Fixed TypeScript red lines in signup.tsx: `router.replace('/')` → `router.replace('/' as any)`, `router.push('/login')` → `router.push('/login' as any)`
+- Fixed signup password reset bug (textContentType oneTimeCode → newPassword)
+- Added Latin transliteration below Kazakh text on flashcard front face
+- Applied Firestore security rules (no expiry, users can only access own data)
+- Created app/ai-exercises.tsx — AI exercises screen with topic/level selectors and Claude API integration
+- Added ✨ AI Exercises button to home screen
+- Created .env file for API key (added to .gitignore)
+- AI exercises screen is built and ready — needs $5 API credits added at console.anthropic.com to activate
 
 ### Session 5 — March 20, 2026
 - Added logout button to home screen (signOut from firebase/auth)
