@@ -1,5 +1,6 @@
 // app/quiz.tsx
-// Quiz screen — Greetings deck
+// Quiz screen — works with any vocabulary deck.
+// The caller passes { deck, title } as route params.
 // Shows Kazakh Cyrillic word, 4 English answer choices, instant feedback, 10 questions per session.
 
 import React, { useState, useCallback, useEffect } from 'react';
@@ -11,17 +12,64 @@ import {
   SafeAreaView,
   StatusBar,
 } from 'react-native';
-import { useRouter } from 'expo-router';
-import { greetings } from '../data/greetings';
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import { greetings }   from '../data/greetings';
+import { numbers }     from '../data/numbers';
+import { colors }      from '../data/colors';
+import { familyWords } from '../data/family';
+import { foodWords }   from '../data/food';
+import { animalWords } from '../data/animals';
 import { saveQuizScore, loadQuizScores, updateStreak } from '../utils/storage';
+import { auth } from '../utils/firebase';
+import { saveProgress, loadProgress } from '../utils/firestore';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
+// Minimal normalized card — quiz only needs the Kazakh word, Latin, and English meaning
+type QuizCard = {
+  kazakh: string;
+  latin?: string;
+  english: string;
+};
+
 type Question = {
   kazakh: string;
+  latin?: string;
   correctAnswer: string;
   choices: string[]; // 4 shuffled choices
 };
+
+// Emoji shown in the deck label
+const DECK_EMOJIS: Record<string, string> = {
+  greetings: '👋',
+  numbers:   '🔢',
+  colors:    '🎨',
+  family:    '👨‍👩‍👧',
+  food:      '🍽️',
+  animals:   '🐴',
+};
+
+// ─── Data normalization ────────────────────────────────────────────────────────
+
+// Convert each deck's raw data to { kazakh, latin, english } for quiz use
+function normalizeDeck(deckId: string): QuizCard[] {
+  switch (deckId) {
+    case 'greetings':
+      return greetings.map((w) => ({ kazakh: w.kazakh, latin: w.latin, english: w.english }));
+    case 'numbers':
+      return numbers.map((w) => ({ kazakh: w.cyrillic, latin: w.latin, english: w.english }));
+    case 'colors':
+      return colors.map((w) => ({ kazakh: w.cyrillic, latin: w.latin, english: w.english }));
+    case 'family':
+      return familyWords.map((w) => ({ kazakh: w.kazakh, latin: w.latin, english: w.english }));
+    case 'food':
+      return foodWords.map((w) => ({ kazakh: w.kazakh, latin: w.latin, english: w.english }));
+    case 'animals':
+      return animalWords.map((w) => ({ kazakh: w.kazakh, latin: w.latin, english: w.english }));
+    default:
+      return [];
+  }
+}
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -35,21 +83,21 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
-/** Build 10 random questions from the greetings deck. */
-function buildQuiz(): Question[] {
-  const pool = shuffle(greetings).slice(0, 10);
+/** Build up to 10 random questions from the given card array. */
+function buildQuiz(cards: QuizCard[]): Question[] {
+  const pool = shuffle(cards).slice(0, Math.min(10, cards.length));
 
   return pool.map((item) => {
     const correctAnswer = item.english;
 
     // Wrong answers: all other english values, shuffled, pick 3
     const wrongAnswers = shuffle(
-      greetings.filter((g) => g.english !== correctAnswer).map((g) => g.english)
+      cards.filter((c) => c.english !== correctAnswer).map((c) => c.english)
     ).slice(0, 3);
 
     const choices = shuffle([correctAnswer, ...wrongAnswers]);
 
-    return { kazakh: item.kazakh, correctAnswer, choices };
+    return { kazakh: item.kazakh, latin: item.latin, correctAnswer, choices };
   });
 }
 
@@ -58,7 +106,15 @@ function buildQuiz(): Question[] {
 export default function QuizScreen() {
   const router = useRouter();
 
-  const [questions, setQuestions] = useState<Question[]>(() => buildQuiz());
+  // Read deck key and display title from navigation params.
+  // Defaults keep the screen usable if opened without params.
+  const { deck = 'greetings', title = 'Greetings', from } =
+    useLocalSearchParams<{ deck: string; title: string; from: string }>();
+
+  // Normalize the deck once — stable during the component's lifetime
+  const cards = normalizeDeck(deck);
+
+  const [questions, setQuestions] = useState<Question[]>(() => buildQuiz(cards));
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [score, setScore] = useState(0);
@@ -71,15 +127,37 @@ export default function QuizScreen() {
     totalQuestions: number | null;
   }>({ lastScore: null, bestScore: null, totalQuestions: null });
 
-  // Load saved scores when screen opens
+  // Load saved scores when screen opens.
+  // AsyncStorage loads first. Firestore loads second and overwrites bestScore
+  // if cloud data exists — keeps best score in sync across devices.
   useEffect(() => {
-    loadQuizScores('greetings').then(setSavedScores);
-  }, []);
+    loadQuizScores(deck).then(setSavedScores);
 
-  // When quiz ends: save the score, update best if needed, update streak
+    const userId = auth.currentUser?.uid;
+    if (userId) {
+      loadProgress(userId).then((data) => {
+        if (data?.quizBestScores?.[deck] != null) {
+          setSavedScores((prev) => ({
+            ...prev,
+            bestScore: data.quizBestScores[deck],
+          }));
+        }
+      });
+    }
+  }, [deck]);
+
+  // When quiz ends: save the score, update best if needed, update streak,
+  // then sync the best score to Firestore.
   useEffect(() => {
     if (showResults) {
-      saveQuizScore('greetings', score, questions.length).then(setSavedScores);
+      saveQuizScore(deck, score, questions.length).then((updated) => {
+        setSavedScores(updated);
+        // Sync best score to Firestore using the dynamic deck key
+        const userId = auth.currentUser?.uid;
+        if (userId) {
+          saveProgress(userId, { quizBestScores: { [deck]: updated.bestScore } });
+        }
+      });
       updateStreak();
     }
   }, [showResults]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -114,7 +192,7 @@ export default function QuizScreen() {
   // ─── Restart ────────────────────────────────────────────────────────────────
 
   const restart = () => {
-    setQuestions(buildQuiz());
+    setQuestions(buildQuiz(cards));
     setCurrentIndex(0);
     setSelectedAnswer(null);
     setScore(0);
@@ -166,7 +244,7 @@ export default function QuizScreen() {
               : 'Keep going — you\'ll get there!'}
           </Text>
 
-          {/* Personal best — savedScores updates async after showResults, so use score directly for best */}
+          {/* Personal best */}
           {savedScores.bestScore !== null && (
             <Text style={styles.bestScoreResult}>
               Personal best: {savedScores.bestScore}/{savedScores.totalQuestions}
@@ -187,8 +265,8 @@ export default function QuizScreen() {
             <Text style={styles.tryAgainText}>Try Again</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.backHomeButton} onPress={() => router.back()}>
-            <Text style={styles.backHomeText}>← Back to Home</Text>
+          <TouchableOpacity style={styles.backHomeButton} onPress={() => router.push((from ?? '/') as any)}>
+            <Text style={styles.backHomeText}>← Back</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -205,7 +283,7 @@ export default function QuizScreen() {
 
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+        <TouchableOpacity onPress={() => router.push((from ?? '/') as any)} style={styles.backButton}>
           <Text style={styles.backText}>← Back</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Quiz</Text>
@@ -226,13 +304,16 @@ export default function QuizScreen() {
         </Text>
       )}
 
-      {/* Deck label */}
-      <Text style={styles.deckLabel}>👋 Greetings</Text>
+      {/* Deck label — shows emoji + title */}
+      <Text style={styles.deckLabel}>{DECK_EMOJIS[deck] ?? '📚'} {title}</Text>
 
       {/* Question card */}
       <View style={styles.questionCard}>
         <Text style={styles.prompt}>What does this mean?</Text>
         <Text style={styles.kazakhWord}>{question.kazakh}</Text>
+        {question.latin && (
+          <Text style={styles.latinText}>({question.latin})</Text>
+        )}
       </View>
 
       {/* Answer choices */}
@@ -261,12 +342,6 @@ export default function QuizScreen() {
         ))}
       </View>
 
-      {/* Feedback hint when wrong */}
-      {isAnswered && selectedAnswer !== question.correctAnswer && (
-        <Text style={styles.correctHint}>
-          Correct answer: {question.correctAnswer}
-        </Text>
-      )}
     </SafeAreaView>
   );
 }
@@ -364,6 +439,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  latinText: {
+    color: '#888888',
+    fontSize: 14,
+    fontStyle: 'italic',
+    textAlign: 'center',
+    marginTop: 8,
+  },
 
   // Choices
   choicesContainer: {
@@ -413,15 +495,6 @@ const styles = StyleSheet.create({
   choiceTextCorrect: { color: '#22c55e' },
   choiceTextWrong: { color: '#ef4444' },
   choiceTextDimmed: { color: '#374151' },
-
-  // Feedback hint
-  correctHint: {
-    color: '#22c55e',
-    fontSize: 13,
-    textAlign: 'center',
-    marginTop: 16,
-    paddingHorizontal: 24,
-  },
 
   // ── Results screen ──
   resultsContainer: {

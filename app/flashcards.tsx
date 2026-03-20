@@ -1,5 +1,6 @@
 // app/flashcards.tsx
-// Flashcard screen — Greetings deck
+// Flashcard screen — works with any vocabulary deck.
+// The caller passes { deck, title } as route params.
 // Front: Kazakh Cyrillic. Tap to flip → Latin + English.
 // "I know this" / "Still learning" buttons track mastery.
 
@@ -14,25 +15,96 @@ import {
   Animated,
   Dimensions,
 } from 'react-native';
-import { useRouter } from 'expo-router';
-import { greetings } from '../data/greetings';
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import { greetings }   from '../data/greetings';
+import { numbers }     from '../data/numbers';
+import { colors }      from '../data/colors';
+import { familyWords } from '../data/family';
+import { foodWords }   from '../data/food';
+import { animalWords } from '../data/animals';
 import {
   saveFlashcardProgress,
   loadFlashcardProgress,
   updateStreak,
 } from '../utils/storage';
+import { auth } from '../utils/firebase';
+import { saveProgress, loadProgress } from '../utils/firestore';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const CARD_WIDTH = SCREEN_WIDTH - 48;
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+// ─── Normalized card type ────────────────────────────────────────────────────
+// Every deck's data is mapped to this shape so the card UI is identical
+// regardless of which deck is loaded.
 
-type Card = typeof greetings[0];
+type Card = {
+  kazakh: string;        // front face — Cyrillic Kazakh word
+  latin: string;         // back face — Latin transliteration
+  english: string;       // back face — English meaning
+  context?: string;      // back face — extra note (optional)
+  contextLabel?: string; // label shown above the context line
+};
+
+// Emoji shown next to the deck name in the header
+const DECK_EMOJIS: Record<string, string> = {
+  greetings: '👋',
+  numbers:   '🔢',
+  colors:    '🎨',
+  family:    '👨‍👩‍👧',
+  food:      '🍽️',
+  animals:   '🐴',
+};
+
+// Convert a deck's raw data into the normalized Card array
+function normalizeDeck(deckId: string): Card[] {
+  switch (deckId) {
+    case 'greetings':
+      return greetings.map((w) => ({
+        kazakh: w.kazakh, latin: w.latin, english: w.english,
+        context: w.usage, contextLabel: 'WHEN TO USE',
+      }));
+    case 'numbers':
+      return numbers.map((w) => ({
+        kazakh: w.cyrillic, latin: w.latin, english: w.english,
+        context: w.digit, contextLabel: 'DIGIT',
+      }));
+    case 'colors':
+      return colors.map((w) => ({
+        kazakh: w.cyrillic, latin: w.latin, english: w.english,
+        // colors have no extra note — context section is hidden
+      }));
+    case 'family':
+      return familyWords.map((w) => ({
+        kazakh: w.kazakh, latin: w.latin, english: w.english,
+        context: w.note, contextLabel: 'NOTE',
+      }));
+    case 'food':
+      return foodWords.map((w) => ({
+        kazakh: w.kazakh, latin: w.latin, english: w.english,
+        context: w.note, contextLabel: 'NOTE',
+      }));
+    case 'animals':
+      return animalWords.map((w) => ({
+        kazakh: w.kazakh, latin: w.latin, english: w.english,
+        context: w.note, contextLabel: 'NOTE',
+      }));
+    default:
+      return [];
+  }
+}
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export default function FlashcardsScreen() {
   const router = useRouter();
+
+  // Read deck key and display title from navigation params.
+  // Defaults keep the screen usable if opened without params.
+  const { deck = 'greetings', title = 'Greetings', from } =
+    useLocalSearchParams<{ deck: string; title: string; from: string }>();
+
+  // Build the cards array once from the deck param
+  const cards = normalizeDeck(deck);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -44,13 +116,25 @@ export default function FlashcardsScreen() {
   // Whether we've shown a "summary" after going through all cards
   const [showSummary, setShowSummary] = useState(false);
 
-  // Load saved mastery marks from storage when the screen first opens
+  // Load saved mastery marks from storage when the screen first opens.
+  // AsyncStorage loads first (fast, local). Firestore loads second and
+  // overwrites if cloud data exists — so the user's progress follows them
+  // across devices and reinstalls.
   useEffect(() => {
-    loadFlashcardProgress('greetings').then(({ known, stillLearning }) => {
+    loadFlashcardProgress(deck).then(({ known, stillLearning }) => {
       setKnown(known);
       setStillLearning(stillLearning);
     });
-  }, []);
+
+    const userId = auth.currentUser?.uid;
+    if (userId) {
+      loadProgress(userId).then((data) => {
+        if (data?.masteredCards?.[deck]) {
+          setKnown(new Set<number>(data.masteredCards[deck]));
+        }
+      });
+    }
+  }, [deck]);
 
   // Update streak whenever the deck summary appears (session completed)
   useEffect(() => {
@@ -61,8 +145,8 @@ export default function FlashcardsScreen() {
   const flipAnim = useRef(new Animated.Value(0)).current;
 
   // Derived
-  const card: Card = greetings[currentIndex];
-  const total = greetings.length;
+  const card: Card = cards[currentIndex] ?? { kazakh: '', latin: '', english: '' };
+  const total = cards.length;
   const knownCount = known.size;
   const progressPercent = total > 0 ? knownCount / total : 0;
 
@@ -152,7 +236,12 @@ export default function FlashcardsScreen() {
     newStillLearning.delete(currentIndex);
     setKnown(newKnown);
     setStillLearning(newStillLearning);
-    saveFlashcardProgress('greetings', newKnown, newStillLearning);
+    saveFlashcardProgress(deck, newKnown, newStillLearning);
+    // Sync mastered card indices to Firestore using the dynamic deck key
+    const userId = auth.currentUser?.uid;
+    if (userId) {
+      saveProgress(userId, { masteredCards: { [deck]: [...newKnown] } });
+    }
     goNext();
   };
 
@@ -162,7 +251,12 @@ export default function FlashcardsScreen() {
     newKnown.delete(currentIndex);
     setStillLearning(newStillLearning);
     setKnown(newKnown);
-    saveFlashcardProgress('greetings', newKnown, newStillLearning);
+    saveFlashcardProgress(deck, newKnown, newStillLearning);
+    // Sync mastered card indices to Firestore (card removed from known)
+    const userId = auth.currentUser?.uid;
+    if (userId) {
+      saveProgress(userId, { masteredCards: { [deck]: [...newKnown] } });
+    }
     goNext();
   };
 
@@ -185,7 +279,7 @@ export default function FlashcardsScreen() {
         <View style={styles.summaryContainer}>
           <Text style={styles.summaryEmoji}>🎉</Text>
           <Text style={styles.summaryTitle}>Deck Complete!</Text>
-          <Text style={styles.summarySubtitle}>Greetings — {total} cards</Text>
+          <Text style={styles.summarySubtitle}>{title} — {total} cards</Text>
 
           <View style={styles.summaryStats}>
             <View style={styles.statBox}>
@@ -217,8 +311,8 @@ export default function FlashcardsScreen() {
             <Text style={styles.restartButtonText}>Practice Again</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.backHomeButton} onPress={() => router.back()}>
-            <Text style={styles.backHomeText}>← Back to Home</Text>
+          <TouchableOpacity style={styles.backHomeButton} onPress={() => router.push((from ?? '/') as any)}>
+            <Text style={styles.backHomeText}>← Back</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -233,7 +327,7 @@ export default function FlashcardsScreen() {
 
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+        <TouchableOpacity onPress={() => router.push((from ?? '/') as any)} style={styles.backButton}>
           <Text style={styles.backText}>← Back</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Flashcards</Text>
@@ -246,8 +340,8 @@ export default function FlashcardsScreen() {
       </View>
       <Text style={styles.progressLabel}>{knownCount} of {total} mastered</Text>
 
-      {/* Deck label */}
-      <Text style={styles.deckLabel}>👋 Greetings</Text>
+      {/* Deck label — shows emoji + title */}
+      <Text style={styles.deckLabel}>{DECK_EMOJIS[deck] ?? '📚'} {title}</Text>
 
       {/* ── Card ── */}
       <TouchableOpacity
@@ -277,9 +371,13 @@ export default function FlashcardsScreen() {
         >
           <Text style={styles.backLatin}>{card.latin}</Text>
           <Text style={styles.backEnglish}>{card.english}</Text>
-          <View style={styles.divider} />
-          <Text style={styles.usageLabel}>WHEN TO USE</Text>
-          <Text style={styles.usageText}>{card.usage}</Text>
+          {card.context != null && (
+            <>
+              <View style={styles.divider} />
+              <Text style={styles.usageLabel}>{card.contextLabel ?? 'NOTE'}</Text>
+              <Text style={styles.usageText}>{card.context}</Text>
+            </>
+          )}
         </Animated.View>
       </TouchableOpacity>
 

@@ -67,6 +67,22 @@ export default function ColorsScreen() {
       {/* Subtitle */}
       <Text style={styles.subtitle}>Tap any color to learn more</Text>
 
+      {/* Practice shortcuts row */}
+      <View style={styles.practiceRow}>
+        <TouchableOpacity
+          style={styles.flashcardsBtn}
+          onPress={() => router.push({ pathname: '/flashcards' as any, params: { deck: 'colors', title: 'Colors', from: '/colors' } })}
+        >
+          <Text style={styles.flashcardsBtnText}>🃏 Flashcards</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.quizBtn}
+          onPress={() => router.push({ pathname: '/quiz' as any, params: { deck: 'colors', title: 'Colors', from: '/colors' } })}
+        >
+          <Text style={styles.quizBtnText}>🧠 Take Quiz</Text>
+        </TouchableOpacity>
+      </View>
+
       {/* List of colors */}
       <FlatList
         data={colors}
@@ -181,6 +197,40 @@ const styles = StyleSheet.create({
     fontSize: 14,
     width: 80,
     textAlign: 'right',
+  },
+  practiceRow: {
+    flexDirection: 'row',
+    marginHorizontal: 16,
+    marginBottom: 12,
+    gap: 8,
+  },
+  flashcardsBtn: {
+    flex: 1,
+    backgroundColor: '#1a1a2e',
+    borderRadius: 12,
+    paddingVertical: 13,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#a78bfa',
+  },
+  flashcardsBtnText: {
+    color: '#a78bfa',
+    fontWeight: '600',
+    fontSize: 13,
+  },
+  quizBtn: {
+    flex: 1,
+    backgroundColor: '#1a1a2e',
+    borderRadius: 12,
+    paddingVertical: 13,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#a78bfa',
+  },
+  quizBtnText: {
+    color: '#a78bfa',
+    fontWeight: '600',
+    fontSize: 13,
   },
 
   // Modal styles

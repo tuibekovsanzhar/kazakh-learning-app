@@ -37,7 +37,7 @@ export const greetings = [
   },
   {
     kazakh: 'Өте жақсы',
-    latin: 'Óte jaqsy',
+    latin: 'Öte jaqsy',
     english: 'Very good',
     usage: 'Used to express that something is very good or you are doing great.',
   },
@@ -61,13 +61,13 @@ export const greetings = [
   },
   {
     kazakh: 'Сау болыңыз',
-    latin: 'Saw bolıńyz',
+    latin: 'Sau bolıńyz',
     english: 'Goodbye (formal)',
     usage: 'Formal farewell, literally means "be healthy".',
   },
   {
     kazakh: 'Сау бол',
-    latin: 'Saw bol',
+    latin: 'Sau bol',
     english: 'Goodbye (informal)',
     usage: 'Casual farewell used with friends.',
   },
@@ -79,7 +79,7 @@ export const greetings = [
   },
   {
     kazakh: 'Қайырлы күн',
-    latin: 'Qayyrly kún',
+    latin: 'Qayyrly kün',
     english: 'Good afternoon',
     usage: 'Afternoon greeting.',
   },
@@ -91,7 +91,7 @@ export const greetings = [
   },
   {
   kazakh: 'Қайырлы түн',
-  latin: 'Qayyrly tún',
+  latin: 'Qayyrly tün',
   english: 'Good night',
   usage: 'Said when going to sleep or saying goodbye late at night.',
   },
@@ -109,7 +109,7 @@ export const greetings = [
   },
   {
     kazakh: 'Танысқаныма қуаныштымын',
-    latin: 'Tanysqanyma quanysytymyn',
+    latin: 'Tanysqanyma quanyshtymyn',
     english: 'Nice to meet you',
     usage: 'Said when meeting someone for the first time.',
   },

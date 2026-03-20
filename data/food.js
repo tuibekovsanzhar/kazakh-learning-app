@@ -18,7 +18,7 @@ export const foodWords = [
   { kazakh: "Қант", latin: "Qant", english: "Sugar", note: "Added to tea — Kazakhs love sweet tea." },
   { kazakh: "Май", latin: "May", english: "Butter / Oil", note: "Used for both butter and cooking oil." },
   { kazakh: "Пісіру", latin: "Pisıru", english: "To cook", note: "The verb for cooking or boiling." },
-  { kazakh: "Жеу", latin: "Jew", english: "To eat", note: "Core verb. 'Жейік!' means 'Let's eat!'" },
+  { kazakh: "Жеу", latin: "Jeu", english: "To eat", note: "Core verb. 'Жейік!' means 'Let's eat!'" },
   { kazakh: "Іші", latin: "İshi", english: "To drink", note: "Core verb for drinking." },
   { kazakh: "Дәмді", latin: "Dämdi", english: "Delicious", note: "Great compliment to give after a meal." },
 ];

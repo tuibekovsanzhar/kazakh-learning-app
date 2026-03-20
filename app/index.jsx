@@ -3,15 +3,50 @@ import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-nati
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { loadStreak } from '../utils/storage';
+import { signOut } from 'firebase/auth';
+import { auth } from '../utils/firebase';
+import { saveProgress, loadProgress } from '../utils/firestore';
 
 
 export default function HomeScreen() {
   const router = useRouter();
   const [streakCount, setStreakCount] = useState(0);
+  const [totalMastered, setTotalMastered] = useState(0);
 
+  // Load streak from local storage, then pull any cloud-saved progress
   useEffect(() => {
     loadStreak().then(({ count }) => setStreakCount(count));
+
+    const userId = auth.currentUser?.uid;
+    if (userId) {
+      loadProgress(userId).then((data) => {
+        if (data?.streakCount != null) setStreakCount(data.streakCount);
+        if (data?.masteredCards) {
+          const total = Object.values(data.masteredCards).reduce(
+            (sum, arr) => sum + (Array.isArray(arr) ? arr.length : 0), 0
+          );
+          setTotalMastered(total);
+        }
+      });
+    }
   }, []);
+
+  // Sync streak to Firestore whenever it changes
+  useEffect(() => {
+    const userId = auth.currentUser?.uid;
+    if (userId) {
+      console.log('Syncing streakCount to Firestore:', streakCount);
+      saveProgress(userId, { streakCount });
+    }
+  }, [streakCount]);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -23,12 +58,21 @@ export default function HomeScreen() {
         <Text style={styles.subtitle}>Қазақша үйрен</Text>
       </View>
 
+      <TouchableOpacity onPress={handleLogout} style={styles.logoutBtn}>
+        <Text style={styles.logoutText}>Log out</Text>
+      </TouchableOpacity>
+
       {/* Streak card */}
       <View style={styles.streakCard}>
         <Text style={styles.streakEmoji}>🔥</Text>
         <Text style={styles.streakNumber}>{streakCount}</Text>
         <Text style={styles.streakLabel}>Day Streak</Text>
       </View>
+
+      {/* Words mastered summary */}
+      {totalMastered > 0 && (
+        <Text style={styles.masteredSummary}>📚 {totalMastered} words mastered</Text>
+      )}
 
       {/* Lesson buttons */}
       <ScrollView style={styles.lessonsSection} showsVerticalScrollIndicator={false}>
@@ -58,18 +102,6 @@ export default function HomeScreen() {
           <Text style={styles.lessonArrow}>→</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.lessonButton} onPress={() => router.push('/flashcards')}>
-          <Text style={styles.lessonEmoji}>🃏</Text>
-          <Text style={styles.lessonText}>Flashcards</Text>
-          <Text style={styles.lessonArrow}>→</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.lessonButton} onPress={() => router.push('/quiz')}>
-          <Text style={styles.lessonEmoji}>🧠</Text>
-          <Text style={styles.lessonText}>Quiz</Text>
-          <Text style={styles.lessonArrow}>→</Text>
-        </TouchableOpacity>
-        
         <TouchableOpacity style={styles.lessonButton} onPress={() => router.push('/family')}>
           <Text style={styles.lessonEmoji}>👨‍👩‍👧</Text>
           <Text style={styles.lessonText}>Family</Text>
@@ -170,5 +202,24 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#e94560',
   },
-
+  logoutBtn: {
+    alignSelf: 'flex-end',
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#a78bfa',
+    marginBottom: 12,
+  },
+  logoutText: {
+    color: '#a78bfa',
+    fontSize: 13,
+  },
+  masteredSummary: {
+    color: '#a78bfa',
+    fontSize: 13,
+    textAlign: 'center',
+    marginTop: -18,
+    marginBottom: 20,
+  },
 });

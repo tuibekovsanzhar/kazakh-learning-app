@@ -21,6 +21,21 @@ export default function AnimalsScreen() {
       <Text style={styles.title}>🐴 Animals</Text>
       <Text style={styles.subtitle}>{animalWords.length} words</Text>
 
+      <View style={styles.practiceRow}>
+        <TouchableOpacity
+          style={styles.flashcardsBtn}
+          onPress={() => router.push({ pathname: '/flashcards' as any, params: { deck: 'animals', title: 'Animals', from: '/animals' } })}
+        >
+          <Text style={styles.flashcardsBtnText}>🃏 Flashcards</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.quizBtn}
+          onPress={() => router.push({ pathname: '/quiz' as any, params: { deck: 'animals', title: 'Animals', from: '/animals' } })}
+        >
+          <Text style={styles.quizBtnText}>🧠 Take Quiz</Text>
+        </TouchableOpacity>
+      </View>
+
       <FlatList
         data={animalWords}
         keyExtractor={(_, i) => i.toString()}
@@ -83,4 +98,15 @@ const styles = StyleSheet.create({
   closeBtnText: { color: '#fff', fontWeight: '700', fontSize: 15 },
   backBtn: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 4 },
   backBtnText: { color: '#a78bfa', fontSize: 16, fontWeight: '600' },
+  practiceRow: { flexDirection: 'row' as const, marginHorizontal: 16, marginBottom: 12, gap: 8 },
+  flashcardsBtn: {
+    flex: 1, backgroundColor: '#1a1a2e', borderRadius: 12,
+    paddingVertical: 13, alignItems: 'center' as const, borderWidth: 1, borderColor: '#a78bfa',
+  },
+  flashcardsBtnText: { color: '#a78bfa', fontWeight: '600' as const, fontSize: 13 },
+  quizBtn: {
+    flex: 1, backgroundColor: '#1a1a2e', borderRadius: 12,
+    paddingVertical: 13, alignItems: 'center' as const, borderWidth: 1, borderColor: '#a78bfa',
+  },
+  quizBtnText: { color: '#a78bfa', fontWeight: '600' as const, fontSize: 13 },
 });

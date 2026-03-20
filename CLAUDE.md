@@ -34,7 +34,7 @@ Mobile app for learning the Kazakh language interactively, similar to Duolingo b
 - [x] Quiz / multiple choice exercises ✅ DONE
 - [x] User progress tracking + streaks ✅ DONE (AsyncStorage persistence)
 - [x] User authentication (Firebase) ✅ DONE (login + signup screens, auth gate)
-- [ ] Cloud sync of progress (Firestore)
+- [x] Cloud sync of progress (Firestore) ✅ DONE
 - [ ] AI-powered personalized exercises (Claude API)
 
 ---
@@ -105,10 +105,9 @@ kazakh-learning-app/
 - Nothing currently
 
 **To do next session:**
-- Add a logout button to the home screen (call `signOut(auth)` from firebase/auth)
-- Save user progress to Firestore (cloud sync) instead of only AsyncStorage
 - Build a Progress screen showing mastered flashcard counts and quiz best scores per deck
 - Add spaced repetition to flashcards (show "Still learning" cards more often)
+- Fix password reset bug on signup screen
 
 **Important file locations:**
 - Project: ~/Desktop/kazakh-learning-app
@@ -119,6 +118,27 @@ kazakh-learning-app/
 ---
 
 ## Session history
+
+### Session 5 — March 19, 2026
+- Added logout button to home screen (app/index.jsx)
+  - Imports `signOut` from firebase/auth and `auth` from utils/firebase
+  - Purple outline pill button in top-right, calls `signOut(auth)` on press
+  - Auth gate in `_layout.tsx` automatically redirects to /login after sign out
+- Set up Firestore database (utils/firebase.js, utils/firestore.js)
+  - Added `getFirestore` import and `export const db = getFirestore(app)` to firebase.js
+  - Created utils/firestore.js with two functions:
+    - `saveProgress(userId, data)` — writes to `users/{userId}/progress/data` with `merge:true`
+    - `loadProgress(userId)` — reads that document, returns data or null
+- Synced streakCount to Firestore from home screen (app/index.jsx)
+  - On mount: loads streak from AsyncStorage, then Firestore overwrites if cloud value exists
+  - On streakCount change: calls `saveProgress(userId, { streakCount })`
+- Synced flashcard mastery to Firestore (app/flashcards.tsx)
+  - On mount: loads from AsyncStorage first, then Firestore overwrites `known` if cloud data exists
+  - On "I know this" and "Still learning": saves `{ masteredCards: { greetings: [...indices] } }`
+- Synced quiz best scores to Firestore (app/quiz.tsx)
+  - On mount: loads from AsyncStorage first, then Firestore overwrites `bestScore` if cloud data exists
+  - On quiz end: saves `{ quizBestScores: { greetings: bestScore } }` using value returned by `saveQuizScore`
+- Added debug console.logs to saveProgress and index.jsx sync effect (temporary, for debugging)
 
 ### Session 4 — March 19, 2026
 - Fixed home screen button styling (app/index.jsx)

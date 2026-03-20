@@ -82,7 +82,9 @@ export default function SignupScreen() {
           value={password}
           onChangeText={setPassword}
           secureTextEntry
-          autoComplete="new-password"
+          autoComplete="off"
+          textContentType="oneTimeCode"
+          selectTextOnFocus={false}
         />
 
         <Text style={styles.label}>Confirm Password</Text>
@@ -93,7 +95,9 @@ export default function SignupScreen() {
           value={confirmPassword}
           onChangeText={setConfirmPassword}
           secureTextEntry
-          autoComplete="new-password"
+          autoComplete="off"
+          textContentType="oneTimeCode"
+          selectTextOnFocus={false}
         />
 
         <TouchableOpacity
