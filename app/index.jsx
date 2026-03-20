@@ -119,6 +119,12 @@ export default function HomeScreen() {
           <Text style={styles.lessonText}>Animals</Text>
           <Text style={styles.lessonArrow}>→</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity style={[styles.lessonButton, styles.aiButton]} onPress={() => router.push('/ai-exercises')}>
+          <Text style={styles.lessonEmoji}>✨</Text>
+          <Text style={[styles.lessonText, styles.aiButtonText]}>AI Exercises</Text>
+          <Text style={styles.lessonArrow}>→</Text>
+        </TouchableOpacity>
       </ScrollView>
     </View>
   );
@@ -221,5 +227,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: -18,
     marginBottom: 20,
+  },
+  aiButton: {
+    borderColor: '#a78bfa',
+    backgroundColor: '#1a1040',
+  },
+  aiButtonText: {
+    color: '#a78bfa',
   },
 });

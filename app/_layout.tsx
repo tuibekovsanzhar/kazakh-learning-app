@@ -82,7 +82,8 @@ export default function RootLayout() {
       <Tabs.Screen name="quiz"       options={hiddenScreen} />
       <Tabs.Screen name="family"     options={hiddenScreen} />
       <Tabs.Screen name="food"       options={hiddenScreen} />
-      <Tabs.Screen name="animals"    options={hiddenScreen} />
+      <Tabs.Screen name="animals"      options={hiddenScreen} />
+      <Tabs.Screen name="ai-exercises" options={hiddenScreen} />
     </Tabs>
   );
 }

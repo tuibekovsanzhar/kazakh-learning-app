@@ -83,8 +83,8 @@ kazakh-learning-app/
 
 ## Current project status
 
-**Last updated:** March 19, 2026
-**Current phase:** MVP feature-complete — polish + Firebase next
+**Last updated:** March 20, 2026
+**Current phase:** MVP feature-complete — polish + AI next
 
 **Completed:**
 - Project setup with Expo SDK 54 + React Native
@@ -94,20 +94,26 @@ kazakh-learning-app/
 - Greetings screen (20 phrases, Kazakh + Latin + English, modal with "When to use")
 - Numbers screen (21 numbers 0–1000, digit badge, modal)
 - Colors screen (15 colors, circular swatches, modal with color-matched button)
-- Flashcard screen (spring flip animation, "I know this" / "Still learning", progress bar, summary)
-- Quiz screen (10 random questions, 4 choices, instant feedback, results + personal best)
+- Flashcard screen (dynamic — all 6 decks, spring flip animation, mastery, Firestore sync)
+- Quiz screen (dynamic — all 6 decks, 10 questions, instant feedback, Firestore sync)
 - AsyncStorage persistence: flashcard mastery marks, quiz best scores, streak system
 - README.md for GitHub
 - Family, Food, Animals vocabulary screens with back button and modal
 - Firebase Authentication: login screen, signup screen, auth gate in root layout
+- Logout button on home screen
+- Firestore cloud sync: streak, flashcard mastery per deck, quiz best scores per deck
+- Progress screen (tab bar, stats row, deck progress bars, quiz best scores)
+- Flashcards + Quiz buttons inside each vocabulary screen; back button returns to correct screen
+- Latin transliteration audit + 15 fixes across greetings.js, numbers.js, colors.js
 
 **In progress:**
 - Nothing currently
 
 **To do next session:**
-- Build a Progress screen showing mastered flashcard counts and quiz best scores per deck
-- Add spaced repetition to flashcards (show "Still learning" cards more often)
-- Fix password reset bug on signup screen
+1. ~~Fix password reset bug on signup screen~~ ✅ DONE
+2. ~~Add latin transcription on flashcard front face~~ ✅ DONE
+3. Update Firestore security rules before April 18 expiry
+4. AI personalized exercises (Claude API)
 
 **Important file locations:**
 - Project: ~/Desktop/kazakh-learning-app
@@ -119,26 +125,30 @@ kazakh-learning-app/
 
 ## Session history
 
-### Session 5 — March 19, 2026
-- Added logout button to home screen (app/index.jsx)
-  - Imports `signOut` from firebase/auth and `auth` from utils/firebase
-  - Purple outline pill button in top-right, calls `signOut(auth)` on press
-  - Auth gate in `_layout.tsx` automatically redirects to /login after sign out
-- Set up Firestore database (utils/firebase.js, utils/firestore.js)
-  - Added `getFirestore` import and `export const db = getFirestore(app)` to firebase.js
-  - Created utils/firestore.js with two functions:
-    - `saveProgress(userId, data)` — writes to `users/{userId}/progress/data` with `merge:true`
-    - `loadProgress(userId)` — reads that document, returns data or null
-- Synced streakCount to Firestore from home screen (app/index.jsx)
-  - On mount: loads streak from AsyncStorage, then Firestore overwrites if cloud value exists
-  - On streakCount change: calls `saveProgress(userId, { streakCount })`
-- Synced flashcard mastery to Firestore (app/flashcards.tsx)
-  - On mount: loads from AsyncStorage first, then Firestore overwrites `known` if cloud data exists
-  - On "I know this" and "Still learning": saves `{ masteredCards: { greetings: [...indices] } }`
-- Synced quiz best scores to Firestore (app/quiz.tsx)
-  - On mount: loads from AsyncStorage first, then Firestore overwrites `bestScore` if cloud data exists
-  - On quiz end: saves `{ quizBestScores: { greetings: bestScore } }` using value returned by `saveQuizScore`
-- Added debug console.logs to saveProgress and index.jsx sync effect (temporary, for debugging)
+### Session 6 — March 20, 2026
+- Fixed password reset bug on signup screen (app/signup.tsx)
+  - Password field: `autoComplete="off"` → `"new-password"`, `textContentType="oneTimeCode"` → `"newPassword"`, removed `selectTextOnFocus={false}`
+  - Confirm Password field: same changes
+  - These props were confusing iOS into treating the field as a one-time code input, causing it to reset text on focus
+- Added latin transcription to flashcard front face (app/flashcards.tsx)
+  - Added `<Text style={styles.frontLatin}>{card.latin}</Text>` below the Kazakh word
+  - Added `frontLatin` style: gray (#6b7280), 16px, weight 500, letter-spacing 0.5
+  - Now the front of every card shows: Kazakh (large white) + Latin (small gray) + "tap to reveal →"
+- Fixed TypeScript red lines in signup.tsx: `router.replace('/')` → `router.replace('/' as any)`, `router.push('/login')` → `router.push('/login' as any)`
+
+### Session 5 — March 20, 2026
+- Added logout button to home screen (signOut from firebase/auth)
+- Set up Firestore database (europe-west3, Standard edition, test mode)
+- Added Firestore cloud sync: streakCount, flashcard mastery per deck, quiz best scores per deck
+- Built Progress screen (tab bar navigation, stats row, deck-by-deck progress bars, quiz best scores)
+- Made flashcards dynamic — works for all 6 decks (greetings, numbers, colors, family, food, animals)
+- Made quiz dynamic — works for all 6 decks
+- Added Flashcards + Quiz buttons inside each vocabulary screen
+- Removed standalone Flashcards/Quiz buttons from home screen
+- Fixed Back button in flashcards/quiz to return to correct vocabulary screen
+- Fixed latin transliteration: 15 entries fixed across greetings.js, numbers.js, colors.js
+- Added latin transcription in brackets under Kazakh text in quiz questions
+- Replaced "Correct answer" text with ✓/✗ icons on quiz answer buttons
 
 ### Session 4 — March 19, 2026
 - Fixed home screen button styling (app/index.jsx)
@@ -203,3 +213,16 @@ kazakh-learning-app/
 - Always run `npx expo start` from ~/Desktop/kazakh-learning-app
 - Phone and Mac must be on same WiFi to use Expo Go
 - All screens follow the same dark theme: background #0f0f1a or #1a1a2e, accent #a78bfa
+
+---
+
+## Latin Transliteration Rules
+
+These rules apply to ALL new vocabulary added to data files:
+
+- **Ж → J** (not Zh). Examples: Jeti, Jiyrma, Jasyl
+- **Ғ → ġ** (g with dot above, not ğ). Examples: Toġyz, Qyzġylt
+- **Ө → Ö**. Examples: Öte, Nöl, Tört
+- **Ү → Ü**. Examples: Üsh, Jüz, Tüye
+- **Сау → Sau** (not Saw — "saw" reads as an English word). Examples: Sau bol, Sau bolıńyz
+- Always verify latin fields don't accidentally spell offensive or jarring English words

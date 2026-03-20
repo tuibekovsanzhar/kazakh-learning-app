@@ -358,6 +358,7 @@ export default function FlashcardsScreen() {
           ]}
         >
           <Text style={styles.frontKazakh}>{card.kazakh}</Text>
+          <Text style={styles.frontLatin}>{card.latin}</Text>
           <Text style={styles.tapHint}>tap to reveal →</Text>
         </Animated.View>
 
@@ -524,6 +525,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 24,
+  },
+  frontLatin: {
+    color: '#6b7280',
+    fontSize: 16,
+    fontWeight: '500',
+    textAlign: 'center',
+    marginBottom: 20,
+    letterSpacing: 0.5,
   },
   tapHint: {
     color: '#4b5563',

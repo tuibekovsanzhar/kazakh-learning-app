@@ -32,7 +32,7 @@ export default function SignupScreen() {
     setError('');
     try {
       await createUserWithEmailAndPassword(auth, email.trim(), password);
-      router.replace('/');
+      router.replace('/' as any);
     } catch (e: any) {
       switch (e.code) {
         case 'auth/email-already-in-use':
@@ -82,9 +82,8 @@ export default function SignupScreen() {
           value={password}
           onChangeText={setPassword}
           secureTextEntry
-          autoComplete="off"
-          textContentType="oneTimeCode"
-          selectTextOnFocus={false}
+          autoComplete="new-password"
+          textContentType="newPassword"
         />
 
         <Text style={styles.label}>Confirm Password</Text>
@@ -95,9 +94,8 @@ export default function SignupScreen() {
           value={confirmPassword}
           onChangeText={setConfirmPassword}
           secureTextEntry
-          autoComplete="off"
-          textContentType="oneTimeCode"
-          selectTextOnFocus={false}
+          autoComplete="new-password"
+          textContentType="newPassword"
         />
 
         <TouchableOpacity
@@ -110,7 +108,7 @@ export default function SignupScreen() {
             : <Text style={styles.btnText}>Create Account</Text>}
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.switchRow} onPress={() => router.push('/login')}>
+        <TouchableOpacity style={styles.switchRow} onPress={() => router.push('/login' as any)}>
           <Text style={styles.switchText}>
             Already have an account?{' '}
             <Text style={styles.switchLink}>Log In</Text>
