@@ -104,6 +104,7 @@ kazakh-learning-app/
 - Progress screen (tab bar, stats row, deck progress bars, quiz best scores)
 - Flashcards + Quiz buttons inside each vocabulary screen; back button returns to correct screen
 - Latin transliteration audit + 15 fixes across greetings.js, numbers.js, colors.js
+- Alphabet audio pronunciation (42 letters, mp3)
 
 **In progress:**
 - Nothing currently
