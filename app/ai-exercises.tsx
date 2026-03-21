@@ -30,6 +30,9 @@ const LEVELS = ['Beginner', 'Intermediate'];
 // EXPO_PUBLIC_ prefix makes it available in the app bundle.
 const API_KEY = process.env.EXPO_PUBLIC_ANTHROPIC_API_KEY ?? '';
 
+// Set to true when the Claude API key is configured and ready.
+const AI_ENABLED = false;
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function AIExercisesScreen() {
@@ -98,6 +101,24 @@ export default function AIExercisesScreen() {
   };
 
   // ─── Render ───────────────────────────────────────────────────────────────
+
+  if (!AI_ENABLED) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="light-content" />
+        <TouchableOpacity style={styles.backBtn} onPress={() => router.push('/' as any)}>
+          <Text style={styles.backBtnText}>← Back</Text>
+        </TouchableOpacity>
+        <View style={styles.comingSoonContainer}>
+          <Text style={styles.comingSoonEmoji}>✨</Text>
+          <Text style={styles.comingSoonTitle}>Coming Soon</Text>
+          <Text style={styles.comingSoonText}>
+            AI-powered exercises are on the way.{'\n'}Check back in the next update!
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -357,5 +378,29 @@ const styles = StyleSheet.create({
 
   bottomPadding: {
     height: 40,
+  },
+
+  // Coming Soon screen
+  comingSoonContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 32,
+  },
+  comingSoonEmoji: {
+    fontSize: 56,
+    marginBottom: 20,
+  },
+  comingSoonTitle: {
+    fontSize: 26,
+    fontWeight: '700',
+    color: '#fff',
+    marginBottom: 12,
+  },
+  comingSoonText: {
+    fontSize: 15,
+    color: '#94a3b8',
+    textAlign: 'center',
+    lineHeight: 24,
   },
 });

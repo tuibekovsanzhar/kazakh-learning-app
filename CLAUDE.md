@@ -82,7 +82,7 @@ kazakh-learning-app/
 
 ## Current project status
 
-**Last updated:** March 20, 2026
+**Last updated:** March 22, 2026
 **Current phase:** MVP feature-complete — polish + AI next
 
 **Completed:**
@@ -109,9 +109,7 @@ kazakh-learning-app/
 - Nothing currently
 
 **To do next session:**
-1. Add $5 credits at console.anthropic.com → test AI exercises end-to-end
-2. Test signup password fix on a real device
-3. Submit app to Google Play Store (first launch!)
+1. Submit app to Google Play Store (first launch!)
 
 **Important file locations:**
 - Project: ~/Desktop/kazakh-learning-app
@@ -122,6 +120,18 @@ kazakh-learning-app/
 ---
 
 ## Session history
+
+### Session 7 — March 22, 2026
+- Design & UX audit report (no code changes — see report in session notes)
+- Added `AI_ENABLED = false` constant to app/ai-exercises.tsx; shows "Coming Soon" screen when false
+- Created utils/audio.js with `playSound(filename)` using expo-av; silent no-op if file missing
+- Added 🔊 speaker button to each letter card in app/alphabet.tsx (calls letter_01.mp3 … letter_42.mp3)
+- Fixed alphabet data: Һ pronunciation → "he", example → айдаһар / aydahar / dragon
+- Fixed alphabet data: М example → маусым / mausym / June
+- Fixed alphabet data: І pronunciation → "e"
+- Fixed alphabet data: Ё example → актёр / aktyor / actor; added note field (borrowed words only)
+- Added note field display to alphabet modal (italic gray, shown only when note exists)
+- Fixed alphabet data: Ь example → коньки / kon'ki / ice skates (previous session)
 
 ### Session 6 — March 20, 2026
 - Fixed signup password reset bug (textContentType oneTimeCode → newPassword)

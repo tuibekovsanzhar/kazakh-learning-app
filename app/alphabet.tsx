@@ -5,6 +5,7 @@ import {
   FlatList, Modal, SafeAreaView, Pressable
 } from 'react-native';
 import { kazakhAlphabet } from '../data/alphabet';
+import { playSound } from '../utils/audio';
 
 export default function AlphabetScreen() {
   const [selectedLetter, setSelectedLetter] = useState<typeof kazakhAlphabet[0] | null>(null);
@@ -26,13 +27,19 @@ export default function AlphabetScreen() {
         keyExtractor={(item) => item.cyrillic}
         numColumns={4}
         contentContainerStyle={styles.grid}
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
           <TouchableOpacity
             style={styles.card}
             onPress={() => setSelectedLetter(item)}
           >
             <Text style={styles.cardCyrillic}>{item.cyrillic}</Text>
             <Text style={styles.cardLatin}>{item.latin}</Text>
+            <TouchableOpacity
+              style={styles.speakerBtn}
+              onPress={() => playSound(`letter_${String(index + 1).padStart(2, '0')}.mp3`)}
+            >
+              <Text style={styles.speakerIcon}>🔊</Text>
+            </TouchableOpacity>
           </TouchableOpacity>
         )}
       />
@@ -67,6 +74,9 @@ export default function AlphabetScreen() {
                   <Text style={styles.modalExample}>{selectedLetter.example}</Text>
                   <Text style={styles.modalExampleLatin}>{selectedLetter.exampleLatin}</Text>
                   <Text style={styles.modalMeaning}>{selectedLetter.meaning}</Text>
+                  {selectedLetter.note ? (
+                    <Text style={styles.modalNote}>{selectedLetter.note}</Text>
+                  ) : null}
                 </View>
 
                 <TouchableOpacity
@@ -195,6 +205,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#a0a0c0',
   },
+  modalNote: {
+    fontSize: 12,
+    color: '#6b7280',
+    fontStyle: 'italic',
+    textAlign: 'center',
+    marginTop: 8,
+    lineHeight: 18,
+  },
   closeButton: {
     marginTop: 8,
     backgroundColor: '#e94560',
@@ -215,5 +233,12 @@ const styles = StyleSheet.create({
   backArrow: {
   fontSize: 28,
   color: '#ffffff',
+  },
+  speakerBtn: {
+    marginTop: 6,
+    padding: 2,
+  },
+  speakerIcon: {
+    fontSize: 11,
   },
 });
