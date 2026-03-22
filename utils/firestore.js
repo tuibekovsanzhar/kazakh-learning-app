@@ -11,7 +11,6 @@ import { db } from './firebase';
  * @param {object} data   - any key/value pairs to save (e.g. { streakCount: 5 })
  */
 export async function saveProgress(userId, data) {
-  console.log('Saving to Firestore:', userId, data);
   const ref = doc(db, 'users', userId, 'progress', 'data');
   await setDoc(ref, data, { merge: true });
 }
