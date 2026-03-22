@@ -330,7 +330,7 @@ export default function FlashcardsScreen() {
         <TouchableOpacity onPress={() => router.push((from ?? '/') as any)} style={styles.backButton}>
           <Text style={styles.backText}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Flashcards</Text>
+        <Text style={styles.headerTitle}>{title} Flashcards</Text>
         <Text style={styles.counter}>{currentIndex + 1}/{total}</Text>
       </View>
 

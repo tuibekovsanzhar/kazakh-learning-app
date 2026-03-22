@@ -170,6 +170,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 14,
     marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#2a2a4a',
   },
   swatch: {
     width: 44,

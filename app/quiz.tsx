@@ -286,7 +286,7 @@ export default function QuizScreen() {
         <TouchableOpacity onPress={() => router.push((from ?? '/') as any)} style={styles.backButton}>
           <Text style={styles.backText}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Quiz</Text>
+        <Text style={styles.headerTitle}>{title} Quiz</Text>
         <Text style={styles.questionCounter}>
           {currentIndex + 1}/{totalQuestions}
         </Text>

@@ -15,11 +15,12 @@ export default function AlphabetScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <Text style={styles.backArrow}>←</Text>
+          <Text style={styles.backText}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>Kazakh Alphabet</Text>
-        <Text style={styles.subtitle}>{kazakhAlphabet.length} letters • tap any to learn</Text>
+        <Text style={styles.headerTitle}>Kazakh Alphabet</Text>
+        <View style={styles.headerSpacer} />
       </View>
+      <Text style={styles.subtitle}>{kazakhAlphabet.length} letters • tap any to learn</Text>
 
       {/* Grid */}
       <FlatList
@@ -55,25 +56,47 @@ export default function AlphabetScreen() {
           <Pressable style={styles.modalCard} onPress={() => {}}>
             {selectedLetter && (
               <>
-                {/* Big letters */}
+                {/* Hero: big letter display */}
                 <View style={styles.modalLetters}>
                   <Text style={styles.modalCyrillic}>{selectedLetter.cyrillic}</Text>
                   <Text style={styles.modalDivider}>·</Text>
                   <Text style={styles.modalLatin}>{selectedLetter.latin}</Text>
                 </View>
 
-                {/* Pronunciation */}
-                <View style={styles.modalSection}>
+                {/* Pronunciation + 🔊 */}
+                <View style={styles.modalPronSection}>
                   <Text style={styles.modalLabel}>PRONUNCIATION</Text>
-                  <Text style={styles.modalValue}>"{selectedLetter.pronunciation}"</Text>
+                  <View style={styles.modalPronRow}>
+                    <Text style={styles.modalValue}>"{selectedLetter.pronunciation}"</Text>
+                    <TouchableOpacity
+                      style={styles.modalSpeakerBtn}
+                      onPress={() => {
+                        const idx = kazakhAlphabet.findIndex(l => l.cyrillic === selectedLetter.cyrillic);
+                        playSound(`letter_${String(idx + 1).padStart(2, '0')}.mp3`);
+                      }}
+                    >
+                      <Text style={styles.modalSpeakerIcon}>🔊</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
 
-                {/* Example word */}
-                <View style={styles.modalSection}>
-                  <Text style={styles.modalLabel}>EXAMPLE WORD</Text>
-                  <Text style={styles.modalExample}>{selectedLetter.example}</Text>
+                {/* Section divider */}
+                <View style={styles.modalSectionDivider} />
+
+                {/* noSound notice for ъ and ь */}
+                {selectedLetter.noSound ? (
+                  <View style={styles.noSoundBox}>
+                    <Text style={styles.noSoundText}>
+                      This letter has no standalone sound. Tap 🔊 to hear it in a word.
+                    </Text>
+                  </View>
+                ) : null}
+
+                {/* Example word — subtle anchor */}
+                <View style={styles.modalExampleSection}>
+                  <Text style={styles.modalExampleWord}>{selectedLetter.example}</Text>
                   <Text style={styles.modalExampleLatin}>{selectedLetter.exampleLatin}</Text>
-                  <Text style={styles.modalMeaning}>{selectedLetter.meaning}</Text>
+                  <Text style={styles.modalExampleMeaning}>{selectedLetter.meaning}</Text>
                   {selectedLetter.note ? (
                     <Text style={styles.modalNote}>{selectedLetter.note}</Text>
                   ) : null}
@@ -97,23 +120,36 @@ export default function AlphabetScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: '#0f0f1a',
   },
   header: {
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 12,
+    flexDirection: 'row',
     alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
-  title: {
-    fontSize: 26,
-    fontWeight: 'bold',
+  backButton: {
+    padding: 8,
+  },
+  backText: {
+    color: '#a78bfa',
+    fontSize: 16,
+  },
+  headerTitle: {
+    flex: 1,
+    textAlign: 'center',
     color: '#ffffff',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  headerSpacer: {
+    width: 60,
   },
   subtitle: {
     fontSize: 13,
     color: '#a0a0c0',
-    marginTop: 4,
+    textAlign: 'center',
+    marginBottom: 8,
   },
   grid: {
     paddingHorizontal: 12,
@@ -122,12 +158,12 @@ const styles = StyleSheet.create({
   card: {
     flex: 1,
     margin: 6,
-    backgroundColor: '#16213e',
+    backgroundColor: '#1a1a2e',
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#0f3460',
+    borderColor: '#2a2a4a',
   },
   cardCyrillic: {
     fontSize: 22,
@@ -136,7 +172,7 @@ const styles = StyleSheet.create({
   },
   cardLatin: {
     fontSize: 12,
-    color: '#e94560',
+    color: '#a78bfa',
     marginTop: 2,
   },
   modalOverlay: {
@@ -146,18 +182,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalCard: {
-    backgroundColor: '#16213e',
+    backgroundColor: '#1a1a2e',
     borderRadius: 20,
     padding: 28,
     width: '82%',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#0f3460',
+    borderColor: '#2a2a4a',
   },
   modalLetters: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 32,
   },
   modalCyrillic: {
     fontSize: 64,
@@ -172,38 +208,60 @@ const styles = StyleSheet.create({
   modalLatin: {
     fontSize: 64,
     fontWeight: 'bold',
-    color: '#e94560',
-  },
-  modalSection: {
-    width: '100%',
-    alignItems: 'center',
-    marginBottom: 20,
+    color: '#a78bfa',
   },
   modalLabel: {
     fontSize: 11,
     color: '#a0a0c0',
     letterSpacing: 1.5,
-    marginBottom: 6,
+    marginBottom: 8,
+  },
+  modalPronSection: {
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: 28,
+  },
+  modalPronRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
   },
   modalValue: {
-    fontSize: 18,
+    fontSize: 17,
     color: '#ffffff',
     fontStyle: 'italic',
   },
-  modalExample: {
-    fontSize: 28,
+  modalSpeakerBtn: {
+    padding: 4,
+  },
+  modalSpeakerIcon: {
+    fontSize: 16,
+  },
+  modalSectionDivider: {
+    height: 1,
+    backgroundColor: '#ffffff15',
+    width: '100%',
+    marginBottom: 20,
+  },
+  modalExampleSection: {
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  modalExampleWord: {
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#ffffff',
-    marginBottom: 2,
+    marginBottom: 3,
   },
   modalExampleLatin: {
-    fontSize: 16,
-    color: '#e94560',
-    marginBottom: 4,
+    fontSize: 13,
+    color: '#a78bfa',
+    marginBottom: 3,
   },
-  modalMeaning: {
-    fontSize: 14,
-    color: '#a0a0c0',
+  modalExampleMeaning: {
+    fontSize: 13,
+    color: '#9ca3af',
   },
   modalNote: {
     fontSize: 12,
@@ -214,25 +272,31 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   closeButton: {
-    marginTop: 8,
-    backgroundColor: '#e94560',
+    marginTop: 4,
+    backgroundColor: '#a78bfa',
     borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 40,
+    paddingVertical: 13,
+    width: '100%',
+    alignItems: 'center',
   },
   closeButtonText: {
     color: '#ffffff',
     fontWeight: 'bold',
     fontSize: 16,
   },
-  backButton: {
-  position: 'absolute',
-  left: 0,
-  padding: 8,
+  noSoundBox: {
+    backgroundColor: '#1e1e3a',
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    marginBottom: 16,
+    width: '100%',
   },
-  backArrow: {
-  fontSize: 28,
-  color: '#ffffff',
+  noSoundText: {
+    fontSize: 12,
+    color: '#9ca3af',
+    textAlign: 'center',
+    lineHeight: 18,
   },
   speakerBtn: {
     marginTop: 6,

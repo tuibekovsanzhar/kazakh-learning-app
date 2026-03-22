@@ -82,7 +82,7 @@ kazakh-learning-app/
 
 ## Current project status
 
-**Last updated:** March 22, 2026
+**Last updated:** March 22, 2026 (Session 8)
 **Current phase:** MVP feature-complete — polish + AI next
 
 **Completed:**
@@ -121,6 +121,17 @@ kazakh-learning-app/
 ---
 
 ## Session history
+
+### Session 8 — March 22, 2026
+- Design audit fixes (all 8 items):
+  - alphabet.tsx + greetings.tsx: updated to current theme (#0f0f1a bg, #1a1a2e cards, #2a2a4a borders, #a78bfa accent replacing all #e94560 red)
+  - alphabet.tsx + greetings.tsx: replaced absolute-positioned white ← back button with standard purple "← Back" row layout
+  - numbers.tsx + colors.tsx: added borderWidth: 1, borderColor: '#2a2a4a' to list rows
+  - progress.tsx: empty state text color #555 → #94a3b8
+  - index.jsx: "Log out" button removed from top-right, replaced with subtle "Sign out" at bottom of ScrollView
+  - index.jsx: streak number color #e94560 → #a78bfa
+  - flashcards.tsx + quiz.tsx: header now shows deck title ("Greetings Flashcards", "Numbers Quiz")
+  - ai-exercises.tsx: added Platform import + marginTop for Android status bar
 
 ### Session 7 — March 22, 2026
 - Design & UX audit report (no code changes — see report in session notes)

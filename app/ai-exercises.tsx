@@ -9,7 +9,7 @@
 import React, { useState } from 'react';
 import {
   View, Text, TouchableOpacity, StyleSheet,
-  SafeAreaView, StatusBar, ActivityIndicator, ScrollView,
+  SafeAreaView, StatusBar, ActivityIndicator, ScrollView, Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 
@@ -224,6 +224,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 16,
     paddingBottom: 4,
+    marginTop: Platform.OS === 'android' ? 40 : 0,
   },
   backBtnText: {
     color: '#a78bfa',

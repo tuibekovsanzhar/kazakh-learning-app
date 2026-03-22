@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   emptyText: {
-    color: '#555',
+    color: '#94a3b8',
     fontSize: 14,
   },
 });

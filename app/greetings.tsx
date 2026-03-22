@@ -16,11 +16,12 @@ export default function GreetingsScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Text style={styles.backArrow}>←</Text>
+          <Text style={styles.backText}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>👋 Greetings</Text>
-        <Text style={styles.subtitle}>{greetings.length} phrases • tap any to learn</Text>
+        <Text style={styles.headerTitle}>👋 Greetings</Text>
+        <View style={styles.headerSpacer} />
       </View>
+      <Text style={styles.subtitle}>{greetings.length} phrases • tap any to learn</Text>
 
       {/* List */}
       <FlatList
@@ -80,40 +81,43 @@ export default function GreetingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: '#0f0f1a',
   },
   header: {
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 16,
+    flexDirection: 'row',
     alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
   backButton: {
-    position: 'absolute',
-    left: 20,
-    top: 20,
     padding: 8,
   },
-  backArrow: {
-    fontSize: 28,
-    color: '#ffffff',
+  backText: {
+    color: '#a78bfa',
+    fontSize: 16,
   },
-  title: {
-    fontSize: 26,
-    fontWeight: 'bold',
+  headerTitle: {
+    flex: 1,
+    textAlign: 'center',
     color: '#ffffff',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  headerSpacer: {
+    width: 60,
   },
   subtitle: {
     fontSize: 13,
     color: '#a0a0c0',
-    marginTop: 4,
+    textAlign: 'center',
+    marginBottom: 8,
   },
   list: {
     paddingHorizontal: 16,
     paddingBottom: 20,
   },
   row: {
-    backgroundColor: '#16213e',
+    backgroundColor: '#1a1a2e',
     borderRadius: 12,
     padding: 16,
     marginBottom: 10,
@@ -121,7 +125,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     borderWidth: 1,
-    borderColor: '#0f3460',
+    borderColor: '#2a2a4a',
   },
   rowLeft: {
     flex: 1,
@@ -133,7 +137,7 @@ const styles = StyleSheet.create({
   },
   rowLatin: {
     fontSize: 13,
-    color: '#e94560',
+    color: '#a78bfa',
     marginTop: 2,
   },
   rowEnglish: {
@@ -149,13 +153,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalCard: {
-    backgroundColor: '#16213e',
+    backgroundColor: '#1a1a2e',
     borderRadius: 20,
     padding: 28,
     width: '85%',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#0f3460',
+    borderColor: '#2a2a4a',
   },
   modalKazakh: {
     fontSize: 36,
@@ -165,7 +169,7 @@ const styles = StyleSheet.create({
   },
   modalLatin: {
     fontSize: 18,
-    color: '#e94560',
+    color: '#a78bfa',
     marginTop: 6,
   },
   modalEnglish: {
@@ -176,7 +180,7 @@ const styles = StyleSheet.create({
   divider: {
     width: '100%',
     height: 1,
-    backgroundColor: '#0f3460',
+    backgroundColor: '#2a2a4a',
     marginVertical: 20,
   },
   usageLabel: {
@@ -193,10 +197,11 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     marginTop: 24,
-    backgroundColor: '#e94560',
+    backgroundColor: '#a78bfa',
     borderRadius: 12,
     paddingVertical: 12,
-    paddingHorizontal: 40,
+    width: '100%',
+    alignItems: 'center',
   },
   closeButtonText: {
     color: '#ffffff',

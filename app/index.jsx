@@ -58,10 +58,6 @@ export default function HomeScreen() {
         <Text style={styles.subtitle}>Қазақша үйрен</Text>
       </View>
 
-      <TouchableOpacity onPress={handleLogout} style={styles.logoutBtn}>
-        <Text style={styles.logoutText}>Log out</Text>
-      </TouchableOpacity>
-
       {/* Streak card */}
       <View style={styles.streakCard}>
         <Text style={styles.streakEmoji}>🔥</Text>
@@ -125,6 +121,10 @@ export default function HomeScreen() {
           <Text style={[styles.lessonText, styles.aiButtonText]}>AI Exercises</Text>
           <Text style={styles.lessonArrow}>→</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity style={styles.signOutBtn} onPress={handleLogout}>
+          <Text style={styles.signOutText}>Sign out</Text>
+        </TouchableOpacity>
       </ScrollView>
     </View>
   );
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
   streakNumber: {
     fontSize: 48,
     fontWeight: 'bold',
-    color: '#e94560',
+    color: '#a78bfa',
     marginTop: 8,
   },
   streakLabel: {
@@ -208,18 +208,15 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#e94560',
   },
-  logoutBtn: {
-    alignSelf: 'flex-end',
-    paddingHorizontal: 14,
-    paddingVertical: 7,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#a78bfa',
-    marginBottom: 12,
+  signOutBtn: {
+    alignItems: 'center',
+    paddingVertical: 16,
+    marginTop: 4,
+    marginBottom: 8,
   },
-  logoutText: {
-    color: '#a78bfa',
-    fontSize: 13,
+  signOutText: {
+    color: '#6b7280',
+    fontSize: 14,
   },
   masteredSummary: {
     color: '#a78bfa',
