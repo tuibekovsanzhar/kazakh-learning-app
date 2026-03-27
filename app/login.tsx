@@ -145,6 +145,13 @@ export default function LoginScreen() {
             <Text style={styles.switchLink}>Sign Up</Text>
           </Text>
         </TouchableOpacity>
+
+        <TouchableOpacity style={styles.privacyRow} onPress={() => router.push('/privacy-policy' as any)}>
+          <Text style={styles.privacyText}>
+            By continuing you agree to our{' '}
+            <Text style={styles.privacyLink}>Privacy Policy</Text>
+          </Text>
+        </TouchableOpacity>
       </View>
 
       {/* ── Forgot password modal ── */}
@@ -235,6 +242,9 @@ const styles = StyleSheet.create({
   switchLink: { color: '#a78bfa', fontWeight: '600' },
   forgotRow: { alignSelf: 'flex-end', marginTop: -10, marginBottom: 20 },
   forgotText: { color: '#a78bfa', fontSize: 13, fontWeight: '600' },
+  privacyRow: { alignItems: 'center', marginTop: 20 },
+  privacyText: { color: '#4b5563', fontSize: 12 },
+  privacyLink: { color: '#6b7280', textDecorationLine: 'underline' },
 
   // Forgot password modal
   modalOverlay: {

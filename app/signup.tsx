@@ -125,6 +125,13 @@ export default function SignupScreen() {
             <Text style={styles.switchLink}>Log In</Text>
           </Text>
         </TouchableOpacity>
+
+        <TouchableOpacity style={styles.privacyRow} onPress={() => router.push('/privacy-policy' as any)}>
+          <Text style={styles.privacyText}>
+            By continuing you agree to our{' '}
+            <Text style={styles.privacyLink}>Privacy Policy</Text>
+          </Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -161,4 +168,7 @@ const styles = StyleSheet.create({
   switchRow: { alignItems: 'center', marginTop: 24 },
   switchText: { color: '#94a3b8', fontSize: 14 },
   switchLink: { color: '#a78bfa', fontWeight: '600' },
+  privacyRow: { alignItems: 'center', marginTop: 20 },
+  privacyText: { color: '#4b5563', fontSize: 12 },
+  privacyLink: { color: '#6b7280', textDecorationLine: 'underline' },
 });

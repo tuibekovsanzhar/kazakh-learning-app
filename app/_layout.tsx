@@ -23,7 +23,7 @@ export default function RootLayout() {
   useEffect(() => {
     if (checking) return;
 
-    const onAuthScreen = segments[0] === 'login' || segments[0] === 'signup';
+    const onAuthScreen = segments[0] === 'login' || segments[0] === 'signup' || segments[0] === 'privacy-policy';
 
     if (!user && !onAuthScreen) {
       // Not logged in and not already on login/signup → send to login
@@ -83,7 +83,8 @@ export default function RootLayout() {
       <Tabs.Screen name="family"     options={hiddenScreen} />
       <Tabs.Screen name="food"       options={hiddenScreen} />
       <Tabs.Screen name="animals"      options={hiddenScreen} />
-      <Tabs.Screen name="ai-exercises" options={hiddenScreen} />
+      <Tabs.Screen name="ai-exercises"    options={hiddenScreen} />
+      <Tabs.Screen name="privacy-policy"  options={hiddenScreen} />
     </Tabs>
   );
 }
