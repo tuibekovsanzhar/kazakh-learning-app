@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
 import { loadStreak } from '../utils/storage';
 import { signOut } from 'firebase/auth';
 import { auth } from '../utils/firebase';
@@ -35,7 +36,6 @@ export default function HomeScreen() {
   useEffect(() => {
     const userId = auth.currentUser?.uid;
     if (userId) {
-      console.log('Syncing streakCount to Firestore:', streakCount);
       saveProgress(userId, { streakCount });
     }
   }, [streakCount]);
@@ -48,10 +48,20 @@ export default function HomeScreen() {
     }
   };
 
+  const lessons = [
+    { emoji: '🔤', label: 'Kazakh Alphabet', route: '/alphabet' },
+    { emoji: '👋', label: 'Greetings',        route: '/greetings' },
+    { emoji: '🔢', label: 'Numbers',          route: '/numbers' },
+    { emoji: '🎨', label: 'Colors',           route: '/colors' },
+    { emoji: '👨‍👩‍👧', label: 'Family',        route: '/family' },
+    { emoji: '🍽️', label: 'Food',             route: '/food' },
+    { emoji: '🐴', label: 'Animals',          route: '/animals' },
+  ];
+
   return (
-    <View style={styles.container}>
+    <LinearGradient colors={['#0f0f1a', '#130f2a']} style={styles.container}>
       <StatusBar style="light" />
-      
+
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.appName}>Kazakh Learn</Text>
@@ -59,11 +69,11 @@ export default function HomeScreen() {
       </View>
 
       {/* Streak card */}
-      <View style={styles.streakCard}>
+      <LinearGradient colors={['#1a1a3e', '#2d1b69']} style={styles.streakCard}>
         <Text style={styles.streakEmoji}>🔥</Text>
         <Text style={styles.streakNumber}>{streakCount}</Text>
         <Text style={styles.streakLabel}>Day Streak</Text>
-      </View>
+      </LinearGradient>
 
       {/* Words mastered summary */}
       {totalMastered > 0 && (
@@ -74,66 +84,39 @@ export default function HomeScreen() {
       <ScrollView style={styles.lessonsSection} showsVerticalScrollIndicator={false}>
         <Text style={styles.sectionTitle}>Start Learning</Text>
 
-        <TouchableOpacity style={styles.lessonButton} onPress={() => router.push('/alphabet')}>
-        <Text style={styles.lessonEmoji}>🔤</Text>
-        <Text style={styles.lessonText}>Kazakh Alphabet</Text>
-        <Text style={styles.lessonArrow}>→</Text>
-        </TouchableOpacity>
+        {lessons.map(({ emoji, label, route }) => (
+          <TouchableOpacity key={route} activeOpacity={0.8} onPress={() => router.push(route)}>
+            <LinearGradient colors={['#1a1a2e', '#16213e']} style={styles.lessonButton}>
+              <View style={styles.emojiPill}>
+                <Text style={styles.lessonEmoji}>{emoji}</Text>
+              </View>
+              <Text style={styles.lessonText}>{label}</Text>
+              <Text style={styles.lessonArrow}>→</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        ))}
 
-        <TouchableOpacity style={styles.lessonButton} onPress={() => router.push('/greetings')}>
-        <Text style={styles.lessonEmoji}>👋</Text>
-        <Text style={styles.lessonText}>Greetings</Text>
-        <Text style={styles.lessonArrow}>→</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.lessonButton} onPress={() => router.push('/numbers')}>
-          <Text style={styles.lessonEmoji}>🔢</Text>
-          <Text style={styles.lessonText}>Numbers</Text>
-          <Text style={styles.lessonArrow}>→</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.lessonButton} onPress={() => router.push('/colors')}>
-          <Text style={styles.lessonEmoji}>🎨</Text>
-          <Text style={styles.lessonText}>Colors</Text>
-          <Text style={styles.lessonArrow}>→</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.lessonButton} onPress={() => router.push('/family')}>
-          <Text style={styles.lessonEmoji}>👨‍👩‍👧</Text>
-          <Text style={styles.lessonText}>Family</Text>
-          <Text style={styles.lessonArrow}>→</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.lessonButton} onPress={() => router.push('/food')}>
-          <Text style={styles.lessonEmoji}>🍽️</Text>
-          <Text style={styles.lessonText}>Food</Text>
-          <Text style={styles.lessonArrow}>→</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.lessonButton} onPress={() => router.push('/animals')}>
-          <Text style={styles.lessonEmoji}>🐴</Text>
-          <Text style={styles.lessonText}>Animals</Text>
-          <Text style={styles.lessonArrow}>→</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={[styles.lessonButton, styles.aiButton]} onPress={() => router.push('/ai-exercises')}>
-          <Text style={styles.lessonEmoji}>✨</Text>
-          <Text style={[styles.lessonText, styles.aiButtonText]}>AI Exercises</Text>
-          <Text style={styles.lessonArrow}>→</Text>
+        <TouchableOpacity activeOpacity={0.8} onPress={() => router.push('/ai-exercises')}>
+          <LinearGradient colors={['#1a1040', '#2d1b69']} style={[styles.lessonButton, styles.aiButton]}>
+            <View style={[styles.emojiPill, styles.aiEmojiPill]}>
+              <Text style={styles.lessonEmoji}>✨</Text>
+            </View>
+            <Text style={[styles.lessonText, styles.aiButtonText]}>AI Exercises</Text>
+            <Text style={[styles.lessonArrow, styles.aiButtonText]}>→</Text>
+          </LinearGradient>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.signOutBtn} onPress={handleLogout}>
           <Text style={styles.signOutText}>Sign out</Text>
         </TouchableOpacity>
       </ScrollView>
-    </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a2e',
     paddingTop: 60,
     paddingHorizontal: 20,
   },
@@ -149,17 +132,17 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
-    color: '#a0a0c0',
+    color: '#a78bfa',
     marginTop: 4,
   },
   streakCard: {
-    backgroundColor: '#16213e',
     borderRadius: 16,
     padding: 24,
     alignItems: 'center',
     marginBottom: 30,
     borderWidth: 1,
-    borderColor: '#0f3460',
+    borderColor: '#a78bfa',
+    overflow: 'hidden',
   },
   streakEmoji: {
     fontSize: 40,
@@ -167,12 +150,12 @@ const styles = StyleSheet.create({
   streakNumber: {
     fontSize: 48,
     fontWeight: 'bold',
-    color: '#a78bfa',
+    color: '#ffffff',
     marginTop: 8,
   },
   streakLabel: {
     fontSize: 14,
-    color: '#a0a0c0',
+    color: '#c4b5fd',
     marginTop: 4,
   },
   lessonsSection: {
@@ -185,18 +168,26 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   lessonButton: {
-    backgroundColor: '#16213e',
     borderRadius: 12,
-    padding: 18,
+    padding: 16,
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 12,
-    borderWidth: 1,
-    borderColor: '#0f3460',
+    borderLeftWidth: 3,
+    borderLeftColor: '#a78bfa',
+    overflow: 'hidden',
+  },
+  emojiPill: {
+    backgroundColor: '#2d1b69',
+    borderRadius: 10,
+    width: 44,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 14,
   },
   lessonEmoji: {
-    fontSize: 24,
-    marginRight: 14,
+    fontSize: 22,
   },
   lessonText: {
     fontSize: 16,
@@ -206,7 +197,7 @@ const styles = StyleSheet.create({
   },
   lessonArrow: {
     fontSize: 18,
-    color: '#e94560',
+    color: '#a78bfa',
   },
   signOutBtn: {
     alignItems: 'center',
@@ -226,10 +217,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   aiButton: {
-    borderColor: '#a78bfa',
-    backgroundColor: '#1a1040',
+    borderLeftColor: '#c4b5fd',
+  },
+  aiEmojiPill: {
+    backgroundColor: '#3d1f8a',
   },
   aiButtonText: {
-    color: '#a78bfa',
+    color: '#c4b5fd',
   },
 });

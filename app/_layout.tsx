@@ -50,7 +50,7 @@ export default function RootLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarStyle: { backgroundColor: '#1a1a2e', borderTopColor: '#0f3460', borderTopWidth: 1 },
+        tabBarStyle: { backgroundColor: '#1a1a2e', borderTopColor: '#a78bfa', borderTopWidth: 1 },
         tabBarActiveTintColor: '#a78bfa',
         tabBarInactiveTintColor: '#555555',
       }}
