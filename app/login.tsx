@@ -6,19 +6,20 @@ import {
 import { useRouter } from 'expo-router';
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../utils/firebase';
+import { useToast } from '../utils/useToast';
 
 export default function LoginScreen() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showForgotModal, setShowForgotModal] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
   const [resetLoading, setResetLoading] = useState(false);
   const [resetError, setResetError] = useState('');
   const [resetSuccess, setResetSuccess] = useState(false);
+  const { showToast, Toast } = useToast();
 
   const handlePasswordReset = async () => {
     if (!resetEmail.trim()) {
@@ -31,7 +32,11 @@ export default function LoginScreen() {
       await sendPasswordResetEmail(auth, resetEmail.trim());
       setResetSuccess(true);
     } catch (e: any) {
-      if (e.code === 'auth/user-not-found' || e.code === 'auth/invalid-email' || e.code === 'auth/invalid-credential') {
+      if (
+        e.code === 'auth/user-not-found' ||
+        e.code === 'auth/invalid-email' ||
+        e.code === 'auth/invalid-credential'
+      ) {
         setResetError('No account found with that email address.');
       } else {
         setResetError('Something went wrong. Please try again.');
@@ -50,29 +55,33 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     if (!email.trim() || !password) {
-      setError('Please enter your email and password.');
+      showToast('Please fill in all required fields');
       return;
     }
     setLoading(true);
-    setError('');
     try {
       await signInWithEmailAndPassword(auth, email.trim(), password);
       router.replace('/');
     } catch (e: any) {
       switch (e.code) {
         case 'auth/user-not-found':
+          showToast('No account found with this email');
+          break;
         case 'auth/wrong-password':
+          showToast('Incorrect password. Try again or use Forgot Password');
+          break;
         case 'auth/invalid-credential':
-          setError('Incorrect email or password.');
+          // Firebase SDK v9+ collapses user-not-found + wrong-password into this
+          showToast('Incorrect email or password');
           break;
         case 'auth/invalid-email':
-          setError('Please enter a valid email address.');
+          showToast('Please enter a valid email address');
           break;
         case 'auth/too-many-requests':
-          setError('Too many attempts. Please try again later.');
+          showToast('Too many failed attempts. Please try again later');
           break;
         default:
-          setError('Login failed. Please try again.');
+          showToast('Login failed. Please try again.');
       }
     } finally {
       setLoading(false);
@@ -82,12 +91,11 @@ export default function LoginScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
+      {Toast}
 
       <View style={styles.inner}>
         <Text style={styles.title}>Welcome back</Text>
         <Text style={styles.subtitle}>Log in to continue learning Kazakh</Text>
-
-        {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
         <Text style={styles.label}>Email</Text>
         <TextInput
@@ -199,10 +207,6 @@ const styles = StyleSheet.create({
   inner: { flex: 1, paddingHorizontal: 28, justifyContent: 'center' },
   title: { fontSize: 30, fontWeight: '700', color: '#fff', marginBottom: 6 },
   subtitle: { fontSize: 15, color: '#94a3b8', marginBottom: 32 },
-  errorText: {
-    color: '#f87171', fontSize: 14, marginBottom: 16,
-    backgroundColor: '#f8717122', borderRadius: 8, padding: 10,
-  },
   label: { fontSize: 13, fontWeight: '600', color: '#a78bfa', marginBottom: 6 },
   input: {
     backgroundColor: '#1a1a2e', color: '#fff', borderRadius: 12,
@@ -218,12 +222,8 @@ const styles = StyleSheet.create({
     flex: 1, color: '#fff',
     paddingHorizontal: 16, paddingVertical: 14, fontSize: 15,
   },
-  eyeBtn: {
-    paddingHorizontal: 14, paddingVertical: 14,
-  },
-  eyeText: {
-    color: '#a78bfa', fontSize: 13, fontWeight: '600',
-  },
+  eyeBtn: { paddingHorizontal: 14, paddingVertical: 14 },
+  eyeText: { color: '#a78bfa', fontSize: 13, fontWeight: '600' },
   btn: {
     backgroundColor: '#a78bfa', borderRadius: 12,
     paddingVertical: 15, alignItems: 'center', marginTop: 4,

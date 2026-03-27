@@ -6,6 +6,7 @@ import {
 import { useRouter } from 'expo-router';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../utils/firebase';
+import { useToast } from '../utils/useToast';
 
 export default function SignupScreen() {
   const router = useRouter();
@@ -13,41 +14,40 @@ export default function SignupScreen() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { showToast, Toast } = useToast();
 
   const handleSignup = async () => {
     if (!email.trim() || !password || !confirmPassword) {
-      setError('Please fill in all fields.');
-      return;
-    }
-    if (password !== confirmPassword) {
-      setError('Passwords do not match.');
+      showToast('Please fill in all required fields');
       return;
     }
     if (password.length < 6) {
-      setError('Password must be at least 6 characters.');
+      showToast('Password must be at least 6 characters');
+      return;
+    }
+    if (password !== confirmPassword) {
+      showToast('Passwords do not match');
       return;
     }
     setLoading(true);
-    setError('');
     try {
       await createUserWithEmailAndPassword(auth, email.trim(), password);
       router.replace('/' as any);
     } catch (e: any) {
       switch (e.code) {
         case 'auth/email-already-in-use':
-          setError('An account with this email already exists.');
+          showToast('This email is already registered. Try logging in instead.');
           break;
         case 'auth/invalid-email':
-          setError('Please enter a valid email address.');
+          showToast('Please enter a valid email address');
           break;
         case 'auth/weak-password':
-          setError('Password must be at least 6 characters.');
+          showToast('Password must be at least 6 characters');
           break;
         default:
-          setError('Sign up failed. Please try again.');
+          showToast('Sign up failed. Please try again.');
       }
     } finally {
       setLoading(false);
@@ -57,12 +57,11 @@ export default function SignupScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
+      {Toast}
 
       <View style={styles.inner}>
         <Text style={styles.title}>Create account</Text>
         <Text style={styles.subtitle}>Start your Kazakh learning journey</Text>
-
-        {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
         <Text style={styles.label}>Email</Text>
         <TextInput
@@ -76,7 +75,7 @@ export default function SignupScreen() {
           autoComplete="email"
         />
 
-        <Text style={styles.label}>Password</Text>
+        <Text style={styles.label}>Create Password</Text>
         <View style={styles.inputRow}>
           <TextInput
             style={styles.inputFlex}
@@ -136,10 +135,6 @@ const styles = StyleSheet.create({
   inner: { flex: 1, paddingHorizontal: 28, justifyContent: 'center' },
   title: { fontSize: 30, fontWeight: '700', color: '#fff', marginBottom: 6 },
   subtitle: { fontSize: 15, color: '#94a3b8', marginBottom: 32 },
-  errorText: {
-    color: '#f87171', fontSize: 14, marginBottom: 16,
-    backgroundColor: '#f8717122', borderRadius: 8, padding: 10,
-  },
   label: { fontSize: 13, fontWeight: '600', color: '#a78bfa', marginBottom: 6 },
   input: {
     backgroundColor: '#1a1a2e', color: '#fff', borderRadius: 12,
@@ -155,12 +150,8 @@ const styles = StyleSheet.create({
     flex: 1, color: '#fff',
     paddingHorizontal: 16, paddingVertical: 14, fontSize: 15,
   },
-  eyeBtn: {
-    paddingHorizontal: 14, paddingVertical: 14,
-  },
-  eyeText: {
-    color: '#a78bfa', fontSize: 13, fontWeight: '600',
-  },
+  eyeBtn: { paddingHorizontal: 14, paddingVertical: 14 },
+  eyeText: { color: '#a78bfa', fontSize: 13, fontWeight: '600' },
   btn: {
     backgroundColor: '#a78bfa', borderRadius: 12,
     paddingVertical: 15, alignItems: 'center', marginTop: 4,
