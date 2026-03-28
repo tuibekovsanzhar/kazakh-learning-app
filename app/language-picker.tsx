@@ -4,20 +4,24 @@ import {
   SafeAreaView, StatusBar, ActivityIndicator,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useLanguage, HAS_CHOSEN_LANGUAGE_KEY } from '../utils/i18n';
+import { useLanguage } from '../utils/i18n';
 
 export default function LanguagePickerScreen() {
   const router = useRouter();
-  const { setLanguage } = useLanguage();
+  const { setLanguage, markLanguageChosen } = useLanguage();
   const [selected, setSelected] = useState<'en' | 'ru'>('en');
   const [saving, setSaving] = useState(false);
 
   const handleContinue = async () => {
     setSaving(true);
-    await setLanguage(selected);
-    await AsyncStorage.setItem(HAS_CHOSEN_LANGUAGE_KEY, 'true');
-    router.replace('/');
+    try {
+      await setLanguage(selected);
+      await markLanguageChosen();
+      router.replace('/');
+    } catch (e) {
+      console.error('Language picker error:', e);
+      setSaving(false);
+    }
   };
 
   return (

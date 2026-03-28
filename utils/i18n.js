@@ -195,26 +195,37 @@ const translations = {
 // ─── Context ──────────────────────────────────────────────────────────────────
 
 const LanguageContext = createContext({
-  language:    'en',
-  setLanguage: async (_lang) => {},
-  t:           (key) => key,
+  language:           'en',
+  setLanguage:        async (_lang) => {},
+  hasChosenLanguage:  false,
+  markLanguageChosen: async () => {},
+  t:                  (key) => key,
 });
 
 // ─── Provider ─────────────────────────────────────────────────────────────────
 
 /**
  * Wrap the app with this provider.
- * Pass initialLanguage from _layout.tsx (pre-read from AsyncStorage)
- * to avoid a flash of English on Russian devices.
+ * Pass initialLanguage and initialHasChosen from _layout.tsx
+ * (pre-read from AsyncStorage) to avoid any flash on first render.
  */
-export function LanguageProvider({ children, initialLanguage = 'en' }) {
+export function LanguageProvider({ children, initialLanguage = 'en', initialHasChosen = false }) {
   const [language, setLanguageState] = useState(
     initialLanguage === 'ru' ? 'ru' : 'en'
   );
+  const [hasChosenLanguage, setHasChosenLanguage] = useState(initialHasChosen);
 
   const setLanguage = async (lang) => {
     setLanguageState(lang);
     await AsyncStorage.setItem(LANGUAGE_KEY, lang);
+  };
+
+  // Call this from language-picker after the user confirms their choice.
+  // Updating context state here triggers the redirect effect in _layout.tsx
+  // synchronously — no AsyncStorage re-read race condition.
+  const markLanguageChosen = async () => {
+    setHasChosenLanguage(true);
+    await AsyncStorage.setItem(HAS_CHOSEN_LANGUAGE_KEY, 'true');
   };
 
   const t = (key) => {
@@ -222,7 +233,7 @@ export function LanguageProvider({ children, initialLanguage = 'en' }) {
   };
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+    <LanguageContext.Provider value={{ language, setLanguage, hasChosenLanguage, markLanguageChosen, t }}>
       {children}
     </LanguageContext.Provider>
   );
