@@ -26,11 +26,12 @@ import { saveProgress, loadProgress } from '../utils/firestore';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-// Minimal normalized card — quiz only needs the Kazakh word, Latin, and English meaning
+// Minimal normalized card — quiz only needs the Kazakh word, Latin, English meaning, and optional Russian meaning
 type QuizCard = {
   kazakh: string;
   latin?: string;
   english: string;
+  russian?: string;
 };
 
 type Question = {
@@ -52,21 +53,21 @@ const DECK_EMOJIS: Record<string, string> = {
 
 // ─── Data normalization ────────────────────────────────────────────────────────
 
-// Convert each deck's raw data to { kazakh, latin, english } for quiz use
+// Convert each deck's raw data to { kazakh, latin, english, russian } for quiz use
 function normalizeDeck(deckId: string): QuizCard[] {
   switch (deckId) {
     case 'greetings':
-      return greetings.map((w) => ({ kazakh: w.kazakh, latin: w.latin, english: w.english }));
+      return greetings.map((w) => ({ kazakh: w.kazakh, latin: w.latin, english: w.english, russian: w.russian }));
     case 'numbers':
-      return numbers.map((w) => ({ kazakh: w.cyrillic, latin: w.latin, english: w.english }));
+      return numbers.map((w) => ({ kazakh: w.cyrillic, latin: w.latin, english: w.english, russian: w.russian }));
     case 'colors':
-      return colors.map((w) => ({ kazakh: w.cyrillic, latin: w.latin, english: w.english }));
+      return colors.map((w) => ({ kazakh: w.cyrillic, latin: w.latin, english: w.english, russian: w.russian }));
     case 'family':
-      return familyWords.map((w) => ({ kazakh: w.kazakh, latin: w.latin, english: w.english }));
+      return familyWords.map((w) => ({ kazakh: w.kazakh, latin: w.latin, english: w.english, russian: w.russian }));
     case 'food':
-      return foodWords.map((w) => ({ kazakh: w.kazakh, latin: w.latin, english: w.english }));
+      return foodWords.map((w) => ({ kazakh: w.kazakh, latin: w.latin, english: w.english, russian: w.russian }));
     case 'animals':
-      return animalWords.map((w) => ({ kazakh: w.kazakh, latin: w.latin, english: w.english }));
+      return animalWords.map((w) => ({ kazakh: w.kazakh, latin: w.latin, english: w.english, russian: w.russian }));
     default:
       return [];
   }
@@ -85,15 +86,17 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 /** Build up to 10 random questions from the given card array. */
-function buildQuiz(cards: QuizCard[]): Question[] {
+function buildQuiz(cards: QuizCard[], lang: string = 'en'): Question[] {
   const pool = shuffle(cards).slice(0, Math.min(10, cards.length));
 
   return pool.map((item) => {
-    const correctAnswer = item.english;
+    const correctAnswer = lang === 'ru' ? (item.russian ?? item.english) : item.english;
 
-    // Wrong answers: all other english values, shuffled, pick 3
+    // Wrong answers: all other answer values, shuffled, pick 3
     const wrongAnswers = shuffle(
-      cards.filter((c) => c.english !== correctAnswer).map((c) => c.english)
+      cards
+        .filter((c) => (lang === 'ru' ? (c.russian ?? c.english) : c.english) !== correctAnswer)
+        .map((c) => (lang === 'ru' ? (c.russian ?? c.english) : c.english))
     ).slice(0, 3);
 
     const choices = shuffle([correctAnswer, ...wrongAnswers]);
@@ -106,21 +109,32 @@ function buildQuiz(cards: QuizCard[]): Question[] {
 
 export default function QuizScreen() {
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   // Read deck key and display title from navigation params.
   // Defaults keep the screen usable if opened without params.
   const { deck = 'greetings', title = 'Greetings', from } =
     useLocalSearchParams<{ deck: string; title: string; from: string }>();
 
-  // Normalize the deck once — stable during the component's lifetime
+  // Normalize the deck — rebuilt when deck param changes
   const cards = normalizeDeck(deck);
 
-  const [questions, setQuestions] = useState<Question[]>(() => buildQuiz(cards));
+  const [questions, setQuestions] = useState<Question[]>(() => buildQuiz(cards, language));
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [score, setScore] = useState(0);
   const [showResults, setShowResults] = useState(false);
+
+  // BUG 1 FIX: Rebuild questions when deck changes (tab screens persist in memory,
+  // so useState initializer doesn't re-fire on navigation param changes).
+  // BUG 2 FIX: Also rebuild when language changes so answer choices use Russian text.
+  useEffect(() => {
+    setQuestions(buildQuiz(normalizeDeck(deck), language));
+    setCurrentIndex(0);
+    setSelectedAnswer(null);
+    setScore(0);
+    setShowResults(false);
+  }, [deck, language]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Persisted best/last scores loaded from storage
   const [savedScores, setSavedScores] = useState<{

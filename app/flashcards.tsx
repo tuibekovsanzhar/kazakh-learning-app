@@ -42,6 +42,7 @@ type Card = {
   kazakh: string;        // front face — Cyrillic Kazakh word
   latin: string;         // back face — Latin transliteration
   english: string;       // back face — English meaning
+  russian?: string;      // back face — Russian meaning (shown in Russian mode)
   context?: string;      // back face — extra note (optional)
   contextLabel?: string; // label shown above the context line
 };
@@ -61,32 +62,32 @@ function normalizeDeck(deckId: string): Card[] {
   switch (deckId) {
     case 'greetings':
       return greetings.map((w) => ({
-        kazakh: w.kazakh, latin: w.latin, english: w.english,
+        kazakh: w.kazakh, latin: w.latin, english: w.english, russian: w.russian,
         context: w.usage, contextLabel: 'whenToUse',
       }));
     case 'numbers':
       return numbers.map((w) => ({
-        kazakh: w.cyrillic, latin: w.latin, english: w.english,
+        kazakh: w.cyrillic, latin: w.latin, english: w.english, russian: w.russian,
         context: w.digit, contextLabel: 'digit',
       }));
     case 'colors':
       return colors.map((w) => ({
-        kazakh: w.cyrillic, latin: w.latin, english: w.english,
+        kazakh: w.cyrillic, latin: w.latin, english: w.english, russian: w.russian,
         // colors have no extra note — context section is hidden
       }));
     case 'family':
       return familyWords.map((w) => ({
-        kazakh: w.kazakh, latin: w.latin, english: w.english,
+        kazakh: w.kazakh, latin: w.latin, english: w.english, russian: w.russian,
         context: w.note, contextLabel: 'note',
       }));
     case 'food':
       return foodWords.map((w) => ({
-        kazakh: w.kazakh, latin: w.latin, english: w.english,
+        kazakh: w.kazakh, latin: w.latin, english: w.english, russian: w.russian,
         context: w.note, contextLabel: 'note',
       }));
     case 'animals':
       return animalWords.map((w) => ({
-        kazakh: w.kazakh, latin: w.latin, english: w.english,
+        kazakh: w.kazakh, latin: w.latin, english: w.english, russian: w.russian,
         context: w.note, contextLabel: 'note',
       }));
     default:
@@ -98,7 +99,7 @@ function normalizeDeck(deckId: string): Card[] {
 
 export default function FlashcardsScreen() {
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   // Read deck key and display title from navigation params.
   // Defaults keep the screen usable if opened without params.
@@ -373,7 +374,9 @@ export default function FlashcardsScreen() {
           ]}
         >
           <Text style={styles.backLatin}>{card.latin}</Text>
-          <Text style={styles.backEnglish}>{card.english}</Text>
+          <Text style={styles.backEnglish}>
+            {language === 'ru' ? (card.russian ?? card.english) : card.english}
+          </Text>
           {card.context != null && (
             <>
               <View style={styles.divider} />
