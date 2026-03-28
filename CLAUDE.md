@@ -137,6 +137,13 @@ kazakh-learning-app/
 
 ## Session history
 
+### Session 14 — March 28, 2026
+- Fixed data/food.js: "Іші" → "Ішу", "İshi" → "Ishu" (To drink verb was incorrect)
+- Fixed all 6 vocabulary screens (greetings, numbers, colors, family, food, animals): word list rows now show `word.russian` in Russian mode instead of always showing English
+- Fixed all 6 vocabulary screen modals: English translation display is now language-aware (`russian ?? english` fallback)
+- Fixed hardcoded modal labels: "WHEN TO USE" → `t('whenToUse')` in greetings/family; "Note" → `t('note')` in food/animals — now translate to КОГДА ИСПОЛЬЗОВАТЬ / ЗАМЕТКА in Russian mode
+- Added `russian?: string` field to local `WordItem`/`NumberItem`/`ColorItem` types in each screen
+
 ### Session 13 — March 28, 2026
 - Fixed BUG 1 (all quiz sections showing Animals questions): Added `useEffect([deck, language])` to quiz.tsx that resets and rebuilds questions when deck param changes — tab screens persist in memory so the `useState` initializer alone was not enough
 - Fixed BUG 2 (quiz answers and flashcard back showing English in Russian mode): Added `russian` field to all 6 data files (greetings, numbers, colors, family, food, animals); updated `buildQuiz()` to accept `lang` param and use `word.russian ?? word.english` when lang is 'ru'; updated flashcard back face to show `card.russian ?? card.english` in Russian mode
