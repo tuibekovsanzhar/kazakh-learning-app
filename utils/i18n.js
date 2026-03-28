@@ -97,6 +97,42 @@ const translations = {
     // ── Language picker ─────────────────────────────────────────────────────
     chooseLanguage:  'Choose your language',
     continueBtn:     'Continue',
+
+    // ── Progress screen ──────────────────────────────────────────────────────
+    myProgress:          'My Progress',
+    mastered:            'Mastered',
+    bestQuiz:            'Best Quiz',
+    flashcardDecks:      'Flashcard Decks',
+    quizBestScoresTitle: 'Quiz Best Scores',
+    noQuizScores:        'Complete a quiz to see your scores here.',
+
+    // ── Flashcards screen ────────────────────────────────────────────────────
+    deckComplete:    'Deck Complete!',
+    of:              'of',
+    cardsMastered:   'cards mastered',
+    notMarked:       'Not marked',
+    iKnowThisLabel:  'I know this',
+    previous:        '← Previous',
+    finish:          'Finish →',
+    nextArrow:       'Next →',
+    cards:           'cards',
+
+    // ── Quiz screen ──────────────────────────────────────────────────────────
+    quiz:             'Quiz',
+    whatDoesThisMean: 'What does this mean?',
+    quizComplete:     'Quiz Complete!',
+    perfectScoreMsg:  'Perfect score! Amazing!',
+    greatJobMsg:      'Great job! Keep practicing.',
+    keepGoingMsg:     "Keep going — you'll get there!",
+    personalBest:     'Personal best:',
+    yourScore:        'Your Score',
+
+    // ── Vocabulary screens ───────────────────────────────────────────────────
+    words:             'words',
+    takeQuiz:          'Take Quiz',
+    phrases:           'phrases',
+    tapAnyToLearn:     'tap any to learn',
+    tapAnyToLearnMore: 'Tap any to learn more',
   },
 
   ru: {
@@ -189,6 +225,42 @@ const translations = {
     // ── Language picker ─────────────────────────────────────────────────────
     chooseLanguage:  'Выберите язык',
     continueBtn:     'Продолжить',
+
+    // ── Progress screen ──────────────────────────────────────────────────────
+    myProgress:          'Мой прогресс',
+    mastered:            'Изучено',
+    bestQuiz:            'Лучший квиз',
+    flashcardDecks:      'Наборы карточек',
+    quizBestScoresTitle: 'Результаты квизов',
+    noQuizScores:        'Пройдите квиз, чтобы увидеть результаты.',
+
+    // ── Flashcards screen ────────────────────────────────────────────────────
+    deckComplete:    'Набор завершён!',
+    of:              'из',
+    cardsMastered:   'карточек изучено',
+    notMarked:       'Не отмечено',
+    iKnowThisLabel:  'Знаю',
+    previous:        '← Предыдущая',
+    finish:          'Завершить →',
+    nextArrow:       'Далее →',
+    cards:           'карточек',
+
+    // ── Quiz screen ──────────────────────────────────────────────────────────
+    quiz:             'Квиз',
+    whatDoesThisMean: 'Что это значит?',
+    quizComplete:     'Квиз завершён!',
+    perfectScoreMsg:  'Идеальный результат! Отлично!',
+    greatJobMsg:      'Хорошая работа! Продолжайте.',
+    keepGoingMsg:     'Продолжайте — у вас получится!',
+    personalBest:     'Личный рекорд:',
+    yourScore:        'Ваш результат',
+
+    // ── Vocabulary screens ───────────────────────────────────────────────────
+    words:             'слов',
+    takeQuiz:          'Пройти квиз',
+    phrases:           'фраз',
+    tapAnyToLearn:     'нажмите чтобы узнать',
+    tapAnyToLearnMore: 'Нажмите чтобы узнать больше',
   },
 };
 

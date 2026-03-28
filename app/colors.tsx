@@ -1,4 +1,3 @@
-// TODO: i18n — translate UI strings to Russian in v1.1
 // app/colors.tsx
 // Colors lesson screen — same pattern as numbers.tsx
 
@@ -15,6 +14,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { colors } from '../data/colors';
+import { useLanguage } from '../utils/i18n';
 
 type ColorItem = {
   id: string;
@@ -26,6 +26,7 @@ type ColorItem = {
 
 export default function ColorsScreen() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [selectedColor, setSelectedColor] = useState<ColorItem | null>(null);
 
   const handlePress = (item: ColorItem) => {
@@ -59,28 +60,28 @@ export default function ColorsScreen() {
       {/* Header with back button */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Text style={styles.backText}>← Back</Text>
+          <Text style={styles.backText}>{t('goBack')}</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Colors</Text>
+        <Text style={styles.headerTitle}>{t('colors')}</Text>
         <View style={styles.headerSpacer} />
       </View>
 
       {/* Subtitle */}
-      <Text style={styles.subtitle}>Tap any color to learn more</Text>
+      <Text style={styles.subtitle}>{t('tapAnyToLearnMore')}</Text>
 
       {/* Practice shortcuts row */}
       <View style={styles.practiceRow}>
         <TouchableOpacity
           style={styles.flashcardsBtn}
-          onPress={() => router.push({ pathname: '/flashcards' as any, params: { deck: 'colors', title: 'Colors', from: '/colors' } })}
+          onPress={() => router.push({ pathname: '/flashcards' as any, params: { deck: 'colors', title: t('colors'), from: '/colors' } })}
         >
-          <Text style={styles.flashcardsBtnText}>🃏 Flashcards</Text>
+          <Text style={styles.flashcardsBtnText}>🃏 {t('flashcards')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.quizBtn}
-          onPress={() => router.push({ pathname: '/quiz' as any, params: { deck: 'colors', title: 'Colors', from: '/colors' } })}
+          onPress={() => router.push({ pathname: '/quiz' as any, params: { deck: 'colors', title: t('colors'), from: '/colors' } })}
         >
-          <Text style={styles.quizBtnText}>🧠 Take Quiz</Text>
+          <Text style={styles.quizBtnText}>🧠 {t('takeQuiz')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -117,7 +118,7 @@ export default function ColorsScreen() {
               style={[styles.closeButton, { backgroundColor: selectedColor?.hex }]}
               onPress={handleClose}
             >
-              <Text style={styles.closeButtonText}>Got it ✓</Text>
+              <Text style={styles.closeButtonText}>{t('gotIt')} ✓</Text>
             </TouchableOpacity>
           </TouchableOpacity>
         </TouchableOpacity>

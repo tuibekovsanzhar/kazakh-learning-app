@@ -1,4 +1,3 @@
-// TODO: i18n — translate UI strings to Russian in v1.1
 // app/flashcards.tsx
 // Flashcard screen — works with any vocabulary deck.
 // The caller passes { deck, title } as route params.
@@ -17,6 +16,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useLanguage } from '../utils/i18n';
 import { greetings }   from '../data/greetings';
 import { numbers }     from '../data/numbers';
 import { colors }      from '../data/colors';
@@ -98,6 +98,7 @@ function normalizeDeck(deckId: string): Card[] {
 
 export default function FlashcardsScreen() {
   const router = useRouter();
+  const { t } = useLanguage();
 
   // Read deck key and display title from navigation params.
   // Defaults keep the screen usable if opened without params.
@@ -279,22 +280,22 @@ export default function FlashcardsScreen() {
         <StatusBar barStyle="light-content" />
         <View style={styles.summaryContainer}>
           <Text style={styles.summaryEmoji}>🎉</Text>
-          <Text style={styles.summaryTitle}>Deck Complete!</Text>
-          <Text style={styles.summarySubtitle}>{title} — {total} cards</Text>
+          <Text style={styles.summaryTitle}>{t('deckComplete')}</Text>
+          <Text style={styles.summarySubtitle}>{title} — {total} {t('cards')}</Text>
 
           <View style={styles.summaryStats}>
             <View style={styles.statBox}>
               <Text style={styles.statNumber}>{knownCount}</Text>
-              <Text style={styles.statLabel}>I know this</Text>
+              <Text style={styles.statLabel}>{t('iKnowThisLabel')}</Text>
             </View>
             <View style={styles.statBox}>
               <Text style={[styles.statNumber, { color: '#f59e0b' }]}>{learningCount}</Text>
-              <Text style={styles.statLabel}>Still learning</Text>
+              <Text style={styles.statLabel}>{t('stillLearning')}</Text>
             </View>
             {unseenCount > 0 && (
               <View style={styles.statBox}>
                 <Text style={[styles.statNumber, { color: '#6b7280' }]}>{unseenCount}</Text>
-                <Text style={styles.statLabel}>Not marked</Text>
+                <Text style={styles.statLabel}>{t('notMarked')}</Text>
               </View>
             )}
           </View>
@@ -309,11 +310,11 @@ export default function FlashcardsScreen() {
               resetFlip();
             }}
           >
-            <Text style={styles.restartButtonText}>Practice Again</Text>
+            <Text style={styles.restartButtonText}>{t('practiceAgain')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.backHomeButton} onPress={() => router.push((from ?? '/') as any)}>
-            <Text style={styles.backHomeText}>← Back</Text>
+            <Text style={styles.backHomeText}>{t('goBack')}</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -329,9 +330,9 @@ export default function FlashcardsScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.push((from ?? '/') as any)} style={styles.backButton}>
-          <Text style={styles.backText}>← Back</Text>
+          <Text style={styles.backText}>{t('goBack')}</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>{title} Flashcards</Text>
+        <Text style={styles.headerTitle}>{title} {t('flashcards')}</Text>
         <Text style={styles.counter}>{currentIndex + 1}/{total}</Text>
       </View>
 
@@ -339,7 +340,7 @@ export default function FlashcardsScreen() {
       <View style={styles.progressBarTrack}>
         <View style={[styles.progressBarFill, { width: `${progressPercent * 100}%` }]} />
       </View>
-      <Text style={styles.progressLabel}>{knownCount} of {total} mastered</Text>
+      <Text style={styles.progressLabel}>{knownCount} {t('of')} {total} {t('cardsMastered')}</Text>
 
       {/* Deck label — shows emoji + title */}
       <Text style={styles.deckLabel}>{DECK_EMOJIS[deck] ?? '📚'} {title}</Text>
@@ -393,7 +394,7 @@ export default function FlashcardsScreen() {
           ]}
           onPress={markStillLearning}
         >
-          <Text style={styles.masteryButtonText}>Still learning</Text>
+          <Text style={styles.masteryButtonText}>{t('stillLearning')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -404,7 +405,7 @@ export default function FlashcardsScreen() {
           ]}
           onPress={markKnown}
         >
-          <Text style={styles.masteryButtonText}>I know this ✓</Text>
+          <Text style={styles.masteryButtonText}>{t('iKnowThis')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -416,13 +417,13 @@ export default function FlashcardsScreen() {
           disabled={currentIndex === 0}
         >
           <Text style={[styles.navButtonText, currentIndex === 0 && styles.navButtonTextDisabled]}>
-            ← Previous
+            {t('previous')}
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={[styles.navButton, styles.navButtonNext]} onPress={goNext}>
           <Text style={styles.navButtonText}>
-            {currentIndex === total - 1 ? 'Finish →' : 'Next →'}
+            {currentIndex === total - 1 ? t('finish') : t('nextArrow')}
           </Text>
         </TouchableOpacity>
       </View>

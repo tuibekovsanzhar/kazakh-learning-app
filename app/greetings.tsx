@@ -1,4 +1,3 @@
-// TODO: i18n — translate UI strings to Russian in v1.1
 import { useState } from 'react';
 import {
   StyleSheet, Text, View, TouchableOpacity,
@@ -6,9 +5,11 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { greetings } from '../data/greetings';
+import { useLanguage } from '../utils/i18n';
 
 export default function GreetingsScreen() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [selected, setSelected] = useState<typeof greetings[0] | null>(null);
 
   return (
@@ -17,12 +18,12 @@ export default function GreetingsScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Text style={styles.backText}>← Back</Text>
+          <Text style={styles.backText}>{t('goBack')}</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>👋 Greetings</Text>
+        <Text style={styles.headerTitle}>👋 {t('greetings')}</Text>
         <View style={styles.headerSpacer} />
       </View>
-      <Text style={styles.subtitle}>{greetings.length} phrases • tap any to learn</Text>
+      <Text style={styles.subtitle}>{greetings.length} {t('phrases')} • {t('tapAnyToLearn')}</Text>
 
       {/* List */}
       <FlatList
@@ -67,7 +68,7 @@ export default function GreetingsScreen() {
                   style={styles.closeButton}
                   onPress={() => setSelected(null)}
                 >
-                  <Text style={styles.closeButtonText}>Got it</Text>
+                  <Text style={styles.closeButtonText}>{t('gotIt')}</Text>
                 </TouchableOpacity>
               </>
             )}

@@ -1,4 +1,3 @@
-// TODO: i18n — translate UI strings to Russian in v1.1
 import React, { useEffect, useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity,
@@ -7,15 +6,16 @@ import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { auth } from '../utils/firebase';
 import { loadProgress } from '../utils/firestore';
+import { useLanguage } from '../utils/i18n';
 
-// Deck definitions — must match the actual data file sizes
+// Deck definitions — labels are translation keys matching i18n.js
 const DECKS = [
-  { key: 'greetings', label: 'Greetings', emoji: '👋', total: 20 },
-  { key: 'numbers',   label: 'Numbers',   emoji: '🔢', total: 21 },
-  { key: 'colors',    label: 'Colors',    emoji: '🎨', total: 15 },
-  { key: 'family',    label: 'Family',    emoji: '👨‍👩‍👧', total: 19 },
-  { key: 'food',      label: 'Food',      emoji: '🍽️', total: 20 },
-  { key: 'animals',   label: 'Animals',   emoji: '🐴', total: 20 },
+  { key: 'greetings', emoji: '👋', total: 20 },
+  { key: 'numbers',   emoji: '🔢', total: 21 },
+  { key: 'colors',    emoji: '🎨', total: 15 },
+  { key: 'family',    emoji: '👨‍👩‍👧', total: 19 },
+  { key: 'food',      emoji: '🍽️', total: 20 },
+  { key: 'animals',   emoji: '🐴', total: 20 },
 ];
 
 type ProgressData = {
@@ -26,6 +26,7 @@ type ProgressData = {
 
 export default function ProgressScreen() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<ProgressData>({});
 
@@ -72,40 +73,40 @@ export default function ProgressScreen() {
 
       {/* Header */}
       <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-        <Text style={styles.backBtnText}>← Back</Text>
+        <Text style={styles.backBtnText}>{t('goBack')}</Text>
       </TouchableOpacity>
-      <Text style={styles.title}>My Progress</Text>
+      <Text style={styles.title}>{t('myProgress')}</Text>
 
       {/* Stats row — streak / mastered / best quiz */}
       <View style={styles.statsRow}>
         <View style={styles.statCard}>
           <Text style={styles.statEmoji}>🔥</Text>
           <Text style={styles.statNumber}>{streakCount}</Text>
-          <Text style={styles.statLabel}>Day Streak</Text>
+          <Text style={styles.statLabel}>{t('dayStreak')}</Text>
         </View>
         <View style={styles.statCard}>
           <Text style={styles.statEmoji}>📚</Text>
           <Text style={styles.statNumber}>{totalMastered}</Text>
-          <Text style={styles.statLabel}>Mastered</Text>
+          <Text style={styles.statLabel}>{t('mastered')}</Text>
         </View>
         <View style={styles.statCard}>
           <Text style={styles.statEmoji}>🏆</Text>
           <Text style={styles.statNumber}>
             {bestQuizScore != null ? `${bestQuizScore}/10` : '—'}
           </Text>
-          <Text style={styles.statLabel}>Best Quiz</Text>
+          <Text style={styles.statLabel}>{t('bestQuiz')}</Text>
         </View>
       </View>
 
       {/* Deck-by-deck breakdown */}
-      <Text style={styles.sectionTitle}>Flashcard Decks</Text>
+      <Text style={styles.sectionTitle}>{t('flashcardDecks')}</Text>
       {DECKS.map((deck) => {
         const mastered = masteredCards[deck.key]?.length ?? 0;
         const pct = deck.total > 0 ? Math.round((mastered / deck.total) * 100) : 0;
         return (
           <View key={deck.key} style={styles.deckCard}>
             <View style={styles.deckHeader}>
-              <Text style={styles.deckLabel}>{deck.emoji}  {deck.label}</Text>
+              <Text style={styles.deckLabel}>{deck.emoji}  {t(deck.key as any)}</Text>
               <Text style={styles.deckCount}>{mastered} / {deck.total}</Text>
             </View>
             {/* Progress bar */}
@@ -117,11 +118,11 @@ export default function ProgressScreen() {
       })}
 
       {/* Quiz best scores section */}
-      <Text style={styles.sectionTitle}>Quiz Best Scores</Text>
+      <Text style={styles.sectionTitle}>{t('quizBestScoresTitle')}</Text>
       {decksWithScores.length > 0 ? (
         decksWithScores.map((deck) => (
           <View key={deck.key} style={styles.quizRow}>
-            <Text style={styles.quizLabel}>{deck.emoji}  {deck.label} Quiz</Text>
+            <Text style={styles.quizLabel}>{deck.emoji}  {t(deck.key as any)} {t('quiz')}</Text>
             <View style={styles.quizBadge}>
               <Text style={styles.quizScore}>{quizBestScores[deck.key]} / 10</Text>
             </View>
@@ -129,7 +130,7 @@ export default function ProgressScreen() {
         ))
       ) : (
         <View style={styles.emptyState}>
-          <Text style={styles.emptyText}>Complete a quiz to see your scores here.</Text>
+          <Text style={styles.emptyText}>{t('noQuizScores')}</Text>
         </View>
       )}
 

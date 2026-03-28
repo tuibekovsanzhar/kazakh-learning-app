@@ -47,21 +47,23 @@ kazakh-learning-app/
 ├── app.json                  ← Expo config
 ├── package.json
 ├── app/
-│   ├── index.jsx             ← Home screen (streak, lesson buttons)
-│   ├── alphabet.tsx          ← Alphabet screen (42 letters, modal)
+│   ├── index.jsx             ← Home screen (streak, lesson buttons, sign out)
+│   ├── alphabet.tsx          ← Alphabet screen (42 letters, modal, 🔊 audio)
 │   ├── greetings.tsx         ← Greetings vocabulary (20 phrases, modal)
 │   ├── numbers.tsx           ← Numbers vocabulary (0–1000, modal)
 │   ├── colors.tsx            ← Colors vocabulary (15 colors, swatches, modal)
-│   ├── flashcards.tsx        ← Flashcard practice (flip animation, mastery)
-│   ├── quiz.tsx              ← Multiple-choice quiz (10 questions, scoring)
+│   ├── flashcards.tsx        ← Flashcard practice (flip animation, mastery, Firestore)
+│   ├── quiz.tsx              ← Multiple-choice quiz (10 questions, scoring, Firestore)
 │   ├── family.tsx            ← Family vocabulary (19 words, modal)
 │   ├── food.tsx              ← Food vocabulary (modal)
 │   ├── animals.tsx           ← Animals vocabulary (modal)
+│   ├── progress.tsx          ← Progress screen (tab bar, stats, deck bars, quiz scores)
+│   ├── ai-exercises.tsx      ← AI exercises screen (Coming Soon; Claude API ready)
 │   ├── login.tsx             ← Login screen (Firebase Auth)
 │   ├── signup.tsx            ← Signup screen (Firebase Auth)
 │   └── _layout.tsx           ← Root layout (auth gate, onAuthStateChanged)
 ├── data/
-│   ├── alphabet.js           ← 42 Kazakh letters
+│   ├── alphabet.js           ← 42 Kazakh letters (with noSound, note fields)
 │   ├── greetings.js          ← 20 greeting phrases
 │   ├── numbers.js            ← 21 numbers
 │   ├── colors.js             ← 15 colors with hex codes
@@ -69,27 +71,34 @@ kazakh-learning-app/
 │   ├── food.js               ← food words
 │   └── animals.js            ← animal words
 ├── assets/
-│   ├── images/
-│   ├── sounds/
-│   └── fonts/
+│   ├── sounds/               ← letter_01.mp3 … letter_42.mp3 (all 42 letters)
+│   ├── icon.png
+│   ├── splash-icon.png
+│   ├── android-icon-foreground.png
+│   ├── android-icon-background.png
+│   ├── android-icon-monochrome.png
+│   └── favicon.png
 └── utils/
     ├── storage.js            ← AsyncStorage helpers (progress, scores, streak)
     ├── firebase.js           ← Firebase app init + auth export
-    └── helpers.js
+    ├── firestore.js          ← Firestore helpers (saveProgress, loadProgress)
+    ├── audio.js              ← expo-av playSound(filename) helper
+    ├── useToast.tsx          ← Animated toast hook (used by login + signup)
+    └── i18n.js               ← Translations (EN/RU), LanguageProvider, useLanguage hook
 ```
 
 ---
 
 ## Current project status
 
-**Last updated:** March 22, 2026 (Session 8)
-**Current phase:** MVP feature-complete — polish + AI next
+**Last updated:** March 24, 2026 (Session 9)
+**Current phase:** Google Play submission ready — EAS build next step
 
 **Completed:**
 - Project setup with Expo SDK 54 + React Native
 - Git + GitHub (github.com/tuibekovsanzhar/kazakh-learning-app)
 - Home screen (dark theme, live streak counter, scrollable lesson buttons)
-- Kazakh Alphabet screen (4-column grid, 42 letters, Cyrillic + Latin, modal popup)
+- Kazakh Alphabet screen (4-column grid, 42 letters, Cyrillic + Latin, modal popup, 🔊 audio)
 - Greetings screen (20 phrases, Kazakh + Latin + English, modal with "When to use")
 - Numbers screen (21 numbers 0–1000, digit badge, modal)
 - Colors screen (15 colors, circular swatches, modal with color-matched button)
@@ -99,18 +108,24 @@ kazakh-learning-app/
 - README.md for GitHub
 - Family, Food, Animals vocabulary screens with back button and modal
 - Firebase Authentication: login screen, signup screen, auth gate in root layout
-- Logout button on home screen
+- Sign out button at bottom of home screen
 - Firestore cloud sync: streak, flashcard mastery per deck, quiz best scores per deck
 - Progress screen (tab bar, stats row, deck progress bars, quiz best scores)
 - Flashcards + Quiz buttons inside each vocabulary screen; back button returns to correct screen
 - Latin transliteration audit + 15 fixes across greetings.js, numbers.js, colors.js
-- Alphabet audio pronunciation (42 letters, mp3)
+- Alphabet audio pronunciation (42 letters, letter_01.mp3 … letter_42.mp3)
+- Full design audit + theme consistency across all screens
+- Russian/English language support with language picker (fully complete — all screens)
+- Pre-launch app.json fixes (name, slug, scheme, package, all asset paths, splash colors)
+- App icon + splash screen: icon.png (eagle, 1024×1024) and splash.png (vertical eagle + QAZAQ text)
 
 **In progress:**
 - Nothing currently
 
 **To do next session:**
-1. Submit app to Google Play Store (first launch!)
+1. Run `eas login` (Expo account required)
+2. Run `eas build --platform android --profile production` to generate AAB
+3. Upload AAB to Google Play Console → create new release → submit for review
 
 **Important file locations:**
 - Project: ~/Desktop/kazakh-learning-app
@@ -122,6 +137,46 @@ kazakh-learning-app/
 
 ## Session history
 
+### Session 11 — March 28, 2026
+- Completed Russian translations for all 9 remaining screens: progress, flashcards, quiz, greetings, numbers, colors, family, food, animals
+- Added 35 new translation keys to utils/i18n.js (both EN + RU): myProgress, mastered, bestQuiz, flashcardDecks, quizBestScoresTitle, noQuizScores, deckComplete, of, cardsMastered, notMarked, iKnowThisLabel, previous, finish, nextArrow, cards, quiz, whatDoesThisMean, quizComplete, perfectScoreMsg, greatJobMsg, keepGoingMsg, personalBest, yourScore, words, takeQuiz, phrases, tapAnyToLearn, tapAnyToLearnMore
+- progress.tsx: DECKS array now uses translation keys instead of hardcoded labels; all stat labels, section titles, deck names, quiz row labels translated
+- flashcards.tsx: summary screen (Deck Complete, card counts, Practice Again, Back), progress label, mastery buttons, nav buttons (Previous/Next/Finish), header all translated
+- quiz.tsx: header, prompt, results screen (Quiz Complete, score messages, Personal best, Try Again, Back) all translated
+- greetings.tsx: header title, subtitle ("X phrases • tap any to learn"), Got it button translated
+- numbers/colors.tsx: header, subtitle, Flashcards/Take Quiz buttons, Got it button translated; t('numbers')/t('colors') passed as title param to flashcards/quiz
+- family/food/animals.tsx: title, word count subtitle, Flashcards/Take Quiz buttons, Got it button translated; translated title passed to flashcards/quiz params
+- All vocabulary screens now pass translated deck title to flashcards/quiz so header shows correct language there too
+- Russian is now fully supported across the entire app
+
+### Session 10 — March 24, 2026
+- Privacy policy screen (app/privacy-policy.tsx): 10 sections covering data collection, Firebase, no data sales, contact email
+- Privacy policy accessible without login (auth guard updated in _layout.tsx)
+- "By continuing you agree to our Privacy Policy" link added to login + signup screens
+- app.json final release config: name → "Qazaq Tili", slug → "qazaq-tili", scheme → "qazaqtili", package → "com.qazaqapps.qazaqtili", versionCode: 1
+- eas.json created: development/preview/production build profiles; production builds app-bundle (.aab)
+- EAS CLI 18.4.0 installed globally
+
+### Session 9 — March 24, 2026
+- Added app icon and splash screen:
+  - icon.png (eagle, 1024×1024) → used for home screen icon + adaptive icon foreground
+  - splash.png (vertical eagle + QAZAQ text) → used as splash screen image
+  - app.json: adaptiveIcon.foregroundImage → icon.png, backgroundColor → #0f0f1a
+  - app.json: expo-splash-screen plugin image → splash.png (removed imageWidth: 200)
+  - Removed separate android-icon-foreground/background/monochrome from adaptiveIcon
+- Toast notification system + improved auth error handling:
+  - Created utils/useToast.tsx — shared hook, Animated slide-in from top, auto-dismiss 3s, purple border
+  - signup.tsx: removed red errorText box, replaced with toasts; 4 specific messages (empty fields, short password, mismatch, email-in-use)
+  - login.tsx: same — 5 specific messages per Firebase error code; forgot-password modal keeps inline errors
+  - Both screens: field label "Password" → "Create Password" on signup
+- Home screen gradients + visual energy:
+  - Screen background: LinearGradient #0f0f1a → #130f2a (subtle depth)
+  - Streak card: LinearGradient #1a1a3e → #2d1b69, purple glowing border #a78bfa
+  - Lesson buttons: LinearGradient #1a1a2e → #16213e, left accent border #a78bfa, emoji pill #2d1b69
+  - Subtitle color: #a0a0c0 → #a78bfa; arrows: #e94560 → #a78bfa
+  - Tab bar top border: #0f3460 → #a78bfa (_layout.tsx)
+  - Removed leftover console.log from streak sync effect
+
 ### Session 8 — March 22, 2026
 - Design audit fixes (all 8 items):
   - alphabet.tsx + greetings.tsx: updated to current theme (#0f0f1a bg, #1a1a2e cards, #2a2a4a borders, #a78bfa accent replacing all #e94560 red)
@@ -132,18 +187,30 @@ kazakh-learning-app/
   - index.jsx: streak number color #e94560 → #a78bfa
   - flashcards.tsx + quiz.tsx: header now shows deck title ("Greetings Flashcards", "Numbers Quiz")
   - ai-exercises.tsx: added Platform import + marginTop for Android status bar
+- Pre-launch app.json fixes:
+  - name: "kazakh-learning-app-2" → "Kazakh Learn"
+  - slug: "kazakh-learning-app-2" → "kazakh-learn"
+  - scheme: "kazakhlearningapp2" → "kazakhlearn"
+  - Added android.package: "com.sanzhar.kazakhlearn"
+  - Fixed all 6 asset paths (were pointing to empty assets/images/ — moved to assets/ root)
+  - Splash backgroundColor: "#ffffff" → "#0f0f1a" (both light + dark)
+- utils/firestore.js: removed console.log from saveProgress() (not suitable for production)
 
 ### Session 7 — March 22, 2026
 - Design & UX audit report (no code changes — see report in session notes)
 - Added `AI_ENABLED = false` constant to app/ai-exercises.tsx; shows "Coming Soon" screen when false
 - Created utils/audio.js with `playSound(filename)` using expo-av; silent no-op if file missing
 - Added 🔊 speaker button to each letter card in app/alphabet.tsx (calls letter_01.mp3 … letter_42.mp3)
+- Added 🔊 button to alphabet modal (PRONUNCIATION section)
+- Redesigned alphabet modal: letter hero → pronunciation + 🔊 → divider → example word
+- Added noSound field to Ъ and Ь in alphabet.js; modal shows info box for those letters
+- Added note field display to alphabet modal (italic gray, shown only when note exists)
 - Fixed alphabet data: Һ pronunciation → "he", example → айдаһар / aydahar / dragon
 - Fixed alphabet data: М example → маусым / mausym / June
-- Fixed alphabet data: І pronunciation → "e"
+- Fixed alphabet data: І pronunciation → "ih"
 - Fixed alphabet data: Ё example → актёр / aktyor / actor; added note field (borrowed words only)
-- Added note field display to alphabet modal (italic gray, shown only when note exists)
-- Fixed alphabet data: Ь example → коньки / kon'ki / ice skates (previous session)
+- Fixed alphabet data: Ь example → альбом / al'bom / album
+- Activated full SOUNDS map in utils/audio.js after all 42 mp3 files were added
 
 ### Session 6 — March 20, 2026
 - Fixed signup password reset bug (textContentType oneTimeCode → newPassword)
@@ -176,50 +243,17 @@ kazakh-learning-app/
   - Deleted last entry "Отбасым" (My family) — deck is now 19 words
   - Updated "Жиен": english → "Nephew / Niece (sister's children)", expanded note
 - Added back button to app/family.tsx, app/food.tsx, app/animals.tsx
-  - Added `useRouter` import and `router.back()` handler to all three
-  - `← Back` button in purple above the title, `backBtn`/`backBtnText` styles added
 - Fixed TypeScript errors in family.tsx, food.tsx, animals.tsx
-  - `useState(null)` was typed as `null`-only, making all `selected?.kazakh` etc. red
-  - Added `type WordItem = { kazakh: string; latin: string; english: string; note: string }`
-  - Changed to `useState<WordItem | null>(null)` in all three files
 - Created .vscode/settings.json — disabled cSpell spell checker for the project
 - Set up Firebase Authentication
-  - Ran `npx expo install firebase` (66 packages)
   - Created utils/firebase.js — initializes Firebase app, exports `auth`
   - Created app/login.tsx — email + password login, error handling, link to signup
   - Created app/signup.tsx — email + password + confirm, validation, link to login
-  - Both screens use dark theme (#0f0f1a background, #a78bfa accent), spinner on submit
 - Created app/_layout.tsx — Expo Router root layout with auth gate
-  - `onAuthStateChanged` listener checks Firebase session on app start
-  - Shows purple spinner on dark screen while checking (~200ms)
-  - Redirects to /login if not logged in, to / if already logged in
-  - Prevents redirect loops by checking current route with `useSegments`
 
 ### Session 3 — March 17, 2026
-- Built Numbers screen (app/numbers.tsx)
-  - 21 numbers from 0–1000, digit badge on each row, Cyrillic + Latin + English
-  - Tap any row → modal popup
-- Built Colors screen (app/colors.tsx)
-  - 15 colors with circular color swatch per row
-  - Modal shows a large color circle; "Got it" button tinted to match the color
-- Built Flashcard screen (app/flashcards.tsx)
-  - Spring-animated card flip (tap to reveal, tap again to flip back)
-  - "I know this ✓" (green) and "Still learning" (amber) mastery buttons
-  - Green progress bar fills as cards are mastered
-  - Session summary screen at the end with counts and "Practice Again"
-- Built Quiz screen (app/quiz.tsx)
-  - 10 random questions per session from the Greetings deck
-  - 4 multiple-choice answers (1 correct + 3 random wrong), shuffled each time
-  - Instant green/red highlight feedback; auto-advances after 1.5 s
-  - Results screen with big score display, emoji rating, score bar, "Try Again"
-  - Personal best score shown below the progress bar and on the results screen
+- Built Numbers screen, Colors screen, Flashcard screen, Quiz screen
 - Added full AsyncStorage persistence (utils/storage.js)
-  - Flashcard mastery marks survive app restarts; progress bar restores on reopen
-  - Quiz last score + best score saved per deck
-  - Streak system: increments on consecutive days, resets after a gap
-  - Home screen 🔥 streak counter now reads the real saved value
-- Fixed bugs: home screen lesson list now scrollable; flashcard flip now two-way
-- Added Numbers, Colors, Flashcards, and Quiz buttons to Home screen
 - Created README.md for the GitHub repository
 
 ### Session 2 — March 15, 2026
@@ -231,6 +265,15 @@ kazakh-learning-app/
 - Always run `npx expo start` from ~/Desktop/kazakh-learning-app
 - Phone and Mac must be on same WiFi to use Expo Go
 - All screens follow the same dark theme: background #0f0f1a or #1a1a2e, accent #a78bfa
+
+---
+
+## UX Rules
+
+- **Form validation errors** always appear inline below the relevant field in `#f87171` red, never as toasts. Toasts are only for system/success messages (network failures, password reset confirmation).
+- Each field has its own error state; typing in a field clears that field's error automatically.
+- "Please fill in all required fields" appears centered below the submit button as `generalError`.
+- **All new UI strings must be added to `utils/i18n.js` in both English and Russian** before being used in any screen.
 
 ---
 

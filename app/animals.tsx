@@ -1,4 +1,3 @@
-// TODO: i18n — translate UI strings to Russian in v1.1
 import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, FlatList,
@@ -6,34 +5,36 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { animalWords } from '../data/animals';
+import { useLanguage } from '../utils/i18n';
 
 type WordItem = { kazakh: string; latin: string; english: string; note: string };
 
 export default function AnimalsScreen() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [selected, setSelected] = useState<WordItem | null>(null);
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
       <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-        <Text style={styles.backBtnText}>← Back</Text>
+        <Text style={styles.backBtnText}>{t('goBack')}</Text>
       </TouchableOpacity>
-      <Text style={styles.title}>🐴 Animals</Text>
-      <Text style={styles.subtitle}>{animalWords.length} words</Text>
+      <Text style={styles.title}>🐴 {t('animals')}</Text>
+      <Text style={styles.subtitle}>{animalWords.length} {t('words')}</Text>
 
       <View style={styles.practiceRow}>
         <TouchableOpacity
           style={styles.flashcardsBtn}
-          onPress={() => router.push({ pathname: '/flashcards' as any, params: { deck: 'animals', title: 'Animals', from: '/animals' } })}
+          onPress={() => router.push({ pathname: '/flashcards' as any, params: { deck: 'animals', title: t('animals'), from: '/animals' } })}
         >
-          <Text style={styles.flashcardsBtnText}>🃏 Flashcards</Text>
+          <Text style={styles.flashcardsBtnText}>🃏 {t('flashcards')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.quizBtn}
-          onPress={() => router.push({ pathname: '/quiz' as any, params: { deck: 'animals', title: 'Animals', from: '/animals' } })}
+          onPress={() => router.push({ pathname: '/quiz' as any, params: { deck: 'animals', title: t('animals'), from: '/animals' } })}
         >
-          <Text style={styles.quizBtnText}>🧠 Take Quiz</Text>
+          <Text style={styles.quizBtnText}>🧠 {t('takeQuiz')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -62,7 +63,7 @@ export default function AnimalsScreen() {
             <Text style={styles.noteLabel}>💡 Note</Text>
             <Text style={styles.noteText}>{selected?.note}</Text>
             <TouchableOpacity style={styles.closeBtn} onPress={() => setSelected(null)}>
-              <Text style={styles.closeBtnText}>Got it</Text>
+              <Text style={styles.closeBtnText}>{t('gotIt')}</Text>
             </TouchableOpacity>
           </View>
         </View>

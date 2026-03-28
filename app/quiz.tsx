@@ -1,4 +1,3 @@
-// TODO: i18n — translate UI strings to Russian in v1.1
 // app/quiz.tsx
 // Quiz screen — works with any vocabulary deck.
 // The caller passes { deck, title } as route params.
@@ -14,6 +13,7 @@ import {
   StatusBar,
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useLanguage } from '../utils/i18n';
 import { greetings }   from '../data/greetings';
 import { numbers }     from '../data/numbers';
 import { colors }      from '../data/colors';
@@ -106,6 +106,7 @@ function buildQuiz(cards: QuizCard[]): Question[] {
 
 export default function QuizScreen() {
   const router = useRouter();
+  const { t } = useLanguage();
 
   // Read deck key and display title from navigation params.
   // Defaults keep the screen usable if opened without params.
@@ -229,7 +230,7 @@ export default function QuizScreen() {
           <Text style={styles.resultsEmoji}>
             {perfect ? '🏆' : good ? '🎉' : '📚'}
           </Text>
-          <Text style={styles.resultsTitle}>Quiz Complete!</Text>
+          <Text style={styles.resultsTitle}>{t('quizComplete')}</Text>
 
           <View style={styles.scoreBox}>
             <Text style={styles.scoreNumber}>{score}</Text>
@@ -238,17 +239,13 @@ export default function QuizScreen() {
           </View>
 
           <Text style={styles.scoreLabel}>
-            {perfect
-              ? 'Perfect score! Amazing!'
-              : good
-              ? 'Great job! Keep practicing.'
-              : 'Keep going — you\'ll get there!'}
+            {perfect ? t('perfectScoreMsg') : good ? t('greatJobMsg') : t('keepGoingMsg')}
           </Text>
 
           {/* Personal best */}
           {savedScores.bestScore !== null && (
             <Text style={styles.bestScoreResult}>
-              Personal best: {savedScores.bestScore}/{savedScores.totalQuestions}
+              {t('personalBest')} {savedScores.bestScore}/{savedScores.totalQuestions}
             </Text>
           )}
 
@@ -263,11 +260,11 @@ export default function QuizScreen() {
           </View>
 
           <TouchableOpacity style={styles.tryAgainButton} onPress={restart}>
-            <Text style={styles.tryAgainText}>Try Again</Text>
+            <Text style={styles.tryAgainText}>{t('tryAgain')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.backHomeButton} onPress={() => router.push((from ?? '/') as any)}>
-            <Text style={styles.backHomeText}>← Back</Text>
+            <Text style={styles.backHomeText}>{t('goBack')}</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -285,9 +282,9 @@ export default function QuizScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.push((from ?? '/') as any)} style={styles.backButton}>
-          <Text style={styles.backText}>← Back</Text>
+          <Text style={styles.backText}>{t('goBack')}</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>{title} Quiz</Text>
+        <Text style={styles.headerTitle}>{title} {t('quiz')}</Text>
         <Text style={styles.questionCounter}>
           {currentIndex + 1}/{totalQuestions}
         </Text>
@@ -301,7 +298,7 @@ export default function QuizScreen() {
       {/* Personal best — only shown if a score has been saved before */}
       {savedScores.bestScore !== null && (
         <Text style={styles.bestScoreLabel}>
-          Personal best: {savedScores.bestScore}/{savedScores.totalQuestions}
+          {t('personalBest')} {savedScores.bestScore}/{savedScores.totalQuestions}
         </Text>
       )}
 
@@ -310,7 +307,7 @@ export default function QuizScreen() {
 
       {/* Question card */}
       <View style={styles.questionCard}>
-        <Text style={styles.prompt}>What does this mean?</Text>
+        <Text style={styles.prompt}>{t('whatDoesThisMean')}</Text>
         <Text style={styles.kazakhWord}>{question.kazakh}</Text>
         {question.latin && (
           <Text style={styles.latinText}>({question.latin})</Text>

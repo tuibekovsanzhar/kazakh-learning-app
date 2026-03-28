@@ -1,4 +1,3 @@
-// TODO: i18n — translate UI strings to Russian in v1.1
 // app/numbers.tsx
 // Numbers lesson screen — same pattern as greetings.tsx
 
@@ -15,6 +14,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { numbers } from '../data/numbers';
+import { useLanguage } from '../utils/i18n';
 
 // TypeScript type — describes what shape each number object has
 type NumberItem = {
@@ -27,6 +27,7 @@ type NumberItem = {
 
 export default function NumbersScreen() {
   const router = useRouter();
+  const { t } = useLanguage();
 
   // selectedNumber holds whichever number the user tapped (or null if none)
   const [selectedNumber, setSelectedNumber] = useState<NumberItem | null>(null);
@@ -65,28 +66,28 @@ export default function NumbersScreen() {
       {/* Header with back button */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Text style={styles.backText}>← Back</Text>
+          <Text style={styles.backText}>{t('goBack')}</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Numbers</Text>
+        <Text style={styles.headerTitle}>{t('numbers')}</Text>
         <View style={styles.headerSpacer} />
       </View>
 
       {/* Subtitle */}
-      <Text style={styles.subtitle}>Tap any number to learn more</Text>
+      <Text style={styles.subtitle}>{t('tapAnyToLearnMore')}</Text>
 
       {/* Practice shortcuts row */}
       <View style={styles.practiceRow}>
         <TouchableOpacity
           style={styles.flashcardsBtn}
-          onPress={() => router.push({ pathname: '/flashcards' as any, params: { deck: 'numbers', title: 'Numbers', from: '/numbers' } })}
+          onPress={() => router.push({ pathname: '/flashcards' as any, params: { deck: 'numbers', title: t('numbers'), from: '/numbers' } })}
         >
-          <Text style={styles.flashcardsBtnText}>🃏 Flashcards</Text>
+          <Text style={styles.flashcardsBtnText}>🃏 {t('flashcards')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.quizBtn}
-          onPress={() => router.push({ pathname: '/quiz' as any, params: { deck: 'numbers', title: 'Numbers', from: '/numbers' } })}
+          onPress={() => router.push({ pathname: '/quiz' as any, params: { deck: 'numbers', title: t('numbers'), from: '/numbers' } })}
         >
-          <Text style={styles.quizBtnText}>🧠 Take Quiz</Text>
+          <Text style={styles.quizBtnText}>🧠 {t('takeQuiz')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -120,7 +121,7 @@ export default function NumbersScreen() {
 
             {/* Close button */}
             <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
-              <Text style={styles.closeButtonText}>Got it ✓</Text>
+              <Text style={styles.closeButtonText}>{t('gotIt')} ✓</Text>
             </TouchableOpacity>
           </TouchableOpacity>
         </TouchableOpacity>
