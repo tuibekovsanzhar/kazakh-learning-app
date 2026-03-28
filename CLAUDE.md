@@ -284,6 +284,54 @@ kazakh-learning-app/
 
 ---
 
+## Internationalization (i18n) Rules
+
+### How the language system works
+- All UI strings live in `utils/i18n.js` in both `en` and `ru` sections
+- Use the `t('key')` function from `useLanguage()` hook for ALL UI text
+- Never hardcode English strings directly in screen files
+- User's language choice is saved to AsyncStorage and persists
+
+### Rules for adding new features
+Every time a new screen or feature is added:
+1. Add ALL new UI strings to `utils/i18n.js` first — both English AND Russian
+2. Use `t('key')` in the screen file, never hardcode text
+3. Test both languages before committing
+
+### Russian translation standards
+- Formal "вы" style (not "ты") for all user-facing text
+- "Назад" for back buttons (not "Вернуться")
+- "Далее" for next buttons (not "Следующий")
+- "Понятно" for "Got it" buttons
+- "Квиз" for Quiz (not "Тест" or "Викторина")
+- "Карточки" for Flashcards (not "Флэшкарды")
+- "ЗАМЕТКА" for NOTE label on flashcard back
+
+### Latin transliteration rules
+These apply to ALL new vocabulary added to data files:
+- **Ж → J** (not Zh). Examples: Jeti, Jiyrma, Jasyl
+- **Ғ → ġ** (g with dot above, not ğ). Examples: Toġyz, Qyzġylt
+- **Ө → Ö**. Examples: Öte, Nöl, Tört
+- **Ү → Ü**. Examples: Üsh, Jüz, Tüye
+- **Сау → Sau** (not Saw — "saw" reads as an English word). Examples: Sau bol, Sau bolıńyz
+- Always verify latin fields don't accidentally spell offensive or jarring English words
+
+### Vocabulary content language
+- Kazakh words (Cyrillic) → always stay as Kazakh
+- Latin transliterations → always stay as Latin/Kazakh
+- English translations of vocabulary (Cat, Dog, etc.) → stay in English in BOTH language modes (these are what users are learning, not UI text)
+- Only UI chrome (buttons, labels, titles) gets translated
+
+### Files to update when adding new vocabulary screens
+1. Create `data/newscreen.js` with kazakh/latin/english fields
+2. Create `app/newscreen.tsx` using `t()` for all UI strings
+3. Add screen button to `app/index.jsx` with `t()` translation
+4. Add translation keys to `utils/i18n.js` (both en + ru)
+5. Add deck to flashcards/quiz dynamic deck system
+6. Commit with descriptive message
+
+---
+
 ## Latin Transliteration Rules
 
 These rules apply to ALL new vocabulary added to data files:
