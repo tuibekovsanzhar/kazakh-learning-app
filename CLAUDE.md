@@ -91,7 +91,7 @@ kazakh-learning-app/
 
 ## Current project status
 
-**Last updated:** March 24, 2026 (Session 9)
+**Last updated:** March 28, 2026 (Session 13)
 **Current phase:** Google Play submission ready — EAS build next step
 
 **Completed:**
@@ -136,6 +136,11 @@ kazakh-learning-app/
 ---
 
 ## Session history
+
+### Session 13 — March 28, 2026
+- Fixed BUG 1 (all quiz sections showing Animals questions): Added `useEffect([deck, language])` to quiz.tsx that resets and rebuilds questions when deck param changes — tab screens persist in memory so the `useState` initializer alone was not enough
+- Fixed BUG 2 (quiz answers and flashcard back showing English in Russian mode): Added `russian` field to all 6 data files (greetings, numbers, colors, family, food, animals); updated `buildQuiz()` to accept `lang` param and use `word.russian ?? word.english` when lang is 'ru'; updated flashcard back face to show `card.russian ?? card.english` in Russian mode
+- `normalizeDeck()` in both quiz.tsx and flashcards.tsx now maps the `russian` field from all 6 data sources
 
 ### Session 12 — March 28, 2026
 - Fixed flashcard header not translating "Flashcards" → "Карточки": `flashcards` key was missing from i18n.js; added to both EN + RU sections
