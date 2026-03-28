@@ -137,6 +137,9 @@ kazakh-learning-app/
 
 ## Session history
 
+### Session 15 — March 28, 2026
+- Fixed app title inconsistency: English mode showed "Kazakh Learn", Russian mode showed "Qazaq Tili" — set `appName` in the `en` section of utils/i18n.js to "Qazaq Tili" so both languages show the same title
+
 ### Session 14 — March 28, 2026
 - Fixed data/food.js: "Іші" → "Ішу", "İshi" → "Ishu" (To drink verb was incorrect)
 - Fixed all 6 vocabulary screens (greetings, numbers, colors, family, food, animals): word list rows now show `word.russian` in Russian mode instead of always showing English
