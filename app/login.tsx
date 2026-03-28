@@ -19,6 +19,11 @@ export default function LoginScreen() {
   const [resetLoading, setResetLoading] = useState(false);
   const [resetError, setResetError] = useState('');
   const [resetSuccess, setResetSuccess] = useState(false);
+
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [generalError, setGeneralError] = useState('');
+
   const { showToast, Toast } = useToast();
 
   const handlePasswordReset = async () => {
@@ -54,8 +59,12 @@ export default function LoginScreen() {
   };
 
   const handleLogin = async () => {
+    setEmailError('');
+    setPasswordError('');
+    setGeneralError('');
+
     if (!email.trim() || !password) {
-      showToast('Please fill in all required fields');
+      setGeneralError('Please fill in all required fields');
       return;
     }
     setLoading(true);
@@ -65,20 +74,20 @@ export default function LoginScreen() {
     } catch (e: any) {
       switch (e.code) {
         case 'auth/user-not-found':
-          showToast('No account found with this email');
+          setEmailError('No account found with this email');
           break;
         case 'auth/wrong-password':
-          showToast('Incorrect password. Try again or use Forgot Password');
+          setPasswordError('Incorrect password');
           break;
         case 'auth/invalid-credential':
           // Firebase SDK v9+ collapses user-not-found + wrong-password into this
-          showToast('Incorrect email or password');
+          setPasswordError('Incorrect email or password');
           break;
         case 'auth/invalid-email':
-          showToast('Please enter a valid email address');
+          setEmailError('Please enter a valid email address');
           break;
         case 'auth/too-many-requests':
-          showToast('Too many failed attempts. Please try again later');
+          setPasswordError('Too many failed attempts. Please try again later');
           break;
         default:
           showToast('Login failed. Please try again.');
@@ -97,32 +106,40 @@ export default function LoginScreen() {
         <Text style={styles.title}>Welcome back</Text>
         <Text style={styles.subtitle}>Log in to continue learning Kazakh</Text>
 
-        <Text style={styles.label}>Email</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="you@example.com"
-          placeholderTextColor="#4a4a6a"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          keyboardType="email-address"
-          autoComplete="email"
-        />
-
-        <Text style={styles.label}>Password</Text>
-        <View style={styles.inputRow}>
+        {/* Email */}
+        <View style={styles.fieldGroup}>
+          <Text style={styles.label}>Email</Text>
           <TextInput
-            style={styles.inputFlex}
-            placeholder="Your password"
+            style={styles.input}
+            placeholder="you@example.com"
             placeholderTextColor="#4a4a6a"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry={!showPassword}
-            autoComplete="password"
+            value={email}
+            onChangeText={(v) => { setEmail(v); setEmailError(''); setGeneralError(''); }}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            autoComplete="email"
           />
-          <TouchableOpacity onPress={() => setShowPassword(v => !v)} style={styles.eyeBtn}>
-            <Text style={styles.eyeText}>{showPassword ? 'Hide' : 'Show'}</Text>
-          </TouchableOpacity>
+          {emailError ? <Text style={styles.fieldError}>{emailError}</Text> : null}
+        </View>
+
+        {/* Password */}
+        <View style={styles.fieldGroup}>
+          <Text style={styles.label}>Password</Text>
+          <View style={styles.inputRow}>
+            <TextInput
+              style={styles.inputFlex}
+              placeholder="Your password"
+              placeholderTextColor="#4a4a6a"
+              value={password}
+              onChangeText={(v) => { setPassword(v); setPasswordError(''); setGeneralError(''); }}
+              secureTextEntry={!showPassword}
+              autoComplete="password"
+            />
+            <TouchableOpacity onPress={() => setShowPassword(v => !v)} style={styles.eyeBtn}>
+              <Text style={styles.eyeText}>{showPassword ? 'Hide' : 'Show'}</Text>
+            </TouchableOpacity>
+          </View>
+          {passwordError ? <Text style={styles.fieldError}>{passwordError}</Text> : null}
         </View>
 
         <TouchableOpacity style={styles.forgotRow} onPress={() => setShowForgotModal(true)}>
@@ -138,6 +155,7 @@ export default function LoginScreen() {
             ? <ActivityIndicator color="#fff" />
             : <Text style={styles.btnText}>Log In</Text>}
         </TouchableOpacity>
+        {generalError ? <Text style={styles.generalError}>{generalError}</Text> : null}
 
         <TouchableOpacity style={styles.switchRow} onPress={() => router.push('/signup')}>
           <Text style={styles.switchText}>
@@ -214,16 +232,17 @@ const styles = StyleSheet.create({
   inner: { flex: 1, paddingHorizontal: 28, justifyContent: 'center' },
   title: { fontSize: 30, fontWeight: '700', color: '#fff', marginBottom: 6 },
   subtitle: { fontSize: 15, color: '#94a3b8', marginBottom: 32 },
+  fieldGroup: { marginBottom: 18 },
   label: { fontSize: 13, fontWeight: '600', color: '#a78bfa', marginBottom: 6 },
   input: {
     backgroundColor: '#1a1a2e', color: '#fff', borderRadius: 12,
     paddingHorizontal: 16, paddingVertical: 14, fontSize: 15,
-    borderWidth: 1, borderColor: '#2a2a4a', marginBottom: 18,
+    borderWidth: 1, borderColor: '#2a2a4a',
   },
   inputRow: {
     flexDirection: 'row', alignItems: 'center',
     backgroundColor: '#1a1a2e', borderRadius: 12,
-    borderWidth: 1, borderColor: '#2a2a4a', marginBottom: 18,
+    borderWidth: 1, borderColor: '#2a2a4a',
   },
   inputFlex: {
     flex: 1, color: '#fff',
@@ -231,6 +250,8 @@ const styles = StyleSheet.create({
   },
   eyeBtn: { paddingHorizontal: 14, paddingVertical: 14 },
   eyeText: { color: '#a78bfa', fontSize: 13, fontWeight: '600' },
+  fieldError: { color: '#f87171', fontSize: 12, marginTop: 4 },
+  generalError: { color: '#f87171', fontSize: 12, textAlign: 'center', marginTop: 8 },
   btn: {
     backgroundColor: '#a78bfa', borderRadius: 12,
     paddingVertical: 15, alignItems: 'center', marginTop: 4,
@@ -240,7 +261,7 @@ const styles = StyleSheet.create({
   switchRow: { alignItems: 'center', marginTop: 24 },
   switchText: { color: '#94a3b8', fontSize: 14 },
   switchLink: { color: '#a78bfa', fontWeight: '600' },
-  forgotRow: { alignSelf: 'flex-end', marginTop: -10, marginBottom: 20 },
+  forgotRow: { alignSelf: 'flex-end', marginBottom: 20 },
   forgotText: { color: '#a78bfa', fontSize: 13, fontWeight: '600' },
   privacyRow: { alignItems: 'center', marginTop: 20 },
   privacyText: { color: '#4b5563', fontSize: 12 },

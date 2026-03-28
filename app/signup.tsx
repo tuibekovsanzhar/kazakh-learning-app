@@ -16,21 +16,37 @@ export default function SignupScreen() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [confirmError, setConfirmError] = useState('');
+  const [generalError, setGeneralError] = useState('');
+
   const { showToast, Toast } = useToast();
 
+  const clearAllErrors = () => {
+    setEmailError('');
+    setPasswordError('');
+    setConfirmError('');
+    setGeneralError('');
+  };
+
   const handleSignup = async () => {
+    clearAllErrors();
+
     if (!email.trim() || !password || !confirmPassword) {
-      showToast('Please fill in all required fields');
+      setGeneralError('Please fill in all required fields');
       return;
     }
     if (password.length < 6) {
-      showToast('Password must be at least 6 characters');
+      setPasswordError('Password must be at least 6 characters');
       return;
     }
     if (password !== confirmPassword) {
-      showToast('Passwords do not match');
+      setConfirmError('Passwords do not match');
       return;
     }
+
     setLoading(true);
     try {
       await createUserWithEmailAndPassword(auth, email.trim(), password);
@@ -38,13 +54,13 @@ export default function SignupScreen() {
     } catch (e: any) {
       switch (e.code) {
         case 'auth/email-already-in-use':
-          showToast('This email is already registered. Try logging in instead.');
+          setEmailError('This email is already registered. Try logging in.');
           break;
         case 'auth/invalid-email':
-          showToast('Please enter a valid email address');
+          setEmailError('Please enter a valid email address');
           break;
         case 'auth/weak-password':
-          showToast('Password must be at least 6 characters');
+          setPasswordError('Password must be at least 6 characters');
           break;
         default:
           showToast('Sign up failed. Please try again.');
@@ -63,50 +79,62 @@ export default function SignupScreen() {
         <Text style={styles.title}>Create account</Text>
         <Text style={styles.subtitle}>Start your Kazakh learning journey</Text>
 
-        <Text style={styles.label}>Email</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="you@example.com"
-          placeholderTextColor="#4a4a6a"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          keyboardType="email-address"
-          autoComplete="email"
-        />
-
-        <Text style={styles.label}>Create Password</Text>
-        <View style={styles.inputRow}>
+        {/* Email */}
+        <View style={styles.fieldGroup}>
+          <Text style={styles.label}>Email</Text>
           <TextInput
-            style={styles.inputFlex}
-            placeholder="At least 6 characters"
+            style={styles.input}
+            placeholder="you@example.com"
             placeholderTextColor="#4a4a6a"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry={!showPassword}
-            autoComplete="new-password"
-            textContentType="newPassword"
+            value={email}
+            onChangeText={(v) => { setEmail(v); setEmailError(''); setGeneralError(''); }}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            autoComplete="email"
           />
-          <TouchableOpacity onPress={() => setShowPassword(v => !v)} style={styles.eyeBtn}>
-            <Text style={styles.eyeText}>{showPassword ? 'Hide' : 'Show'}</Text>
-          </TouchableOpacity>
+          {emailError ? <Text style={styles.fieldError}>{emailError}</Text> : null}
         </View>
 
-        <Text style={styles.label}>Confirm Password</Text>
-        <View style={styles.inputRow}>
-          <TextInput
-            style={styles.inputFlex}
-            placeholder="Repeat your password"
-            placeholderTextColor="#4a4a6a"
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-            secureTextEntry={!showConfirmPassword}
-            autoComplete="new-password"
-            textContentType="newPassword"
-          />
-          <TouchableOpacity onPress={() => setShowConfirmPassword(v => !v)} style={styles.eyeBtn}>
-            <Text style={styles.eyeText}>{showConfirmPassword ? 'Hide' : 'Show'}</Text>
-          </TouchableOpacity>
+        {/* Create Password */}
+        <View style={styles.fieldGroup}>
+          <Text style={styles.label}>Create Password</Text>
+          <View style={styles.inputRow}>
+            <TextInput
+              style={styles.inputFlex}
+              placeholder="At least 6 characters"
+              placeholderTextColor="#4a4a6a"
+              value={password}
+              onChangeText={(v) => { setPassword(v); setPasswordError(''); setGeneralError(''); }}
+              secureTextEntry={!showPassword}
+              autoComplete="new-password"
+              textContentType="newPassword"
+            />
+            <TouchableOpacity onPress={() => setShowPassword(v => !v)} style={styles.eyeBtn}>
+              <Text style={styles.eyeText}>{showPassword ? 'Hide' : 'Show'}</Text>
+            </TouchableOpacity>
+          </View>
+          {passwordError ? <Text style={styles.fieldError}>{passwordError}</Text> : null}
+        </View>
+
+        {/* Confirm Password */}
+        <View style={styles.fieldGroup}>
+          <Text style={styles.label}>Confirm Password</Text>
+          <View style={styles.inputRow}>
+            <TextInput
+              style={styles.inputFlex}
+              placeholder="Repeat your password"
+              placeholderTextColor="#4a4a6a"
+              value={confirmPassword}
+              onChangeText={(v) => { setConfirmPassword(v); setConfirmError(''); setGeneralError(''); }}
+              secureTextEntry={!showConfirmPassword}
+              autoComplete="new-password"
+              textContentType="newPassword"
+            />
+            <TouchableOpacity onPress={() => setShowConfirmPassword(v => !v)} style={styles.eyeBtn}>
+              <Text style={styles.eyeText}>{showConfirmPassword ? 'Hide' : 'Show'}</Text>
+            </TouchableOpacity>
+          </View>
+          {confirmError ? <Text style={styles.fieldError}>{confirmError}</Text> : null}
         </View>
 
         <TouchableOpacity
@@ -118,6 +146,7 @@ export default function SignupScreen() {
             ? <ActivityIndicator color="#fff" />
             : <Text style={styles.btnText}>Create Account</Text>}
         </TouchableOpacity>
+        {generalError ? <Text style={styles.generalError}>{generalError}</Text> : null}
 
         <TouchableOpacity style={styles.switchRow} onPress={() => router.push('/login' as any)}>
           <Text style={styles.switchText}>
@@ -142,16 +171,17 @@ const styles = StyleSheet.create({
   inner: { flex: 1, paddingHorizontal: 28, justifyContent: 'center' },
   title: { fontSize: 30, fontWeight: '700', color: '#fff', marginBottom: 6 },
   subtitle: { fontSize: 15, color: '#94a3b8', marginBottom: 32 },
+  fieldGroup: { marginBottom: 18 },
   label: { fontSize: 13, fontWeight: '600', color: '#a78bfa', marginBottom: 6 },
   input: {
     backgroundColor: '#1a1a2e', color: '#fff', borderRadius: 12,
     paddingHorizontal: 16, paddingVertical: 14, fontSize: 15,
-    borderWidth: 1, borderColor: '#2a2a4a', marginBottom: 18,
+    borderWidth: 1, borderColor: '#2a2a4a',
   },
   inputRow: {
     flexDirection: 'row', alignItems: 'center',
     backgroundColor: '#1a1a2e', borderRadius: 12,
-    borderWidth: 1, borderColor: '#2a2a4a', marginBottom: 18,
+    borderWidth: 1, borderColor: '#2a2a4a',
   },
   inputFlex: {
     flex: 1, color: '#fff',
@@ -159,6 +189,8 @@ const styles = StyleSheet.create({
   },
   eyeBtn: { paddingHorizontal: 14, paddingVertical: 14 },
   eyeText: { color: '#a78bfa', fontSize: 13, fontWeight: '600' },
+  fieldError: { color: '#f87171', fontSize: 12, marginTop: 4 },
+  generalError: { color: '#f87171', fontSize: 12, textAlign: 'center', marginTop: 8 },
   btn: {
     backgroundColor: '#a78bfa', borderRadius: 12,
     paddingVertical: 15, alignItems: 'center', marginTop: 4,
