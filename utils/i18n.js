@@ -9,7 +9,7 @@ export const HAS_CHOSEN_LANGUAGE_KEY = 'hasChosenLanguage';
 const translations = {
   en: {
     // ── App / Home ──────────────────────────────────────────────────────────
-    appName:          'Kazakh Learn',
+    appName:          'Qazaq Tili',
     appSubtitle:      'Қазақша үйрен',
     dayStreak:        'Day Streak',
     wordsMastered:    'words mastered',
