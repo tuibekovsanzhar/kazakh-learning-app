@@ -21,12 +21,13 @@ type ColorItem = {
   cyrillic: string;
   latin: string;
   english: string;
+  russian?: string;
   hex: string;
 };
 
 export default function ColorsScreen() {
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [selectedColor, setSelectedColor] = useState<ColorItem | null>(null);
 
   const handlePress = (item: ColorItem) => {
@@ -48,8 +49,8 @@ export default function ColorsScreen() {
         <Text style={styles.latin}>{item.latin}</Text>
       </View>
 
-      {/* English */}
-      <Text style={styles.english}>{item.english}</Text>
+      {/* Translation */}
+      <Text style={styles.english}>{language === 'ru' ? (item.russian ?? item.english) : item.english}</Text>
     </TouchableOpacity>
   );
 
@@ -111,7 +112,7 @@ export default function ColorsScreen() {
             {/* Kazakh word */}
             <Text style={styles.modalCyrillic}>{selectedColor?.cyrillic}</Text>
             <Text style={styles.modalLatin}>{selectedColor?.latin}</Text>
-            <Text style={styles.modalEnglish}>{selectedColor?.english}</Text>
+            <Text style={styles.modalEnglish}>{language === 'ru' ? (selectedColor?.russian ?? selectedColor?.english) : selectedColor?.english}</Text>
 
             {/* Close button — colored to match the selected color */}
             <TouchableOpacity

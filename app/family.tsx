@@ -7,11 +7,11 @@ import { useRouter } from 'expo-router';
 import { familyWords } from '../data/family';
 import { useLanguage } from '../utils/i18n';
 
-type WordItem = { kazakh: string; latin: string; english: string; note: string };
+type WordItem = { kazakh: string; latin: string; english: string; russian?: string; note: string };
 
 export default function FamilyScreen() {
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [selected, setSelected] = useState<WordItem | null>(null);
 
   return (
@@ -47,7 +47,7 @@ export default function FamilyScreen() {
               <Text style={styles.kazakh}>{item.kazakh}</Text>
               <Text style={styles.latin}>{item.latin}</Text>
             </View>
-            <Text style={styles.english}>{item.english}</Text>
+            <Text style={styles.english}>{language === 'ru' ? (item.russian ?? item.english) : item.english}</Text>
           </TouchableOpacity>
         )}
         contentContainerStyle={{ paddingBottom: 40 }}
@@ -58,9 +58,9 @@ export default function FamilyScreen() {
           <View style={styles.modal}>
             <Text style={styles.modalKazakh}>{selected?.kazakh}</Text>
             <Text style={styles.modalLatin}>{selected?.latin}</Text>
-            <Text style={styles.modalEnglish}>{selected?.english}</Text>
+            <Text style={styles.modalEnglish}>{language === 'ru' ? (selected?.russian ?? selected?.english) : selected?.english}</Text>
             <View style={styles.divider} />
-            <Text style={styles.noteLabel}>💡 When to use</Text>
+            <Text style={styles.noteLabel}>💡 {t('whenToUse')}</Text>
             <Text style={styles.noteText}>{selected?.note}</Text>
             <TouchableOpacity style={styles.closeBtn} onPress={() => setSelected(null)}>
               <Text style={styles.closeBtnText}>{t('gotIt')}</Text>

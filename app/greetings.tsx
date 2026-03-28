@@ -9,7 +9,7 @@ import { useLanguage } from '../utils/i18n';
 
 export default function GreetingsScreen() {
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [selected, setSelected] = useState<typeof greetings[0] | null>(null);
 
   return (
@@ -39,7 +39,7 @@ export default function GreetingsScreen() {
               <Text style={styles.rowKazakh}>{item.kazakh}</Text>
               <Text style={styles.rowLatin}>{item.latin}</Text>
             </View>
-            <Text style={styles.rowEnglish}>{item.english}</Text>
+            <Text style={styles.rowEnglish}>{language === 'ru' ? item.russian : item.english}</Text>
           </TouchableOpacity>
         )}
       />
@@ -57,11 +57,11 @@ export default function GreetingsScreen() {
               <>
                 <Text style={styles.modalKazakh}>{selected.kazakh}</Text>
                 <Text style={styles.modalLatin}>{selected.latin}</Text>
-                <Text style={styles.modalEnglish}>{selected.english}</Text>
+                <Text style={styles.modalEnglish}>{language === 'ru' ? selected.russian : selected.english}</Text>
 
                 <View style={styles.divider} />
 
-                <Text style={styles.usageLabel}>WHEN TO USE</Text>
+                <Text style={styles.usageLabel}>{t('whenToUse')}</Text>
                 <Text style={styles.usageText}>{selected.usage}</Text>
 
                 <TouchableOpacity

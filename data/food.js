@@ -19,6 +19,6 @@ export const foodWords = [
   { kazakh: "Май",       latin: "May",      english: "Butter / Oil", russian: "Масло",         note: "Used for both butter and cooking oil." },
   { kazakh: "Пісіру",    latin: "Pisıru",   english: "To cook",      russian: "Готовить",      note: "The verb for cooking or boiling." },
   { kazakh: "Жеу",       latin: "Jeu",      english: "To eat",       russian: "Есть",          note: "Core verb. 'Жейік!' means 'Let's eat!'" },
-  { kazakh: "Іші",       latin: "İshi",     english: "To drink",     russian: "Пить",          note: "Core verb for drinking." },
+  { kazakh: "Ішу",       latin: "Ishu",     english: "To drink",     russian: "Пить",          note: "Core verb for drinking." },
   { kazakh: "Дәмді",     latin: "Dämdi",    english: "Delicious",    russian: "Вкусный",       note: "Great compliment to give after a meal." },
 ];

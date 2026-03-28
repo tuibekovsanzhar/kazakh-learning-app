@@ -22,12 +22,13 @@ type NumberItem = {
   cyrillic: string;
   latin: string;
   english: string;
+  russian?: string;
   digit: string;
 };
 
 export default function NumbersScreen() {
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   // selectedNumber holds whichever number the user tapped (or null if none)
   const [selectedNumber, setSelectedNumber] = useState<NumberItem | null>(null);
@@ -54,8 +55,8 @@ export default function NumbersScreen() {
         <Text style={styles.latin}>{item.latin}</Text>
       </View>
 
-      {/* Right: English */}
-      <Text style={styles.english}>{item.english}</Text>
+      {/* Right: translation */}
+      <Text style={styles.english}>{language === 'ru' ? (item.russian ?? item.english) : item.english}</Text>
     </TouchableOpacity>
   );
 
@@ -117,7 +118,7 @@ export default function NumbersScreen() {
             {/* Kazakh word in big text */}
             <Text style={styles.modalCyrillic}>{selectedNumber?.cyrillic}</Text>
             <Text style={styles.modalLatin}>{selectedNumber?.latin}</Text>
-            <Text style={styles.modalEnglish}>{selectedNumber?.english}</Text>
+            <Text style={styles.modalEnglish}>{language === 'ru' ? (selectedNumber?.russian ?? selectedNumber?.english) : selectedNumber?.english}</Text>
 
             {/* Close button */}
             <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
