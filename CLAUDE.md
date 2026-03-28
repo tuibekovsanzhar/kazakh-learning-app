@@ -137,6 +137,13 @@ kazakh-learning-app/
 
 ## Session history
 
+### Session 12 — March 28, 2026
+- Fixed flashcard header not translating "Flashcards" → "Карточки": `flashcards` key was missing from i18n.js; added to both EN + RU sections
+- Fixed flashcard back card context labels (NOTE, WHEN TO USE, DIGIT) not translating: changed normalizeDeck() to store i18n keys ('note', 'whenToUse', 'digit') instead of hardcoded strings; render uses t(card.contextLabel)
+- Added new i18n keys: `note` (NOTE / ЗАМЕТКА), `whenToUse` (WHEN TO USE / КОГДА ИСПОЛЬЗОВАТЬ), `digit` (DIGIT / ЦИФРА)
+- Quiz header "Квиз" was already working — `quiz` key existed from previous session
+- Verified all vocab screens pass translated title (t('animals'), t('food'), etc.) to flashcards/quiz params
+
 ### Session 11 — March 28, 2026
 - Completed Russian translations for all 9 remaining screens: progress, flashcards, quiz, greetings, numbers, colors, family, food, animals
 - Added 35 new translation keys to utils/i18n.js (both EN + RU): myProgress, mastered, bestQuiz, flashcardDecks, quizBestScoresTitle, noQuizScores, deckComplete, of, cardsMastered, notMarked, iKnowThisLabel, previous, finish, nextArrow, cards, quiz, whatDoesThisMean, quizComplete, perfectScoreMsg, greatJobMsg, keepGoingMsg, personalBest, yourScore, words, takeQuiz, phrases, tapAnyToLearn, tapAnyToLearnMore

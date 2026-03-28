@@ -77,9 +77,13 @@ const translations = {
     noSoundNotice:    'This letter has no standalone sound. Tap 🔊 to hear it in a word.',
 
     // ── Flashcards ──────────────────────────────────────────────────────────
+    flashcards:    'Flashcards',
     iKnowThis:    'I know this ✓',
     stillLearning: 'Still learning',
     practiceAgain: 'Practice Again',
+    note:          'NOTE',
+    whenToUse:     'WHEN TO USE',
+    digit:         'DIGIT',
 
     // ── Quiz ────────────────────────────────────────────────────────────────
     tryAgain: 'Try Again',
@@ -205,9 +209,13 @@ const translations = {
     noSoundNotice:    'У этой буквы нет отдельного звука. Нажмите 🔊 чтобы услышать в слове.',
 
     // ── Flashcards ──────────────────────────────────────────────────────────
+    flashcards:    'Карточки',
     iKnowThis:    'Знаю ✓',
     stillLearning: 'Ещё учу',
     practiceAgain: 'Повторить',
+    note:          'ЗАМЕТКА',
+    whenToUse:     'КОГДА ИСПОЛЬЗОВАТЬ',
+    digit:         'ЦИФРА',
 
     // ── Quiz ────────────────────────────────────────────────────────────────
     tryAgain: 'Попробовать снова',

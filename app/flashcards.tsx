@@ -62,12 +62,12 @@ function normalizeDeck(deckId: string): Card[] {
     case 'greetings':
       return greetings.map((w) => ({
         kazakh: w.kazakh, latin: w.latin, english: w.english,
-        context: w.usage, contextLabel: 'WHEN TO USE',
+        context: w.usage, contextLabel: 'whenToUse',
       }));
     case 'numbers':
       return numbers.map((w) => ({
         kazakh: w.cyrillic, latin: w.latin, english: w.english,
-        context: w.digit, contextLabel: 'DIGIT',
+        context: w.digit, contextLabel: 'digit',
       }));
     case 'colors':
       return colors.map((w) => ({
@@ -77,17 +77,17 @@ function normalizeDeck(deckId: string): Card[] {
     case 'family':
       return familyWords.map((w) => ({
         kazakh: w.kazakh, latin: w.latin, english: w.english,
-        context: w.note, contextLabel: 'NOTE',
+        context: w.note, contextLabel: 'note',
       }));
     case 'food':
       return foodWords.map((w) => ({
         kazakh: w.kazakh, latin: w.latin, english: w.english,
-        context: w.note, contextLabel: 'NOTE',
+        context: w.note, contextLabel: 'note',
       }));
     case 'animals':
       return animalWords.map((w) => ({
         kazakh: w.kazakh, latin: w.latin, english: w.english,
-        context: w.note, contextLabel: 'NOTE',
+        context: w.note, contextLabel: 'note',
       }));
     default:
       return [];
@@ -377,7 +377,7 @@ export default function FlashcardsScreen() {
           {card.context != null && (
             <>
               <View style={styles.divider} />
-              <Text style={styles.usageLabel}>{card.contextLabel ?? 'NOTE'}</Text>
+              <Text style={styles.usageLabel}>{t((card.contextLabel ?? 'note') as any)}</Text>
               <Text style={styles.usageText}>{card.context}</Text>
             </>
           )}
