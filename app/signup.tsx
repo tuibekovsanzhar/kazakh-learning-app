@@ -7,9 +7,11 @@ import { useRouter } from 'expo-router';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../utils/firebase';
 import { useToast } from '../utils/useToast';
+import { useLanguage } from '../utils/i18n';
 
 export default function SignupScreen() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -35,15 +37,15 @@ export default function SignupScreen() {
     clearAllErrors();
 
     if (!email.trim() || !password || !confirmPassword) {
-      setGeneralError('Please fill in all required fields');
+      setGeneralError(t('fillAllFields'));
       return;
     }
     if (password.length < 6) {
-      setPasswordError('Password must be at least 6 characters');
+      setPasswordError(t('passwordTooShort'));
       return;
     }
     if (password !== confirmPassword) {
-      setConfirmError('Passwords do not match');
+      setConfirmError(t('passwordsNoMatch'));
       return;
     }
 
@@ -54,16 +56,16 @@ export default function SignupScreen() {
     } catch (e: any) {
       switch (e.code) {
         case 'auth/email-already-in-use':
-          setEmailError('This email is already registered. Try logging in.');
+          setEmailError(t('emailAlreadyRegistered'));
           break;
         case 'auth/invalid-email':
-          setEmailError('Please enter a valid email address');
+          setEmailError(t('invalidEmail'));
           break;
         case 'auth/weak-password':
-          setPasswordError('Password must be at least 6 characters');
+          setPasswordError(t('passwordTooShort'));
           break;
         default:
-          showToast('Sign up failed. Please try again.');
+          showToast(t('signupFailed'));
       }
     } finally {
       setLoading(false);
@@ -76,12 +78,12 @@ export default function SignupScreen() {
       {Toast}
 
       <View style={styles.inner}>
-        <Text style={styles.title}>Create account</Text>
-        <Text style={styles.subtitle}>Start your Kazakh learning journey</Text>
+        <Text style={styles.title}>{t('createAccount')}</Text>
+        <Text style={styles.subtitle}>{t('signupSubtitle')}</Text>
 
         {/* Email */}
         <View style={styles.fieldGroup}>
-          <Text style={styles.label}>Email</Text>
+          <Text style={styles.label}>{t('email')}</Text>
           <TextInput
             style={styles.input}
             placeholder="you@example.com"
@@ -97,11 +99,11 @@ export default function SignupScreen() {
 
         {/* Create Password */}
         <View style={styles.fieldGroup}>
-          <Text style={styles.label}>Create Password</Text>
+          <Text style={styles.label}>{t('createPassword')}</Text>
           <View style={styles.inputRow}>
             <TextInput
               style={styles.inputFlex}
-              placeholder="At least 6 characters"
+              placeholder="••••••"
               placeholderTextColor="#4a4a6a"
               value={password}
               onChangeText={(v) => { setPassword(v); setPasswordError(''); setGeneralError(''); }}
@@ -118,11 +120,11 @@ export default function SignupScreen() {
 
         {/* Confirm Password */}
         <View style={styles.fieldGroup}>
-          <Text style={styles.label}>Confirm Password</Text>
+          <Text style={styles.label}>{t('confirmPassword')}</Text>
           <View style={styles.inputRow}>
             <TextInput
               style={styles.inputFlex}
-              placeholder="Repeat your password"
+              placeholder="••••••"
               placeholderTextColor="#4a4a6a"
               value={confirmPassword}
               onChangeText={(v) => { setConfirmPassword(v); setConfirmError(''); setGeneralError(''); }}
@@ -144,21 +146,21 @@ export default function SignupScreen() {
         >
           {loading
             ? <ActivityIndicator color="#fff" />
-            : <Text style={styles.btnText}>Create Account</Text>}
+            : <Text style={styles.btnText}>{t('createAccountBtn')}</Text>}
         </TouchableOpacity>
         {generalError ? <Text style={styles.generalError}>{generalError}</Text> : null}
 
         <TouchableOpacity style={styles.switchRow} onPress={() => router.push('/login' as any)}>
           <Text style={styles.switchText}>
-            Already have an account?{' '}
-            <Text style={styles.switchLink}>Log In</Text>
+            {t('alreadyHaveAccount')}{' '}
+            <Text style={styles.switchLink}>{t('logInLink')}</Text>
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.privacyRow} onPress={() => router.push('/privacy-policy' as any)}>
           <Text style={styles.privacyText}>
-            By continuing you agree to our{' '}
-            <Text style={styles.privacyLink}>Privacy Policy</Text>
+            {t('byContinuing')}{' '}
+            <Text style={styles.privacyLink}>{t('privacyPolicy')}</Text>
           </Text>
         </TouchableOpacity>
       </View>

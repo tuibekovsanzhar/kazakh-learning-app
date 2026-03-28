@@ -1,3 +1,4 @@
+// TODO: i18n — translate UI strings to Russian in v1.1
 // app/numbers.tsx
 // Numbers lesson screen — same pattern as greetings.tsx
 

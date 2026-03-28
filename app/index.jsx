@@ -7,10 +7,12 @@ import { loadStreak } from '../utils/storage';
 import { signOut } from 'firebase/auth';
 import { auth } from '../utils/firebase';
 import { saveProgress, loadProgress } from '../utils/firestore';
+import { useLanguage } from '../utils/i18n';
 
 
 export default function HomeScreen() {
   const router = useRouter();
+  const { language, setLanguage, t } = useLanguage();
   const [streakCount, setStreakCount] = useState(0);
   const [totalMastered, setTotalMastered] = useState(0);
 
@@ -49,13 +51,13 @@ export default function HomeScreen() {
   };
 
   const lessons = [
-    { emoji: '🔤', label: 'Kazakh Alphabet', route: '/alphabet' },
-    { emoji: '👋', label: 'Greetings',        route: '/greetings' },
-    { emoji: '🔢', label: 'Numbers',          route: '/numbers' },
-    { emoji: '🎨', label: 'Colors',           route: '/colors' },
-    { emoji: '👨‍👩‍👧', label: 'Family',        route: '/family' },
-    { emoji: '🍽️', label: 'Food',             route: '/food' },
-    { emoji: '🐴', label: 'Animals',          route: '/animals' },
+    { emoji: '🔤', label: t('kazakhAlphabet'), route: '/alphabet' },
+    { emoji: '👋', label: t('greetings'),       route: '/greetings' },
+    { emoji: '🔢', label: t('numbers'),          route: '/numbers' },
+    { emoji: '🎨', label: t('colors'),           route: '/colors' },
+    { emoji: '👨‍👩‍👧', label: t('family'),        route: '/family' },
+    { emoji: '🍽️', label: t('food'),             route: '/food' },
+    { emoji: '🐴', label: t('animals'),          route: '/animals' },
   ];
 
   return (
@@ -64,25 +66,27 @@ export default function HomeScreen() {
 
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.appName}>Kazakh Learn</Text>
-        <Text style={styles.subtitle}>Қазақша үйрен</Text>
+        <Text style={styles.appName}>{t('appName')}</Text>
+        <Text style={styles.subtitle}>{t('appSubtitle')}</Text>
       </View>
 
       {/* Streak card */}
       <LinearGradient colors={['#1a1a3e', '#2d1b69']} style={styles.streakCard}>
         <Text style={styles.streakEmoji}>🔥</Text>
         <Text style={styles.streakNumber}>{streakCount}</Text>
-        <Text style={styles.streakLabel}>Day Streak</Text>
+        <Text style={styles.streakLabel}>{t('dayStreak')}</Text>
       </LinearGradient>
 
       {/* Words mastered summary */}
       {totalMastered > 0 && (
-        <Text style={styles.masteredSummary}>📚 {totalMastered} words mastered</Text>
+        <Text style={styles.masteredSummary}>
+          📚 {totalMastered} {t('wordsMastered')}
+        </Text>
       )}
 
       {/* Lesson buttons */}
       <ScrollView style={styles.lessonsSection} showsVerticalScrollIndicator={false}>
-        <Text style={styles.sectionTitle}>Start Learning</Text>
+        <Text style={styles.sectionTitle}>{t('startLearning')}</Text>
 
         {lessons.map(({ emoji, label, route }) => (
           <TouchableOpacity key={route} activeOpacity={0.8} onPress={() => router.push(route)}>
@@ -101,13 +105,23 @@ export default function HomeScreen() {
             <View style={[styles.emojiPill, styles.aiEmojiPill]}>
               <Text style={styles.lessonEmoji}>✨</Text>
             </View>
-            <Text style={[styles.lessonText, styles.aiButtonText]}>AI Exercises</Text>
+            <Text style={[styles.lessonText, styles.aiButtonText]}>{t('aiExercises')}</Text>
             <Text style={[styles.lessonArrow, styles.aiButtonText]}>→</Text>
           </LinearGradient>
         </TouchableOpacity>
 
+        {/* Language switcher */}
+        <TouchableOpacity
+          style={styles.langBtn}
+          onPress={() => setLanguage(language === 'en' ? 'ru' : 'en')}
+        >
+          <Text style={styles.langText}>
+            {language === 'en' ? '🇷🇺 Русский' : '🇬🇧 English'}
+          </Text>
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.signOutBtn} onPress={handleLogout}>
-          <Text style={styles.signOutText}>Sign out</Text>
+          <Text style={styles.signOutText}>{t('signOut')}</Text>
         </TouchableOpacity>
       </ScrollView>
     </LinearGradient>
@@ -199,16 +213,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#a78bfa',
   },
-  signOutBtn: {
-    alignItems: 'center',
-    paddingVertical: 16,
-    marginTop: 4,
-    marginBottom: 8,
-  },
-  signOutText: {
-    color: '#6b7280',
-    fontSize: 14,
-  },
   masteredSummary: {
     color: '#a78bfa',
     fontSize: 13,
@@ -224,5 +228,23 @@ const styles = StyleSheet.create({
   },
   aiButtonText: {
     color: '#c4b5fd',
+  },
+  langBtn: {
+    alignItems: 'center',
+    paddingVertical: 14,
+    marginTop: 4,
+  },
+  langText: {
+    color: '#6b7280',
+    fontSize: 14,
+  },
+  signOutBtn: {
+    alignItems: 'center',
+    paddingVertical: 12,
+    marginBottom: 8,
+  },
+  signOutText: {
+    color: '#6b7280',
+    fontSize: 14,
   },
 });

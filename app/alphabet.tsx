@@ -6,10 +6,13 @@ import {
 } from 'react-native';
 import { kazakhAlphabet } from '../data/alphabet';
 import { playSound } from '../utils/audio';
+import { useLanguage } from '../utils/i18n';
 
 export default function AlphabetScreen() {
   const [selectedLetter, setSelectedLetter] = useState<typeof kazakhAlphabet[0] | null>(null);
   const router = useRouter();
+  const { t } = useLanguage();
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
@@ -17,10 +20,10 @@ export default function AlphabetScreen() {
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Text style={styles.backText}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Kazakh Alphabet</Text>
+        <Text style={styles.headerTitle}>{t('kazakhAlphabet')}</Text>
         <View style={styles.headerSpacer} />
       </View>
-      <Text style={styles.subtitle}>{kazakhAlphabet.length} letters • tap any to learn</Text>
+      <Text style={styles.subtitle}>{t('lettersSubtitle')}</Text>
 
       {/* Grid */}
       <FlatList
@@ -65,7 +68,7 @@ export default function AlphabetScreen() {
 
                 {/* Pronunciation + 🔊 */}
                 <View style={styles.modalPronSection}>
-                  <Text style={styles.modalLabel}>PRONUNCIATION</Text>
+                  <Text style={styles.modalLabel}>{t('pronunciation')}</Text>
                   <View style={styles.modalPronRow}>
                     <Text style={styles.modalValue}>"{selectedLetter.pronunciation}"</Text>
                     <TouchableOpacity
@@ -86,13 +89,11 @@ export default function AlphabetScreen() {
                 {/* noSound notice for ъ and ь */}
                 {selectedLetter.noSound ? (
                   <View style={styles.noSoundBox}>
-                    <Text style={styles.noSoundText}>
-                      This letter has no standalone sound. Tap 🔊 to hear it in a word.
-                    </Text>
+                    <Text style={styles.noSoundText}>{t('noSoundNotice')}</Text>
                   </View>
                 ) : null}
 
-                {/* Example word — subtle anchor */}
+                {/* Example word */}
                 <View style={styles.modalExampleSection}>
                   <Text style={styles.modalExampleWord}>{selectedLetter.example}</Text>
                   <Text style={styles.modalExampleLatin}>{selectedLetter.exampleLatin}</Text>
@@ -106,7 +107,7 @@ export default function AlphabetScreen() {
                   style={styles.closeButton}
                   onPress={() => setSelectedLetter(null)}
                 >
-                  <Text style={styles.closeButtonText}>Got it</Text>
+                  <Text style={styles.closeButtonText}>{t('gotIt')}</Text>
                 </TouchableOpacity>
               </>
             )}

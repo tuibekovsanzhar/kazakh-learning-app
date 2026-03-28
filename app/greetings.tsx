@@ -1,3 +1,4 @@
+// TODO: i18n — translate UI strings to Russian in v1.1
 import { useState } from 'react';
 import {
   StyleSheet, Text, View, TouchableOpacity,

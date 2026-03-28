@@ -1,3 +1,4 @@
+// TODO: i18n — translate UI strings to Russian in v1.1
 // app/flashcards.tsx
 // Flashcard screen — works with any vocabulary deck.
 // The caller passes { deck, title } as route params.

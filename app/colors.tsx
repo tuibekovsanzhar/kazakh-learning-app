@@ -1,3 +1,4 @@
+// TODO: i18n — translate UI strings to Russian in v1.1
 // app/colors.tsx
 // Colors lesson screen — same pattern as numbers.tsx
 

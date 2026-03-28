@@ -12,6 +12,7 @@ import {
   SafeAreaView, StatusBar, ActivityIndicator, ScrollView, Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useLanguage } from '../utils/i18n';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -37,6 +38,7 @@ const AI_ENABLED = false;
 
 export default function AIExercisesScreen() {
   const router = useRouter();
+  const { t } = useLanguage();
 
   const [topic, setTopic] = useState('Greetings');
   const [level, setLevel] = useState('Beginner');
@@ -107,14 +109,12 @@ export default function AIExercisesScreen() {
       <SafeAreaView style={styles.container}>
         <StatusBar barStyle="light-content" />
         <TouchableOpacity style={styles.backBtn} onPress={() => router.push('/' as any)}>
-          <Text style={styles.backBtnText}>← Back</Text>
+          <Text style={styles.backBtnText}>{t('goBack')}</Text>
         </TouchableOpacity>
         <View style={styles.comingSoonContainer}>
           <Text style={styles.comingSoonEmoji}>✨</Text>
-          <Text style={styles.comingSoonTitle}>Coming Soon</Text>
-          <Text style={styles.comingSoonText}>
-            AI-powered exercises are on the way.{'\n'}Check back in the next update!
-          </Text>
+          <Text style={styles.comingSoonTitle}>{t('comingSoonTitle')}</Text>
+          <Text style={styles.comingSoonText}>{t('comingSoonText')}</Text>
         </View>
       </SafeAreaView>
     );

@@ -7,9 +7,11 @@ import { useRouter } from 'expo-router';
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../utils/firebase';
 import { useToast } from '../utils/useToast';
+import { useLanguage } from '../utils/i18n';
 
 export default function LoginScreen() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -28,7 +30,7 @@ export default function LoginScreen() {
 
   const handlePasswordReset = async () => {
     if (!resetEmail.trim()) {
-      setResetError('Please enter your email address.');
+      setResetError(t('fillAllFields'));
       return;
     }
     setResetLoading(true);
@@ -42,9 +44,9 @@ export default function LoginScreen() {
         e.code === 'auth/invalid-email' ||
         e.code === 'auth/invalid-credential'
       ) {
-        setResetError('No account found with that email address.');
+        setResetError(t('noAccountFound'));
       } else {
-        setResetError('Something went wrong. Please try again.');
+        setResetError(t('loginFailed'));
       }
     } finally {
       setResetLoading(false);
@@ -64,7 +66,7 @@ export default function LoginScreen() {
     setGeneralError('');
 
     if (!email.trim() || !password) {
-      setGeneralError('Please fill in all required fields');
+      setGeneralError(t('fillAllFields'));
       return;
     }
     setLoading(true);
@@ -74,23 +76,22 @@ export default function LoginScreen() {
     } catch (e: any) {
       switch (e.code) {
         case 'auth/user-not-found':
-          setEmailError('No account found with this email');
+          setEmailError(t('noAccountFound'));
           break;
         case 'auth/wrong-password':
-          setPasswordError('Incorrect password');
+          setPasswordError(t('incorrectPassword'));
           break;
         case 'auth/invalid-credential':
-          // Firebase SDK v9+ collapses user-not-found + wrong-password into this
-          setPasswordError('Incorrect email or password');
+          setPasswordError(t('incorrectEmailOrPassword'));
           break;
         case 'auth/invalid-email':
-          setEmailError('Please enter a valid email address');
+          setEmailError(t('invalidEmail'));
           break;
         case 'auth/too-many-requests':
-          setPasswordError('Too many failed attempts. Please try again later');
+          setPasswordError(t('tooManyAttempts'));
           break;
         default:
-          showToast('Login failed. Please try again.');
+          showToast(t('loginFailed'));
       }
     } finally {
       setLoading(false);
@@ -103,12 +104,12 @@ export default function LoginScreen() {
       {Toast}
 
       <View style={styles.inner}>
-        <Text style={styles.title}>Welcome back</Text>
-        <Text style={styles.subtitle}>Log in to continue learning Kazakh</Text>
+        <Text style={styles.title}>{t('welcomeBack')}</Text>
+        <Text style={styles.subtitle}>{t('loginSubtitle')}</Text>
 
         {/* Email */}
         <View style={styles.fieldGroup}>
-          <Text style={styles.label}>Email</Text>
+          <Text style={styles.label}>{t('email')}</Text>
           <TextInput
             style={styles.input}
             placeholder="you@example.com"
@@ -124,11 +125,11 @@ export default function LoginScreen() {
 
         {/* Password */}
         <View style={styles.fieldGroup}>
-          <Text style={styles.label}>Password</Text>
+          <Text style={styles.label}>{t('password')}</Text>
           <View style={styles.inputRow}>
             <TextInput
               style={styles.inputFlex}
-              placeholder="Your password"
+              placeholder="••••••••"
               placeholderTextColor="#4a4a6a"
               value={password}
               onChangeText={(v) => { setPassword(v); setPasswordError(''); setGeneralError(''); }}
@@ -143,7 +144,7 @@ export default function LoginScreen() {
         </View>
 
         <TouchableOpacity style={styles.forgotRow} onPress={() => setShowForgotModal(true)}>
-          <Text style={styles.forgotText}>Forgot password?</Text>
+          <Text style={styles.forgotText}>{t('forgotPassword')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -153,21 +154,21 @@ export default function LoginScreen() {
         >
           {loading
             ? <ActivityIndicator color="#fff" />
-            : <Text style={styles.btnText}>Log In</Text>}
+            : <Text style={styles.btnText}>{t('logIn')}</Text>}
         </TouchableOpacity>
         {generalError ? <Text style={styles.generalError}>{generalError}</Text> : null}
 
         <TouchableOpacity style={styles.switchRow} onPress={() => router.push('/signup')}>
           <Text style={styles.switchText}>
-            Don't have an account?{' '}
-            <Text style={styles.switchLink}>Sign Up</Text>
+            {t('noAccount')}{' '}
+            <Text style={styles.switchLink}>{t('signUpLink')}</Text>
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.privacyRow} onPress={() => router.push('/privacy-policy' as any)}>
           <Text style={styles.privacyText}>
-            By continuing you agree to our{' '}
-            <Text style={styles.privacyLink}>Privacy Policy</Text>
+            {t('byContinuing')}{' '}
+            <Text style={styles.privacyLink}>{t('privacyPolicy')}</Text>
           </Text>
         </TouchableOpacity>
       </View>
@@ -176,18 +177,14 @@ export default function LoginScreen() {
       <Modal visible={showForgotModal} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.modalBox}>
-            <Text style={styles.modalTitle}>Reset Password</Text>
-            <Text style={styles.modalSubtitle}>
-              Enter your email and we'll send you a reset link.
-            </Text>
+            <Text style={styles.modalTitle}>{t('resetPassword')}</Text>
+            <Text style={styles.modalSubtitle}>{t('resetSubtitle')}</Text>
 
             {resetSuccess ? (
               <>
-                <Text style={styles.successText}>
-                  Password reset link sent to your email. Check your inbox.
-                </Text>
+                <Text style={styles.successText}>{t('resetSent')}</Text>
                 <TouchableOpacity style={styles.modalBtn} onPress={closeForgotModal}>
-                  <Text style={styles.modalBtnText}>Done</Text>
+                  <Text style={styles.modalBtnText}>{t('done')}</Text>
                 </TouchableOpacity>
               </>
             ) : (
@@ -212,11 +209,11 @@ export default function LoginScreen() {
                 >
                   {resetLoading
                     ? <ActivityIndicator color="#fff" />
-                    : <Text style={styles.modalBtnText}>Send Reset Link</Text>}
+                    : <Text style={styles.modalBtnText}>{t('sendResetLink')}</Text>}
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.modalCancel} onPress={closeForgotModal}>
-                  <Text style={styles.modalCancelText}>Cancel</Text>
+                  <Text style={styles.modalCancelText}>{t('cancel')}</Text>
                 </TouchableOpacity>
               </>
             )}
