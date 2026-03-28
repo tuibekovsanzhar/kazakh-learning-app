@@ -137,6 +137,11 @@ kazakh-learning-app/
 
 ## Session history
 
+### Session 16 — March 28, 2026
+- Created privacy-policy.html: public web privacy policy (12 sections, clean white layout) for Google Play submission
+- Created index.html: redirects root GitHub Pages URL to privacy-policy.html
+- Privacy policy URL: https://tuibekovsanzhar.github.io/kazakh-learning-app/privacy-policy.html (live after enabling GitHub Pages on main branch in repo Settings)
+
 ### Session 15 — March 28, 2026
 - Fixed app title inconsistency: English mode showed "Kazakh Learn", Russian mode showed "Qazaq Tili" — set `appName` in the `en` section of utils/i18n.js to "Qazaq Tili" so both languages show the same title
 
