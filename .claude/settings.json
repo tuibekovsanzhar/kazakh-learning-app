@@ -1,7 +1,14 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git -C /Users/sanzhartuibekov/Desktop/kazakh-learning-app show e66035f --name-only)",
+      "Bash(git -C /Users/sanzhartuibekov/Desktop/kazakh-learning-app show e66035f --stat)",
+      "Bash(git -C /Users/sanzhartuibekov/Desktop/kazakh-learning-app ls-tree HEAD --name-only)",
+      "Bash(git -C /Users/sanzhartuibekov/Desktop/kazakh-learning-app add privacy-policy.html)",
+      "Bash(git -C:*)",
+      "Bash(git -C /Users/sanzhartuibekov/Desktop/kazakh-learning-app push)",
+      "Bash(ls /Users/sanzhartuibekov/Desktop/kazakh-learning-app/*.js /Users/sanzhartuibekov/Desktop/kazakh-learning-app/*.jsx)"
     ]
   }
 }
