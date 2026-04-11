@@ -181,6 +181,10 @@ export default function LoginScreen() {
 
       {/* ── Forgot password modal ── */}
       <Modal visible={showForgotModal} transparent animationType="fade">
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
         <View style={styles.modalOverlay}>
           <View style={styles.modalBox}>
             <Text style={styles.modalTitle}>{t('resetPassword')}</Text>
@@ -225,6 +229,7 @@ export default function LoginScreen() {
             )}
           </View>
         </View>
+        </KeyboardAvoidingView>
       </Modal>
     </SafeAreaView>
   );
