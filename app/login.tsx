@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity,
   StyleSheet, SafeAreaView, StatusBar, ActivityIndicator, Modal,
+  KeyboardAvoidingView, Platform, ScrollView,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
@@ -72,15 +73,13 @@ export default function LoginScreen() {
     setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, email.trim(), password);
-      router.replace('/');
+      router.replace('/' as any);
     } catch (e: any) {
       switch (e.code) {
-        case 'auth/user-not-found':
-          setEmailError(t('noAccountFound'));
-          break;
+        // Firebase v12 collapses wrong-password + user-not-found into invalid-credential.
+        // Keep the old codes as fallback for older SDK versions.
         case 'auth/wrong-password':
-          setPasswordError(t('incorrectPassword'));
-          break;
+        case 'auth/user-not-found':
         case 'auth/invalid-credential':
           setPasswordError(t('incorrectEmailOrPassword'));
           break;
@@ -102,8 +101,14 @@ export default function LoginScreen() {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
       {Toast}
-
-      <View style={styles.inner}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+      <ScrollView
+        contentContainerStyle={styles.inner}
+        keyboardShouldPersistTaps="handled"
+      >
         <Text style={styles.title}>{t('welcomeBack')}</Text>
         <Text style={styles.subtitle}>{t('loginSubtitle')}</Text>
 
@@ -158,7 +163,7 @@ export default function LoginScreen() {
         </TouchableOpacity>
         {generalError ? <Text style={styles.generalError}>{generalError}</Text> : null}
 
-        <TouchableOpacity style={styles.switchRow} onPress={() => router.push('/signup')}>
+        <TouchableOpacity style={styles.switchRow} onPress={() => router.push('/signup' as any)}>
           <Text style={styles.switchText}>
             {t('noAccount')}{' '}
             <Text style={styles.switchLink}>{t('signUpLink')}</Text>
@@ -171,7 +176,8 @@ export default function LoginScreen() {
             <Text style={styles.privacyLink}>{t('privacyPolicy')}</Text>
           </Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
+      </KeyboardAvoidingView>
 
       {/* ── Forgot password modal ── */}
       <Modal visible={showForgotModal} transparent animationType="fade">
@@ -226,7 +232,7 @@ export default function LoginScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0f0f1a' },
-  inner: { flex: 1, paddingHorizontal: 28, justifyContent: 'center' },
+  inner: { flexGrow: 1, paddingHorizontal: 28, justifyContent: 'center', paddingVertical: 40 },
   title: { fontSize: 30, fontWeight: '700', color: '#fff', marginBottom: 6 },
   subtitle: { fontSize: 15, color: '#94a3b8', marginBottom: 32 },
   fieldGroup: { marginBottom: 18 },
