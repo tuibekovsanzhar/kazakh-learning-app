@@ -2,7 +2,7 @@
   "expo": {
     "name": "Qazaq Tili",
     "slug": "qazaq-tili",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "scheme": "qazaqtili",
@@ -13,7 +13,7 @@
     },
     "android": {
       "package": "com.qazaqapps.qazaqtili",
-      "versionCode": 1,
+      "versionCode": 2,
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#0f0f1a"
