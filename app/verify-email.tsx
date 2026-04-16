@@ -124,6 +124,8 @@ export default function VerifyEmailScreen() {
           )}
         </TouchableOpacity>
 
+        <Text style={styles.spamHint}>{t('checkSpamHint')}</Text>
+
         {/* Escape hatch — sign out and go back to signup */}
         <TouchableOpacity style={styles.cancelRow} onPress={handleUseDifferentEmail}>
           <Text style={styles.cancelText}>{t('useDifferentEmail')}</Text>
@@ -225,6 +227,13 @@ const styles = StyleSheet.create({
   resendTextDim: {
     color: '#6b7280',
     fontSize: 15,
+  },
+  spamHint: {
+    fontSize: 12,
+    color: '#9ca3af',
+    textAlign: 'center',
+    marginBottom: 24,
+    paddingHorizontal: 8,
   },
   cancelRow: {
     padding: 12,

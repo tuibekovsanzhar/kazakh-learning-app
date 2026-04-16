@@ -150,6 +150,7 @@ const translations = {
     emailNotVerified:        'Please verify your email before logging in. Check your inbox.',
     useDifferentEmail:       'Use a different email',
     verificationCheckFailed: 'Could not check verification. Please try again.',
+    checkSpamHint:           "Don't see the email? Check your spam or junk folder.",
   },
 
   ru: {
@@ -295,6 +296,7 @@ const translations = {
     emailNotVerified:        'Сначала подтвердите email. Проверьте входящие.',
     useDifferentEmail:       'Использовать другой email',
     verificationCheckFailed: 'Не удалось проверить. Попробуйте снова.',
+    checkSpamHint:           'Не видите письмо? Проверьте папку Спам или Нежелательная почта.',
   },
 };
 

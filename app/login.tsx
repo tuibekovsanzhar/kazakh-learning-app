@@ -227,6 +227,8 @@ export default function LoginScreen() {
                     : <Text style={styles.modalBtnText}>{t('sendResetLink')}</Text>}
                 </TouchableOpacity>
 
+                <Text style={styles.spamHint}>{t('checkSpamHint')}</Text>
+
                 <TouchableOpacity style={styles.modalCancel} onPress={closeForgotModal}>
                   <Text style={styles.modalCancelText}>{t('cancel')}</Text>
                 </TouchableOpacity>
@@ -309,6 +311,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14, alignItems: 'center',
   },
   modalBtnText: { color: '#fff', fontWeight: '700', fontSize: 15 },
+  spamHint: { fontSize: 12, color: '#9ca3af', textAlign: 'center', marginTop: 16, marginBottom: 4 },
   modalCancel: { alignItems: 'center', marginTop: 14 },
   modalCancelText: { color: '#6b7280', fontSize: 14 },
 });
