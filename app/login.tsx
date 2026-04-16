@@ -5,7 +5,7 @@ import {
   KeyboardAvoidingView, Platform, ScrollView,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
+import { signInWithEmailAndPassword, sendPasswordResetEmail, signOut } from 'firebase/auth';
 import { auth } from '../utils/firebase';
 import { useToast } from '../utils/useToast';
 import { useLanguage } from '../utils/i18n';
@@ -72,7 +72,12 @@ export default function LoginScreen() {
     }
     setLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email.trim(), password);
+      const credential = await signInWithEmailAndPassword(auth, email.trim(), password);
+      if (!credential.user.emailVerified) {
+        await signOut(auth);
+        setPasswordError(t('emailNotVerified'));
+        return;
+      }
       router.replace('/' as any);
     } catch (e: any) {
       switch (e.code) {

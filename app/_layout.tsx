@@ -28,12 +28,18 @@ function AppContent({ user, checking }: { user: any; checking: boolean }) {
       segments[0] === 'signup' ||
       segments[0] === 'privacy-policy';
     const onLanguagePicker = segments[0] === 'language-picker';
+    const onVerifyScreen   = segments[0] === 'verify-email';
 
     if (!user && !onAuthScreen) {
+      // Not logged in → login (covers verify-email too — can't be there without an account)
       router.replace('/login');
-    } else if (user && onAuthScreen) {
+    } else if (user && !user.emailVerified && !onVerifyScreen) {
+      // Logged in but email not verified → always send to verify screen
+      router.replace('/verify-email');
+    } else if (user && user.emailVerified && (onAuthScreen || onVerifyScreen)) {
+      // Fully verified, no need to be on auth/verify screens → enter app
       router.replace(!hasChosenLanguage ? '/language-picker' : '/');
-    } else if (user && !hasChosenLanguage && !onLanguagePicker) {
+    } else if (user && user.emailVerified && !hasChosenLanguage && !onLanguagePicker) {
       router.replace('/language-picker');
     }
   }, [user, checking, segments, hasChosenLanguage]);
@@ -80,6 +86,7 @@ function AppContent({ user, checking }: { user: any; checking: boolean }) {
       <Tabs.Screen name="ai-exercises"    options={hiddenScreen} />
       <Tabs.Screen name="privacy-policy"  options={hiddenScreen} />
       <Tabs.Screen name="language-picker" options={hiddenScreen} />
+      <Tabs.Screen name="verify-email"    options={hiddenScreen} />
     </Tabs>
   );
 }

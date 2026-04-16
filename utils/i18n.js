@@ -137,6 +137,19 @@ const translations = {
     phrases:           'phrases',
     tapAnyToLearn:     'tap any to learn',
     tapAnyToLearnMore: 'Tap any to learn more',
+
+    // ── Email verification ───────────────────────────────────────────────────
+    verifyEmailTitle:        'Check your inbox',
+    verifyEmailSubtitle:     'We sent a verification email to',
+    verifyEmailInstructions: 'Click the link in the email to verify your account, then tap the button below.',
+    iHaveVerified:           "I've verified my email ✓",
+    resendEmail:             'Resend email',
+    resendIn:                'Resend in',
+    notVerifiedError:        'Not verified yet. Please click the link in your inbox first.',
+    verificationSent:        'Verification email sent!',
+    emailNotVerified:        'Please verify your email before logging in. Check your inbox.',
+    useDifferentEmail:       'Use a different email',
+    verificationCheckFailed: 'Could not check verification. Please try again.',
   },
 
   ru: {
@@ -269,6 +282,19 @@ const translations = {
     phrases:           'фраз',
     tapAnyToLearn:     'нажмите чтобы узнать',
     tapAnyToLearnMore: 'Нажмите чтобы узнать больше',
+
+    // ── Email verification ───────────────────────────────────────────────────
+    verifyEmailTitle:        'Проверьте почту',
+    verifyEmailSubtitle:     'Мы отправили письмо на',
+    verifyEmailInstructions: 'Перейдите по ссылке в письме, затем нажмите кнопку ниже.',
+    iHaveVerified:           'Я подтвердил(а) email ✓',
+    resendEmail:             'Отправить повторно',
+    resendIn:                'Повтор через',
+    notVerifiedError:        'Email ещё не подтверждён. Нажмите ссылку в письме.',
+    verificationSent:        'Письмо отправлено!',
+    emailNotVerified:        'Сначала подтвердите email. Проверьте входящие.',
+    useDifferentEmail:       'Использовать другой email',
+    verificationCheckFailed: 'Не удалось проверить. Попробуйте снова.',
   },
 };
 

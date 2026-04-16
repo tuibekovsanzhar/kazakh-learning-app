@@ -4,7 +4,7 @@ import {
   StyleSheet, SafeAreaView, StatusBar, ActivityIndicator,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { auth } from '../utils/firebase';
 import { useToast } from '../utils/useToast';
 import { useLanguage } from '../utils/i18n';
@@ -51,8 +51,9 @@ export default function SignupScreen() {
 
     setLoading(true);
     try {
-      await createUserWithEmailAndPassword(auth, email.trim(), password);
-      router.replace('/' as any);
+      const credential = await createUserWithEmailAndPassword(auth, email.trim(), password);
+      await sendEmailVerification(credential.user);
+      router.replace('/verify-email' as any);
     } catch (e: any) {
       switch (e.code) {
         case 'auth/email-already-in-use':
