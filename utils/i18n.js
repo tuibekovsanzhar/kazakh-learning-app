@@ -151,6 +151,22 @@ const translations = {
     useDifferentEmail:       'Use a different email',
     verificationCheckFailed: 'Could not check verification. Please try again.',
     checkSpamHint:           "Don't see the email? Check your spam or junk folder.",
+
+    // ── Settings & notifications ─────────────────────────────────────────────
+    settings:                'Settings',
+    notifications:           'Notifications',
+    dailyReminder:           'Daily reminder',
+    reminderTime:            'Reminder time',
+    notifEnabled:            'Reminders are on',
+    notifDisabled:           'Reminders are off',
+    enableNotif:             'Enable',
+    disableNotif:            'Disable',
+    saveSettings:            'Save',
+    settingsSaved:           'Settings saved!',
+    notifPermissionTitle:    'Stay on your streak! 🔥',
+    notifPermissionBody:     'Allow Qazaq Tili to send a daily reminder so you never miss a practice session.',
+    notifPermissionAllow:    'Allow notifications',
+    notifPermissionSkip:     'Not now',
   },
 
   ru: {
@@ -297,6 +313,22 @@ const translations = {
     useDifferentEmail:       'Использовать другой email',
     verificationCheckFailed: 'Не удалось проверить. Попробуйте снова.',
     checkSpamHint:           'Не видите письмо? Проверьте папку Спам или Нежелательная почта.',
+
+    // ── Settings & notifications ─────────────────────────────────────────────
+    settings:                'Настройки',
+    notifications:           'Уведомления',
+    dailyReminder:           'Ежедневное напоминание',
+    reminderTime:            'Время напоминания',
+    notifEnabled:            'Напоминания включены',
+    notifDisabled:           'Напоминания отключены',
+    enableNotif:             'Включить',
+    disableNotif:            'Отключить',
+    saveSettings:            'Сохранить',
+    settingsSaved:           'Настройки сохранены!',
+    notifPermissionTitle:    'Не теряй серию! 🔥',
+    notifPermissionBody:     'Разрешите Qazaq Tili отправлять ежедневные напоминания, чтобы не пропустить тренировку.',
+    notifPermissionAllow:    'Разрешить уведомления',
+    notifPermissionSkip:     'Не сейчас',
   },
 };
 

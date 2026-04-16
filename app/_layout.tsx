@@ -3,6 +3,7 @@ import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import { Tabs, useRouter, useSegments } from 'expo-router';
 import { onAuthStateChanged } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Notifications from 'expo-notifications';
 import { auth } from '../utils/firebase';
 import {
   LanguageProvider, useLanguage,
@@ -19,6 +20,14 @@ function AppContent({ user, checking }: { user: any; checking: boolean }) {
   const router = useRouter();
   const segments = useSegments();
   const { t, hasChosenLanguage } = useLanguage();
+
+  // When user taps a notification, bring them to the home screen
+  useEffect(() => {
+    const sub = Notifications.addNotificationResponseReceivedListener(() => {
+      router.replace('/');
+    });
+    return () => sub.remove();
+  }, []);
 
   useEffect(() => {
     if (checking) return;
@@ -87,6 +96,7 @@ function AppContent({ user, checking }: { user: any; checking: boolean }) {
       <Tabs.Screen name="privacy-policy"  options={hiddenScreen} />
       <Tabs.Screen name="language-picker" options={hiddenScreen} />
       <Tabs.Screen name="verify-email"    options={hiddenScreen} />
+      <Tabs.Screen name="settings"        options={hiddenScreen} />
     </Tabs>
   );
 }

@@ -1,13 +1,22 @@
 import { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Modal } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { loadStreak } from '../utils/storage';
 import { signOut } from 'firebase/auth';
 import { auth } from '../utils/firebase';
 import { saveProgress, loadProgress } from '../utils/firestore';
 import { useLanguage } from '../utils/i18n';
+import {
+  NOTIF_ASKED_KEY,
+  getNotificationSettings,
+  getPermissionStatus,
+  requestPermission,
+  scheduleDailyNotification,
+  setupAndroidChannel,
+} from '../utils/notifications';
 
 
 export default function HomeScreen() {
@@ -15,6 +24,42 @@ export default function HomeScreen() {
   const { language, setLanguage, t } = useLanguage();
   const [streakCount, setStreakCount] = useState(0);
   const [totalMastered, setTotalMastered] = useState(0);
+  const [showPermissionModal, setShowPermissionModal] = useState(false);
+
+  // Show permission modal once on first launch; reschedule notifications on every open
+  useEffect(() => {
+    const initNotifications = async () => {
+      const asked = await AsyncStorage.getItem(NOTIF_ASKED_KEY);
+      if (!asked) {
+        setShowPermissionModal(true);
+        return;
+      }
+      // Already decided — reschedule with fresh random message if enabled + granted
+      const settings = await getNotificationSettings();
+      if (!settings.enabled) return;
+      const status = await getPermissionStatus();
+      if (status !== 'granted') return;
+      await setupAndroidChannel();
+      await scheduleDailyNotification(settings.hour, settings.minute, language);
+    };
+    initNotifications();
+  }, []);
+
+  const handleAllowNotifications = async () => {
+    setShowPermissionModal(false);
+    await AsyncStorage.setItem(NOTIF_ASKED_KEY, 'true');
+    await setupAndroidChannel();
+    const status = await requestPermission();
+    if (status === 'granted') {
+      const settings = await getNotificationSettings();
+      await scheduleDailyNotification(settings.hour, settings.minute, language);
+    }
+  };
+
+  const handleSkipNotifications = async () => {
+    setShowPermissionModal(false);
+    await AsyncStorage.setItem(NOTIF_ASKED_KEY, 'skipped');
+  };
 
   // Load streak from local storage, then pull any cloud-saved progress
   useEffect(() => {
@@ -64,10 +109,33 @@ export default function HomeScreen() {
     <LinearGradient colors={['#0f0f1a', '#130f2a']} style={styles.container}>
       <StatusBar style="light" />
 
+      {/* Permission modal — shown once on first launch */}
+      <Modal visible={showPermissionModal} transparent animationType="fade">
+        <View style={styles.permOverlay}>
+          <View style={styles.permBox}>
+            <Text style={styles.permEmoji}>🔥</Text>
+            <Text style={styles.permTitle}>{t('notifPermissionTitle')}</Text>
+            <Text style={styles.permBody}>{t('notifPermissionBody')}</Text>
+            <TouchableOpacity style={styles.permAllowBtn} onPress={handleAllowNotifications}>
+              <Text style={styles.permAllowText}>{t('notifPermissionAllow')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.permSkipBtn} onPress={handleSkipNotifications}>
+              <Text style={styles.permSkipText}>{t('notifPermissionSkip')}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.appName}>{t('appName')}</Text>
-        <Text style={styles.subtitle}>{t('appSubtitle')}</Text>
+        <View style={styles.headerSpacer} />
+        <View style={styles.headerCenter}>
+          <Text style={styles.appName}>{t('appName')}</Text>
+          <Text style={styles.subtitle}>{t('appSubtitle')}</Text>
+        </View>
+        <TouchableOpacity style={styles.settingsBtn} onPress={() => router.push('/settings')}>
+          <Text style={styles.settingsIcon}>⚙️</Text>
+        </TouchableOpacity>
       </View>
 
       {/* Streak card */}
@@ -135,8 +203,79 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   header: {
+    flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 30,
+  },
+  headerSpacer: {
+    width: 40,
+  },
+  headerCenter: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  settingsBtn: {
+    width: 40,
+    alignItems: 'flex-end',
+  },
+  settingsIcon: {
+    fontSize: 22,
+  },
+
+  // Permission modal
+  permOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.75)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 28,
+  },
+  permBox: {
+    backgroundColor: '#1a1a2e',
+    borderRadius: 20,
+    padding: 28,
+    width: '100%',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#2a2a4a',
+  },
+  permEmoji: {
+    fontSize: 48,
+    marginBottom: 16,
+  },
+  permTitle: {
+    color: '#ffffff',
+    fontSize: 22,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginBottom: 12,
+  },
+  permBody: {
+    color: '#94a3b8',
+    fontSize: 14,
+    textAlign: 'center',
+    lineHeight: 22,
+    marginBottom: 28,
+  },
+  permAllowBtn: {
+    backgroundColor: '#a78bfa',
+    borderRadius: 12,
+    paddingVertical: 14,
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  permAllowText: {
+    color: '#ffffff',
+    fontWeight: '700',
+    fontSize: 16,
+  },
+  permSkipBtn: {
+    padding: 10,
+  },
+  permSkipText: {
+    color: '#6b7280',
+    fontSize: 14,
   },
   appName: {
     fontSize: 32,
