@@ -3,7 +3,7 @@ import { db } from './firebase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const MAX_HEARTS = 5;
-const HEART_REGEN_MS = 30 * 60 * 1000; // 30 minutes
+const HEART_REGEN_MS = 20 * 60 * 1000; // 20 minutes
 const XP_PER_CORRECT = 10;
 const XP_PER_QUIZ_BONUS = 50;
 const XP_PER_LEVEL = 500;

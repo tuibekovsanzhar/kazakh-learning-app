@@ -431,7 +431,7 @@ export default function QuizScreen() {
   };
 
   const heartsDisplay = gameStats
-    ? Array.from({ length: MAX_HEARTS }, (_, i) => (i < gameStats.hearts ? '❤️' : '🖤')).join('')
+    ? Array.from({ length: MAX_HEARTS }, (_, i) => (i < gameStats.hearts ? '❤️' : '🤍')).join('')
     : '❤️❤️❤️❤️❤️';
 
   return (
