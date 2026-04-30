@@ -6,7 +6,23 @@ export const MAX_HEARTS = 5;
 const HEART_REGEN_MS = 20 * 60 * 1000; // 20 minutes
 const XP_PER_CORRECT = 10;
 const XP_PER_QUIZ_BONUS = 50;
-const XP_PER_LEVEL = 500;
+
+// XP required to reach each level (index = level - 1)
+export const LEVEL_THRESHOLDS = [0, 500, 1000, 1500, 2500, 4000, 6000, 9000, 13000, 20000];
+
+function xpToLevel(xp) {
+  let level = 1;
+  for (let i = 0; i < LEVEL_THRESHOLDS.length; i++) {
+    if (xp >= LEVEL_THRESHOLDS[i]) level = i + 1;
+    else break;
+  }
+  return Math.min(level, LEVEL_THRESHOLDS.length);
+}
+
+/** XP threshold for the NEXT level after `currentLevel`. Returns null at max level. */
+export function nextLevelThreshold(currentLevel) {
+  return LEVEL_THRESHOLDS[currentLevel] ?? null;
+}
 
 const STORAGE_KEY = 'gameStats';
 
@@ -136,7 +152,7 @@ export function loseHeart(stats) {
 
 export function gainXP(stats, amount) {
   const newXP = stats.totalXP + amount;
-  const newLevel = Math.floor(newXP / XP_PER_LEVEL) + 1;
+  const newLevel = xpToLevel(newXP);
   return { ...stats, totalXP: newXP, level: newLevel };
 }
 

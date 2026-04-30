@@ -97,6 +97,7 @@ function AppContent({ user, checking }: { user: any; checking: boolean }) {
       <Tabs.Screen name="language-picker" options={hiddenScreen} />
       <Tabs.Screen name="verify-email"    options={hiddenScreen} />
       <Tabs.Screen name="settings"        options={hiddenScreen} />
+      <Tabs.Screen name="badges"          options={hiddenScreen} />
     </Tabs>
   );
 }

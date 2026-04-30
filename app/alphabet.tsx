@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'expo-router';
 import {
   StyleSheet, Text, View, TouchableOpacity,
@@ -7,11 +7,30 @@ import {
 import { kazakhAlphabet } from '../data/alphabet';
 import { playSound } from '../utils/audio';
 import { useLanguage } from '../utils/i18n';
+import { auth } from '../utils/firebase';
+import { checkAndUnlockAchievements } from '../utils/achievements';
+import BadgeModal from '../components/BadgeModal';
 
 export default function AlphabetScreen() {
   const [selectedLetter, setSelectedLetter] = useState<typeof kazakhAlphabet[0] | null>(null);
+  const [activeBadges, setActiveBadges] = useState<any[]>([]);
+  const [badgeIndex, setBadgeIndex] = useState(0);
+  const currentBadge = activeBadges[badgeIndex] ?? null;
   const router = useRouter();
   const { t } = useLanguage();
+
+  useEffect(() => {
+    const userId = auth.currentUser?.uid ?? null;
+    checkAndUnlockAchievements(userId, { isAlphabetOpened: true }).then((newBadges) => {
+      setActiveBadges(newBadges);
+      setBadgeIndex(0);
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleBadgeDismiss = () => {
+    if (badgeIndex + 1 < activeBadges.length) setBadgeIndex((i) => i + 1);
+    else { setActiveBadges([]); setBadgeIndex(0); }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -114,6 +133,8 @@ export default function AlphabetScreen() {
           </Pressable>
         </Pressable>
       </Modal>
+
+      <BadgeModal badge={currentBadge} onDismiss={handleBadgeDismiss} />
     </SafeAreaView>
   );
 }

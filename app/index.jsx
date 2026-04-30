@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Modal } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
@@ -9,6 +9,8 @@ import { signOut } from 'firebase/auth';
 import { auth } from '../utils/firebase';
 import { saveProgress, loadProgress } from '../utils/firestore';
 import { useLanguage } from '../utils/i18n';
+import { checkAndUnlockAchievements } from '../utils/achievements';
+import BadgeModal from '../components/BadgeModal';
 import {
   NOTIF_ASKED_KEY,
   getNotificationSettings,
@@ -25,6 +27,17 @@ export default function HomeScreen() {
   const [streakCount, setStreakCount] = useState(0);
   const [totalMastered, setTotalMastered] = useState(0);
   const [showPermissionModal, setShowPermissionModal] = useState(false);
+
+  // Badge unlock state
+  const [activeBadges, setActiveBadges] = useState([]);
+  const [badgeIndex, setBadgeIndex] = useState(0);
+  const currentBadge = activeBadges[badgeIndex] ?? null;
+  const handleBadgeDismiss = () => {
+    if (badgeIndex + 1 < activeBadges.length) setBadgeIndex((i) => i + 1);
+    else { setActiveBadges([]); setBadgeIndex(0); }
+  };
+  // Track if we've already fired the streak badge check this session
+  const streakBadgeChecked = useRef(false);
 
   // Show permission modal once on first launch; reschedule notifications on every open
   useEffect(() => {
@@ -61,9 +74,22 @@ export default function HomeScreen() {
     await AsyncStorage.setItem(NOTIF_ASKED_KEY, 'skipped');
   };
 
-  // Load streak from local storage, then pull any cloud-saved progress
+  // Load streak from local storage, then pull any cloud-saved progress + check streak badges
   useEffect(() => {
-    loadStreak().then(({ count }) => setStreakCount(count));
+    loadStreak().then(({ count }) => {
+      setStreakCount(count);
+      // Check streak achievements once per session
+      if (!streakBadgeChecked.current) {
+        streakBadgeChecked.current = true;
+        const userId = auth.currentUser?.uid ?? null;
+        checkAndUnlockAchievements(userId, { streakCount: count }).then((newBadges) => {
+          if (newBadges.length > 0) {
+            setActiveBadges(newBadges);
+            setBadgeIndex(0);
+          }
+        });
+      }
+    });
 
     const userId = auth.currentUser?.uid;
     if (userId) {
@@ -93,6 +119,18 @@ export default function HomeScreen() {
     } catch (error) {
       console.error('Logout error:', error);
     }
+  };
+
+  const handleLessonPress = (route) => {
+    // Fire-and-forget: check first_lesson badge
+    const userId = auth.currentUser?.uid ?? null;
+    checkAndUnlockAchievements(userId, { isFirstLesson: true }).then((newBadges) => {
+      if (newBadges.length > 0) {
+        setActiveBadges(newBadges);
+        setBadgeIndex(0);
+      }
+    });
+    router.push(route);
   };
 
   const lessons = [
@@ -128,7 +166,9 @@ export default function HomeScreen() {
 
       {/* Header */}
       <View style={styles.header}>
-        <View style={styles.headerSpacer} />
+        <TouchableOpacity style={styles.badgesBtn} onPress={() => router.push('/badges')}>
+          <Text style={styles.settingsIcon}>🏅</Text>
+        </TouchableOpacity>
         <View style={styles.headerCenter}>
           <Text style={styles.appName}>{t('appName')}</Text>
           <Text style={styles.subtitle}>{t('appSubtitle')}</Text>
@@ -157,7 +197,7 @@ export default function HomeScreen() {
         <Text style={styles.sectionTitle}>{t('startLearning')}</Text>
 
         {lessons.map(({ emoji, label, route }) => (
-          <TouchableOpacity key={route} activeOpacity={0.8} onPress={() => router.push(route)}>
+          <TouchableOpacity key={route} activeOpacity={0.8} onPress={() => handleLessonPress(route)}>
             <LinearGradient colors={['#1a1a2e', '#16213e']} style={styles.lessonButton}>
               <View style={styles.emojiPill}>
                 <Text style={styles.lessonEmoji}>{emoji}</Text>
@@ -192,6 +232,8 @@ export default function HomeScreen() {
           <Text style={styles.signOutText}>{t('signOut')}</Text>
         </TouchableOpacity>
       </ScrollView>
+
+      <BadgeModal badge={currentBadge} onDismiss={handleBadgeDismiss} />
     </LinearGradient>
   );
 }
@@ -207,8 +249,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 30,
   },
-  headerSpacer: {
+  badgesBtn: {
     width: 40,
+    alignItems: 'flex-start',
   },
   headerCenter: {
     flex: 1,

@@ -35,6 +35,9 @@ import {
   XP_PER_CORRECT,
   XP_PER_QUIZ_BONUS,
 } from '../utils/gameStats';
+import { checkAndUnlockAchievements } from '../utils/achievements';
+import LevelUpOverlay from '../components/LevelUpOverlay';
+import BadgeModal from '../components/BadgeModal';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -152,6 +155,16 @@ export default function QuizScreen() {
   const [sessionXP, setSessionXP] = useState(0);
   const [outOfHearts, setOutOfHearts] = useState(false);
 
+  // ── Level-up + badge state ──────────────────────────────────────────────────
+  const [showLevelUp, setShowLevelUp] = useState(false);
+  const [newLevelAchieved, setNewLevelAchieved] = useState(1);
+  // badges waiting to show (queued behind level-up screen)
+  const [badgeQueue, setBadgeQueue] = useState<any[]>([]);
+  // badges currently being shown in sequence
+  const [activeBadges, setActiveBadges] = useState<any[]>([]);
+  const [badgeIndex, setBadgeIndex] = useState(0);
+  const currentBadge = activeBadges[badgeIndex] ?? null;
+
   // ── Animations ──────────────────────────────────────────────────────────────
   const progressAnim = useRef(new Animated.Value(0)).current;
   const feedbackSlide = useRef(new Animated.Value(120)).current;  // slides up from bottom
@@ -199,24 +212,63 @@ export default function QuizScreen() {
     }
   }, [deck]);
 
-  // ── Save results when quiz ends ─────────────────────────────────────────────
+  // ── Save results, award bonus XP, check level-up, check badges ─────────────
   useEffect(() => {
-    if (!showResults) return;
+    if (!showResults || !gameStats) return;
+
+    const userId = auth.currentUser?.uid ?? null;
+
+    // Save quiz score
     saveQuizScore(deck, score, questions.length).then((updated) => {
       setSavedScores(updated);
-      const userId = auth.currentUser?.uid;
       if (userId) saveProgress(userId, { quizBestScores: { [deck]: updated.bestScore } });
     });
     updateStreak();
 
-    // Award quiz completion bonus XP
-    if (gameStats) {
-      const updated = gainXP(gameStats, XP_PER_QUIZ_BONUS);
-      setGameStats(updated);
-      setSessionXP((x) => x + XP_PER_QUIZ_BONUS);
-      saveGameStats(auth.currentUser?.uid ?? null, updated);
-    }
+    // Award bonus XP and detect level-up
+    const oldLevel = gameStats.level;
+    const withBonus = gainXP(gameStats, XP_PER_QUIZ_BONUS);
+    setGameStats(withBonus);
+    setSessionXP((x) => x + XP_PER_QUIZ_BONUS);
+    saveGameStats(userId, withBonus);
+
+    const isPerfect = score === questions.length && questions.length >= 5;
+
+    // Check achievements async — store new badges before showing overlays
+    checkAndUnlockAchievements(userId, {
+      completedQuiz: true,
+      isPerfectScore: isPerfect,
+      gameStats: withBonus,
+    }).then((newBadges) => {
+      const leveledUp = withBonus.level > oldLevel;
+      if (leveledUp) {
+        setNewLevelAchieved(withBonus.level);
+        setShowLevelUp(true);
+        // Badges show after level-up is dismissed
+        setBadgeQueue(newBadges);
+      } else {
+        // Show badges immediately
+        setActiveBadges(newBadges);
+        setBadgeIndex(0);
+      }
+    });
   }, [showResults]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleLevelUpDismiss = () => {
+    setShowLevelUp(false);
+    setActiveBadges(badgeQueue);
+    setBadgeQueue([]);
+    setBadgeIndex(0);
+  };
+
+  const handleBadgeDismiss = () => {
+    if (badgeIndex + 1 < activeBadges.length) {
+      setBadgeIndex((i) => i + 1);
+    } else {
+      setActiveBadges([]);
+      setBadgeIndex(0);
+    }
+  };
 
   // ── Animate progress bar ────────────────────────────────────────────────────
   useEffect(() => {
@@ -408,6 +460,18 @@ export default function QuizScreen() {
             <Text style={styles.backHomeText}>{t('goBack')}</Text>
           </TouchableOpacity>
         </View>
+
+        {/* Level-up overlay — appears on top of results */}
+        {showLevelUp && gameStats && (
+          <LevelUpOverlay
+            newLevel={newLevelAchieved}
+            totalXP={gameStats.totalXP}
+            onDismiss={handleLevelUpDismiss}
+          />
+        )}
+
+        {/* Badge modal — appears after level-up (or immediately if no level-up) */}
+        <BadgeModal badge={currentBadge} onDismiss={handleBadgeDismiss} />
       </SafeAreaView>
     );
   }

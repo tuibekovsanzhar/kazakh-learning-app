@@ -30,6 +30,8 @@ import {
 } from '../utils/storage';
 import { auth } from '../utils/firebase';
 import { saveProgress, loadProgress } from '../utils/firestore';
+import { checkAndUnlockAchievements } from '../utils/achievements';
+import BadgeModal from '../components/BadgeModal';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const CARD_WIDTH = SCREEN_WIDTH - 48;
@@ -116,8 +118,16 @@ export default function FlashcardsScreen() {
   const [known, setKnown] = useState<Set<number>>(new Set());
   const [stillLearning, setStillLearning] = useState<Set<number>>(new Set());
 
-  // Whether we've shown a "summary" after going through all cards
   const [showSummary, setShowSummary] = useState(false);
+
+  // Badge unlock state
+  const [activeBadges, setActiveBadges] = useState<any[]>([]);
+  const [badgeIndex, setBadgeIndex] = useState(0);
+  const currentBadge = activeBadges[badgeIndex] ?? null;
+  const handleBadgeDismiss = () => {
+    if (badgeIndex + 1 < activeBadges.length) setBadgeIndex((i) => i + 1);
+    else { setActiveBadges([]); setBadgeIndex(0); }
+  };
 
   // Load saved mastery marks from storage when the screen first opens.
   // AsyncStorage loads first (fast, local). Firestore loads second and
@@ -139,10 +149,28 @@ export default function FlashcardsScreen() {
     }
   }, [deck]);
 
-  // Update streak whenever the deck summary appears (session completed)
+  // On deck complete: update streak + check flashcard achievements
   useEffect(() => {
-    if (showSummary) updateStreak();
-  }, [showSummary]);
+    if (!showSummary) return;
+    updateStreak();
+
+    const userId = auth.currentUser?.uid ?? null;
+    loadProgress(userId ?? '').then((data) => {
+      const totalMastered = data?.masteredCards
+        ? Object.values(data.masteredCards).reduce(
+            (sum: number, arr: any) => sum + (Array.isArray(arr) ? arr.length : 0),
+            0
+          )
+        : 0;
+      checkAndUnlockAchievements(userId, {
+        isFirstFlashcard: true,
+        totalMastered: totalMastered as number,
+      }).then((newBadges) => {
+        setActiveBadges(newBadges);
+        setBadgeIndex(0);
+      });
+    });
+  }, [showSummary]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Animated value: 0 = front, 180 = back
   const flipAnim = useRef(new Animated.Value(0)).current;
@@ -318,6 +346,7 @@ export default function FlashcardsScreen() {
             <Text style={styles.backHomeText}>{t('goBack')}</Text>
           </TouchableOpacity>
         </View>
+        <BadgeModal badge={currentBadge} onDismiss={handleBadgeDismiss} />
       </SafeAreaView>
     );
   }
