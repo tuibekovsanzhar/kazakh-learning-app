@@ -168,6 +168,11 @@ const translations = {
     notifPermissionAllow:    'Allow notifications',
     notifPermissionSkip:     'Not now',
 
+    // ── XP / Level card ──────────────────────────────────────────────────────
+    levelLabel:   'Level',
+    xpToLevel:    'XP to Level',
+    maxLevel:     'Max Level!',
+
     // ── Achievements / Badges ────────────────────────────────────────────────
     badges:             'Badges',
     achievementUnlocked: 'Achievement Unlocked! 🏆',
@@ -386,6 +391,11 @@ const translations = {
     notifPermissionBody:     'Разрешите Qazaq Tili отправлять ежедневные напоминания, чтобы не пропустить тренировку.',
     notifPermissionAllow:    'Разрешить уведомления',
     notifPermissionSkip:     'Не сейчас',
+
+    // ── XP / Level card ──────────────────────────────────────────────────────
+    levelLabel:   'Уровень',
+    xpToLevel:    'XP до уровня',
+    maxLevel:     'Макс. уровень!',
 
     // ── Achievements / Badges ────────────────────────────────────────────────
     badges:             'Достижения',

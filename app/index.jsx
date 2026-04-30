@@ -11,6 +11,7 @@ import { saveProgress, loadProgress } from '../utils/firestore';
 import { useLanguage } from '../utils/i18n';
 import { checkAndUnlockAchievements } from '../utils/achievements';
 import BadgeModal from '../components/BadgeModal';
+import { loadGameStats, LEVEL_THRESHOLDS, nextLevelThreshold } from '../utils/gameStats';
 import {
   NOTIF_ASKED_KEY,
   getNotificationSettings,
@@ -27,6 +28,7 @@ export default function HomeScreen() {
   const [streakCount, setStreakCount] = useState(0);
   const [totalMastered, setTotalMastered] = useState(0);
   const [showPermissionModal, setShowPermissionModal] = useState(false);
+  const [gameStats, setGameStats] = useState(null);
 
   // Badge unlock state
   const [activeBadges, setActiveBadges] = useState([]);
@@ -113,6 +115,12 @@ export default function HomeScreen() {
     }
   }, [streakCount]);
 
+  // Load XP / level from Firestore
+  useEffect(() => {
+    const userId = auth.currentUser?.uid ?? null;
+    loadGameStats(userId).then(setGameStats);
+  }, []);
+
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -184,6 +192,34 @@ export default function HomeScreen() {
         <Text style={styles.streakNumber}>{streakCount}</Text>
         <Text style={styles.streakLabel}>{t('dayStreak')}</Text>
       </LinearGradient>
+
+      {/* XP / Level card */}
+      {gameStats && (() => {
+        const { totalXP, level } = gameStats;
+        const currentLevelXP = LEVEL_THRESHOLDS[level - 1] ?? 0;
+        const nextLevelXP = nextLevelThreshold(level);
+        const isMaxLevel = nextLevelXP === null;
+        const progress = isMaxLevel
+          ? 1
+          : (totalXP - currentLevelXP) / (nextLevelXP - currentLevelXP);
+
+        return (
+          <View style={styles.xpCard}>
+            <View style={styles.xpRow}>
+              <Text style={styles.xpLevelText}>⭐ {t('levelLabel')} {level}</Text>
+              <Text style={styles.xpTotalText}>{totalXP} XP</Text>
+            </View>
+            <View style={styles.xpBarTrack}>
+              <View style={[styles.xpBarFill, { width: `${Math.min(progress * 100, 100)}%` }]} />
+            </View>
+            <Text style={styles.xpSubtext}>
+              {isMaxLevel
+                ? t('maxLevel')
+                : `${totalXP} / ${nextLevelXP} ${t('xpToLevel')} ${level + 1}`}
+            </Text>
+          </View>
+        );
+      })()}
 
       {/* Words mastered summary */}
       {totalMastered > 0 && (
@@ -394,6 +430,48 @@ const styles = StyleSheet.create({
   lessonArrow: {
     fontSize: 18,
     color: '#a78bfa',
+  },
+  xpCard: {
+    backgroundColor: '#1a1a2e',
+    borderRadius: 16,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#2a2a4a',
+  },
+  xpRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  xpLevelText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  xpTotalText: {
+    color: '#f59e0b',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  xpBarTrack: {
+    height: 8,
+    backgroundColor: '#2a2a4a',
+    borderRadius: 4,
+    overflow: 'hidden',
+    marginBottom: 8,
+  },
+  xpBarFill: {
+    height: '100%',
+    backgroundColor: '#a78bfa',
+    borderRadius: 4,
+  },
+  xpSubtext: {
+    color: '#6b7280',
+    fontSize: 12,
+    textAlign: 'center',
   },
   masteredSummary: {
     color: '#a78bfa',
