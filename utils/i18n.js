@@ -167,6 +167,21 @@ const translations = {
     notifPermissionBody:     'Allow Qazaq Tili to send a daily reminder so you never miss a practice session.',
     notifPermissionAllow:    'Allow notifications',
     notifPermissionSkip:     'Not now',
+
+    // ── Hearts / XP system ───────────────────────────────────────────────────
+    heartsLabel:         'Hearts',
+    outOfHearts:         "You're out of hearts!",
+    outOfHeartsSubtext:  'Come back when your hearts refill, or practice flashcards instead.',
+    nextHeartIn:         'Next heart in',
+    practiceFlashcards:  'Practice Flashcards',
+    waitForHearts:       'Wait',
+    correct:             'Correct!',
+    incorrect:           'Incorrect',
+    correctAnswer:       'Correct answer:',
+    xpGained:            'XP',
+    quizBonusXP:         '+50 XP bonus for completing the quiz!',
+    level:               'Level',
+    totalXP:             'Total XP',
   },
 
   ru: {
@@ -329,6 +344,21 @@ const translations = {
     notifPermissionBody:     'Разрешите Qazaq Tili отправлять ежедневные напоминания, чтобы не пропустить тренировку.',
     notifPermissionAllow:    'Разрешить уведомления',
     notifPermissionSkip:     'Не сейчас',
+
+    // ── Hearts / XP system ───────────────────────────────────────────────────
+    heartsLabel:         'Жизни',
+    outOfHearts:         'Жизни закончились!',
+    outOfHeartsSubtext:  'Возвращайтесь когда жизни пополнятся, или потренируйтесь на карточках.',
+    nextHeartIn:         'Следующая жизнь через',
+    practiceFlashcards:  'Карточки',
+    waitForHearts:       'Подождать',
+    correct:             'Правильно!',
+    incorrect:           'Неправильно',
+    correctAnswer:       'Правильный ответ:',
+    xpGained:            'XP',
+    quizBonusXP:         '+50 XP бонус за завершение квиза!',
+    level:               'Уровень',
+    totalXP:             'Всего XP',
   },
 };
 
