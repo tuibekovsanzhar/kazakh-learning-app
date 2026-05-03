@@ -152,9 +152,11 @@ export default function FlashcardsScreen() {
   // On deck complete: update streak + check flashcard achievements
   useEffect(() => {
     if (!showSummary) return;
-    updateStreak();
-
     const userId = auth.currentUser?.uid ?? null;
+    updateStreak().then((result) => {
+      if (userId) saveProgress(userId, { streakCount: result.count });
+    });
+
     loadProgress(userId ?? '').then((data) => {
       const totalMastered = data?.masteredCards
         ? Object.values(data.masteredCards).reduce(

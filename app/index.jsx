@@ -107,8 +107,11 @@ export default function HomeScreen() {
     }
   }, []);
 
-  // Sync streak to Firestore whenever it changes
+  // Sync streak to Firestore whenever it changes.
+  // Guard against the initial render value of 0 — that would overwrite
+  // a real saved streak in Firestore before AsyncStorage has loaded.
   useEffect(() => {
+    if (streakCount === 0) return;
     const userId = auth.currentUser?.uid;
     if (userId) {
       saveProgress(userId, { streakCount });

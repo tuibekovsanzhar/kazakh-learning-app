@@ -223,7 +223,11 @@ export default function QuizScreen() {
       setSavedScores(updated);
       if (userId) saveProgress(userId, { quizBestScores: { [deck]: updated.bestScore } });
     });
-    updateStreak();
+    // Await the result so we can sync the updated streak count to Firestore
+    // directly — index.jsx's state may not reflect this session's increment.
+    updateStreak().then((result) => {
+      if (userId) saveProgress(userId, { streakCount: result.count });
+    });
 
     // Award bonus XP and detect level-up
     const oldLevel = gameStats.level;
