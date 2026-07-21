@@ -38,6 +38,7 @@ import {
 import { checkAndUnlockAchievements } from '../utils/achievements';
 import LevelUpOverlay from '../components/LevelUpOverlay';
 import BadgeModal from '../components/BadgeModal';
+import { useToast } from '../utils/useToast';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -176,6 +177,8 @@ export default function QuizScreen() {
   const [lastCorrect, setLastCorrect] = useState(false);
   const [showXPFloat, setShowXPFloat] = useState(false);
 
+  const { showToast, Toast } = useToast();
+
   const countdown = useHeartCountdown(gameStats);
 
   // ── Load game stats on mount ────────────────────────────────────────────────
@@ -226,7 +229,11 @@ export default function QuizScreen() {
     // Await the result so we can sync the updated streak count to Firestore
     // directly — index.jsx's state may not reflect this session's increment.
     updateStreak().then((result) => {
-      if (userId) saveProgress(userId, { streakCount: result.count });
+      if (userId) {
+        saveProgress(userId, { streakCount: result.count, streakFreezes: result.freezesAvailable });
+      }
+      if (result.freezeUsed) showToast(t('freezeUsedToast'));
+      else if (result.freezeEarned > 0) showToast(t('freezeEarnedToast'));
     });
 
     // Award bonus XP and detect level-up
@@ -425,6 +432,7 @@ export default function QuizScreen() {
     return (
       <SafeAreaView style={styles.container}>
         <StatusBar barStyle="light-content" />
+        {Toast}
         <View style={styles.resultsContainer}>
           <Text style={styles.resultsEmoji}>{perfect ? '🏆' : good ? '🎉' : '📚'}</Text>
           <Text style={styles.resultsTitle}>{t('quizComplete')}</Text>

@@ -32,6 +32,7 @@ import { auth } from '../utils/firebase';
 import { saveProgress, loadProgress } from '../utils/firestore';
 import { checkAndUnlockAchievements } from '../utils/achievements';
 import BadgeModal from '../components/BadgeModal';
+import { useToast } from '../utils/useToast';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const CARD_WIDTH = SCREEN_WIDTH - 48;
@@ -120,6 +121,8 @@ export default function FlashcardsScreen() {
 
   const [showSummary, setShowSummary] = useState(false);
 
+  const { showToast, Toast } = useToast();
+
   // Badge unlock state
   const [activeBadges, setActiveBadges] = useState<any[]>([]);
   const [badgeIndex, setBadgeIndex] = useState(0);
@@ -154,7 +157,11 @@ export default function FlashcardsScreen() {
     if (!showSummary) return;
     const userId = auth.currentUser?.uid ?? null;
     updateStreak().then((result) => {
-      if (userId) saveProgress(userId, { streakCount: result.count });
+      if (userId) {
+        saveProgress(userId, { streakCount: result.count, streakFreezes: result.freezesAvailable });
+      }
+      if (result.freezeUsed) showToast(t('freezeUsedToast'));
+      else if (result.freezeEarned > 0) showToast(t('freezeEarnedToast'));
     });
 
     loadProgress(userId ?? '').then((data) => {
@@ -309,6 +316,7 @@ export default function FlashcardsScreen() {
     return (
       <SafeAreaView style={styles.container}>
         <StatusBar barStyle="light-content" />
+        {Toast}
         <View style={styles.summaryContainer}>
           <Text style={styles.summaryEmoji}>🎉</Text>
           <Text style={styles.summaryTitle}>{t('deckComplete')}</Text>

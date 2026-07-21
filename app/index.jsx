@@ -26,6 +26,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const { language, setLanguage, t } = useLanguage();
   const [streakCount, setStreakCount] = useState(0);
+  const [freezesAvailable, setFreezesAvailable] = useState(0);
   const [totalMastered, setTotalMastered] = useState(0);
   const [showPermissionModal, setShowPermissionModal] = useState(false);
   const [gameStats, setGameStats] = useState(null);
@@ -78,8 +79,9 @@ export default function HomeScreen() {
 
   // Load streak from local storage, then pull any cloud-saved progress + check streak badges
   useEffect(() => {
-    loadStreak().then(({ count }) => {
+    loadStreak().then(({ count, freezesAvailable }) => {
       setStreakCount(count);
+      setFreezesAvailable(freezesAvailable);
       // Check streak achievements once per session
       if (!streakBadgeChecked.current) {
         streakBadgeChecked.current = true;
@@ -97,6 +99,7 @@ export default function HomeScreen() {
     if (userId) {
       loadProgress(userId).then((data) => {
         if (data?.streakCount != null) setStreakCount(data.streakCount);
+        if (data?.streakFreezes != null) setFreezesAvailable(data.streakFreezes);
         if (data?.masteredCards) {
           const total = Object.values(data.masteredCards).reduce(
             (sum, arr) => sum + (Array.isArray(arr) ? arr.length : 0), 0
@@ -194,6 +197,9 @@ export default function HomeScreen() {
         <Text style={styles.streakEmoji}>🔥</Text>
         <Text style={styles.streakNumber}>{streakCount}</Text>
         <Text style={styles.streakLabel}>{t('dayStreak')}</Text>
+        {freezesAvailable > 0 && (
+          <Text style={styles.freezeLabel}>🧊 {freezesAvailable} {t('streakFreezes')}</Text>
+        )}
       </LinearGradient>
 
       {/* XP / Level card */}
@@ -392,6 +398,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#c4b5fd',
     marginTop: 4,
+  },
+  freezeLabel: {
+    fontSize: 12,
+    color: '#93c5fd',
+    marginTop: 8,
   },
   lessonsSection: {
     flex: 1,

@@ -173,6 +173,11 @@ const translations = {
     xpToLevel:    'XP to Level',
     maxLevel:     'Max Level!',
 
+    // ── Streak Freeze ────────────────────────────────────────────────────────
+    streakFreezes:       'Streak Freezes',
+    freezeUsedToast:     '🧊 Streak Freeze used — your streak is safe!',
+    freezeEarnedToast:   '🧊 You earned a Streak Freeze!',
+
     // ── Achievements / Badges ────────────────────────────────────────────────
     badges:             'Badges',
     achievementUnlocked: 'Achievement Unlocked! 🏆',
@@ -396,6 +401,11 @@ const translations = {
     levelLabel:   'Уровень',
     xpToLevel:    'XP до уровня',
     maxLevel:     'Макс. уровень!',
+
+    // ── Streak Freeze ────────────────────────────────────────────────────────
+    streakFreezes:       'Заморозки серии',
+    freezeUsedToast:     '🧊 Заморозка использована — ваша серия в безопасности!',
+    freezeEarnedToast:   '🧊 Вы получили заморозку серии!',
 
     // ── Achievements / Badges ────────────────────────────────────────────────
     badges:             'Достижения',

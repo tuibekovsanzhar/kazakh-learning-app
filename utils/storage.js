@@ -9,6 +9,9 @@ const FLASHCARD_KEY = (deckId) => `flashcard_progress_${deckId}`;
 const QUIZ_KEY      = (deckId) => `quiz_scores_${deckId}`;
 const STREAK_KEY    = 'streak';
 
+export const MAX_STREAK_FREEZES = 2;
+const FREEZE_MILESTONE_INTERVAL = 7; // earn 1 freeze every 7-day streak milestone
+
 // ─── Date helpers ─────────────────────────────────────────────────────────────
 
 // Returns today's date as a 'YYYY-MM-DD' string (local time)
@@ -20,14 +23,11 @@ function getToday() {
   return `${yyyy}-${mm}-${dd}`;
 }
 
-// Returns yesterday's date as a 'YYYY-MM-DD' string
-function getYesterday() {
-  const d = new Date();
-  d.setDate(d.getDate() - 1);
-  const yyyy = d.getFullYear();
-  const mm   = String(d.getMonth() + 1).padStart(2, '0');
-  const dd   = String(d.getDate()).padStart(2, '0');
-  return `${yyyy}-${mm}-${dd}`;
+// Whole calendar days between two 'YYYY-MM-DD' strings (b - a).
+function daysBetween(dateStrA, dateStrB) {
+  const a = new Date(`${dateStrA}T00:00:00`);
+  const b = new Date(`${dateStrB}T00:00:00`);
+  return Math.round((b - a) / (1000 * 60 * 60 * 24));
 }
 
 // ─── Flashcard Progress ───────────────────────────────────────────────────────
@@ -100,15 +100,17 @@ export async function loadQuizScores(deckId) {
 
 /**
  * Load the current streak data.
- * Returns { count, lastActiveDate } — count is 0 and date is null if no streak saved.
+ * Returns { count, lastActiveDate, freezesAvailable, freezeMilestone } —
+ * count/freezes are 0 and date is null if no streak saved yet.
  */
 export async function loadStreak() {
+  const defaults = { count: 0, lastActiveDate: null, freezesAvailable: 0, freezeMilestone: 0 };
   try {
     const raw = await AsyncStorage.getItem(STREAK_KEY);
-    if (!raw) return { count: 0, lastActiveDate: null };
-    return JSON.parse(raw);
+    if (!raw) return defaults;
+    return { ...defaults, ...JSON.parse(raw) };
   } catch {
-    return { count: 0, lastActiveDate: null };
+    return defaults;
   }
 }
 
@@ -116,22 +118,61 @@ export async function loadStreak() {
  * Call this when the user completes a quiz or flashcard session.
  * - Same day as last active → no change (streak already counted today)
  * - Consecutive day → streak + 1
- * - Gap of 2+ days → reset to 1
- * Returns the updated { count, lastActiveDate }.
+ * - Gap of missed days → each missed day consumes one streak freeze (if held);
+ *   if freezes don't cover the whole gap, they're used up anyway and streak resets to 1
+ * - Every FREEZE_MILESTONE_INTERVAL-day milestone reached awards 1 freeze, up to MAX_STREAK_FREEZES held
+ *
+ * Returns the updated { count, lastActiveDate, freezesAvailable, freezeMilestone }
+ * plus { freezeUsed, freezesConsumed, freezeEarned } describing what happened this call.
  */
 export async function updateStreak() {
-  const today     = getToday();
-  const yesterday = getYesterday();
-  const streak    = await loadStreak();
+  const today  = getToday();
+  const streak = await loadStreak();
 
   // Already counted today — return unchanged
-  if (streak.lastActiveDate === today) return streak;
+  if (streak.lastActiveDate === today) {
+    return { ...streak, freezeUsed: false, freezesConsumed: 0, freezeEarned: 0 };
+  }
 
-  const newCount = streak.lastActiveDate === yesterday
-    ? (streak.count || 0) + 1  // consecutive day
-    : 1;                        // gap or first time
+  let newCount;
+  let freezeUsed = false;
+  let freezesConsumed = 0;
+  let freezesAvailable = streak.freezesAvailable;
 
-  const updated = { count: newCount, lastActiveDate: today };
+  if (!streak.lastActiveDate) {
+    newCount = 1; // first ever session
+  } else {
+    const missedDays = daysBetween(streak.lastActiveDate, today) - 1;
+
+    if (missedDays <= 0) {
+      newCount = streak.count + 1; // consecutive day
+    } else if (missedDays <= freezesAvailable) {
+      // Freezes cover every missed day — streak survives intact
+      freezesConsumed = missedDays;
+      freezesAvailable -= freezesConsumed;
+      freezeUsed = true;
+      newCount = streak.count + 1;
+    } else {
+      // Not enough freezes to cover the gap — they still get used up, streak resets
+      freezesConsumed = freezesAvailable;
+      freezeUsed = freezesConsumed > 0;
+      freezesAvailable = 0;
+      newCount = 1;
+    }
+  }
+
+  // Award a freeze at every milestone crossed, capped at MAX_STREAK_FREEZES held
+  let freezeMilestone = streak.freezeMilestone;
+  let freezeEarned = 0;
+  while (newCount >= freezeMilestone + FREEZE_MILESTONE_INTERVAL) {
+    freezeMilestone += FREEZE_MILESTONE_INTERVAL;
+    if (freezesAvailable < MAX_STREAK_FREEZES) {
+      freezesAvailable += 1;
+      freezeEarned += 1;
+    }
+  }
+
+  const updated = { count: newCount, lastActiveDate: today, freezesAvailable, freezeMilestone };
   await AsyncStorage.setItem(STREAK_KEY, JSON.stringify(updated));
-  return updated;
+  return { ...updated, freezeUsed, freezesConsumed, freezeEarned };
 }
