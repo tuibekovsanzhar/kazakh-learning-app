@@ -2,6 +2,7 @@ export const greetings = [
   {
     kazakh: 'Сәлем',
     latin: 'Sälem',
+    audioFile: 'vocabulary/greetings/salem.mp3',
     english: 'Hello (informal)',
     russian: 'Привет',
     usage: 'Used with friends and people your age or younger.',
@@ -9,6 +10,7 @@ export const greetings = [
   {
     kazakh: 'Сәлеметсіз бе',
     latin: 'Sälemetsiz be',
+    audioFile: 'vocabulary/greetings/salemetsiz_be.mp3',
     english: 'Hello (formal)',
     russian: 'Здравствуйте',
     usage: 'Used with elders, strangers, or in professional settings.',
@@ -16,6 +18,7 @@ export const greetings = [
   {
     kazakh: 'Қалайсыз?',
     latin: 'Qalaysyz?',
+    audioFile: 'vocabulary/greetings/qalaysyz.mp3',
     english: 'How are you? (formal)',
     russian: 'Как вы?',
     usage: 'Formal way to ask how someone is doing.',
@@ -23,6 +26,7 @@ export const greetings = [
   {
     kazakh: 'Қалайсың?',
     latin: 'Qalaysyń?',
+    audioFile: 'vocabulary/greetings/qalaysyn.mp3',
     english: 'How are you? (informal)',
     russian: 'Как ты?',
     usage: 'Casual — used with friends and family.',
@@ -30,6 +34,7 @@ export const greetings = [
   {
     kazakh: 'Жақсымын',
     latin: 'Jaqsymyn',
+    audioFile: 'vocabulary/greetings/jaqsymyn.mp3',
     english: 'I am fine',
     russian: 'Я хорошо',
     usage: 'Standard response when someone asks how you are.',
@@ -37,6 +42,7 @@ export const greetings = [
   {
     kazakh: 'Рақмет',
     latin: 'Raqmet',
+    audioFile: 'vocabulary/greetings/rahmet.mp3',
     english: 'Thank you',
     russian: 'Спасибо',
     usage: 'The most common way to say thank you in Kazakh.',
@@ -44,6 +50,7 @@ export const greetings = [
   {
     kazakh: 'Өте жақсы',
     latin: 'Öte jaqsy',
+    audioFile: 'vocabulary/greetings/ote_jaqsy.mp3',
     english: 'Very good',
     russian: 'Очень хорошо',
     usage: 'Used to express that something is very good or you are doing great.',
@@ -51,6 +58,7 @@ export const greetings = [
   {
     kazakh: 'Иә',
     latin: 'Iä',
+    audioFile: 'vocabulary/greetings/ia.mp3',
     english: 'Yes',
     russian: 'Да',
     usage: 'Standard yes.',
@@ -58,6 +66,7 @@ export const greetings = [
   {
     kazakh: 'Жоқ',
     latin: 'Joq',
+    audioFile: 'vocabulary/greetings/joq.mp3',
     english: 'No',
     russian: 'Нет',
     usage: 'Standard no.',
@@ -65,6 +74,7 @@ export const greetings = [
   {
     kazakh: 'Кешіріңіз',
     latin: 'Keshiriñiz',
+    audioFile: 'vocabulary/greetings/keshiriniz.mp3',
     english: 'Excuse me / Sorry (formal)',
     russian: 'Извините',
     usage: 'Used to apologize or get someone\'s attention politely.',
@@ -72,6 +82,7 @@ export const greetings = [
   {
     kazakh: 'Сау болыңыз',
     latin: 'Sau bolıńyz',
+    audioFile: 'vocabulary/greetings/sau_bolinyz.mp3',
     english: 'Goodbye (formal)',
     russian: 'До свидания',
     usage: 'Formal farewell, literally means "be healthy".',
@@ -79,6 +90,7 @@ export const greetings = [
   {
     kazakh: 'Сау бол',
     latin: 'Sau bol',
+    audioFile: 'vocabulary/greetings/sau_bol.mp3',
     english: 'Goodbye (informal)',
     russian: 'Пока',
     usage: 'Casual farewell used with friends.',
@@ -86,6 +98,7 @@ export const greetings = [
   {
     kazakh: 'Қайырлы таң',
     latin: 'Qayyrly tań',
+    audioFile: 'vocabulary/greetings/qayyrly_tan.mp3',
     english: 'Good morning',
     russian: 'Доброе утро',
     usage: 'Morning greeting.',
@@ -93,6 +106,7 @@ export const greetings = [
   {
     kazakh: 'Қайырлы күн',
     latin: 'Qayyrly kün',
+    audioFile: 'vocabulary/greetings/qayyrly_kun.mp3',
     english: 'Good afternoon',
     russian: 'Добрый день',
     usage: 'Afternoon greeting.',
@@ -100,6 +114,7 @@ export const greetings = [
   {
     kazakh: 'Қайырлы кеш',
     latin: 'Qayyrly kesh',
+    audioFile: 'vocabulary/greetings/qayyrly_kesh.mp3',
     english: 'Good evening',
     russian: 'Добрый вечер',
     usage: 'Evening greeting.',
@@ -107,6 +122,7 @@ export const greetings = [
   {
     kazakh: 'Қайырлы түн',
     latin: 'Qayyrly tün',
+    audioFile: 'vocabulary/greetings/qayyrly_tun.mp3',
     english: 'Good night',
     russian: 'Спокойной ночи',
     usage: 'Said when going to sleep or saying goodbye late at night.',
@@ -114,6 +130,7 @@ export const greetings = [
   {
     kazakh: 'Атың кім?',
     latin: 'Atıń kim?',
+    audioFile: 'vocabulary/greetings/atin_kim.mp3',
     english: 'What is your name? (informal)',
     russian: 'Как тебя зовут?',
     usage: 'Casual way to ask someone\'s name.',
@@ -121,6 +138,7 @@ export const greetings = [
   {
     kazakh: 'Менің атым...',
     latin: 'Meniń atym...',
+    audioFile: 'vocabulary/greetings/menin_atym.mp3',
     english: 'My name is...',
     russian: 'Меня зовут...',
     usage: 'How you introduce yourself. Add your name after.',
@@ -128,6 +146,7 @@ export const greetings = [
   {
     kazakh: 'Танысқаныма қуаныштымын',
     latin: 'Tanysqanyma quanyshtymyn',
+    audioFile: 'vocabulary/greetings/tanysqanyma_quanyshtymyn.mp3',
     english: 'Nice to meet you',
     russian: 'Приятно познакомиться',
     usage: 'Said when meeting someone for the first time.',
@@ -135,6 +154,7 @@ export const greetings = [
   {
     kazakh: 'Жарайды',
     latin: 'Jaraydy',
+    audioFile: 'vocabulary/greetings/jaraydy.mp3',
     english: 'Okay / Alright',
     russian: 'Хорошо/Ладно',
     usage: 'Used to agree or acknowledge something.',

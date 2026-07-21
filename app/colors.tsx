@@ -15,6 +15,7 @@ import {
 import { useRouter } from 'expo-router';
 import { colors } from '../data/colors';
 import { useLanguage } from '../utils/i18n';
+import { playVocabSound } from '../utils/vocabAudio';
 
 type ColorItem = {
   id: string;
@@ -23,6 +24,7 @@ type ColorItem = {
   english: string;
   russian?: string;
   hex: string;
+  audioFile?: string;
 };
 
 export default function ColorsScreen() {
@@ -40,17 +42,17 @@ export default function ColorsScreen() {
 
   const renderItem = ({ item }: { item: ColorItem }) => (
     <TouchableOpacity style={styles.row} onPress={() => handlePress(item)}>
-      {/* Color swatch */}
       <View style={[styles.swatch, { backgroundColor: item.hex }]} />
-
-      {/* Kazakh word */}
       <View style={styles.kazakhContainer}>
         <Text style={styles.cyrillic}>{item.cyrillic}</Text>
         <Text style={styles.latin}>{item.latin}</Text>
       </View>
-
-      {/* Translation */}
       <Text style={styles.english}>{language === 'ru' ? (item.russian ?? item.english) : item.english}</Text>
+      {item.audioFile && (
+        <TouchableOpacity onPress={() => playVocabSound(item.audioFile!)} style={styles.soundBtn}>
+          <Text style={styles.soundBtnText}>🔊</Text>
+        </TouchableOpacity>
+      )}
     </TouchableOpacity>
   );
 
@@ -109,8 +111,12 @@ export default function ColorsScreen() {
             {/* Big color circle */}
             <View style={[styles.modalSwatch, { backgroundColor: selectedColor?.hex }]} />
 
-            {/* Kazakh word */}
             <Text style={styles.modalCyrillic}>{selectedColor?.cyrillic}</Text>
+            {selectedColor?.audioFile && (
+              <TouchableOpacity onPress={() => playVocabSound(selectedColor.audioFile!)} style={styles.modalSoundBtn}>
+                <Text style={styles.soundBtnText}>🔊</Text>
+              </TouchableOpacity>
+            )}
             <Text style={styles.modalLatin}>{selectedColor?.latin}</Text>
             <Text style={styles.modalEnglish}>{language === 'ru' ? (selectedColor?.russian ?? selectedColor?.english) : selectedColor?.english}</Text>
 
@@ -290,5 +296,26 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  soundBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#2a2a4a',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 8,
+  },
+  modalSoundBtn: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#2a2a4a',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  soundBtnText: {
+    fontSize: 20,
   },
 });

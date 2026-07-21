@@ -6,8 +6,9 @@ import {
 import { useRouter } from 'expo-router';
 import { foodWords } from '../data/food';
 import { useLanguage } from '../utils/i18n';
+import { playVocabSound } from '../utils/vocabAudio';
 
-type WordItem = { kazakh: string; latin: string; english: string; russian?: string; note: string };
+type WordItem = { kazakh: string; latin: string; english: string; russian?: string; note: string; audioFile?: string };
 
 export default function FoodScreen() {
   const router = useRouter();
@@ -48,6 +49,11 @@ export default function FoodScreen() {
               <Text style={styles.latin}>{item.latin}</Text>
             </View>
             <Text style={styles.english}>{language === 'ru' ? (item.russian ?? item.english) : item.english}</Text>
+            {item.audioFile && (
+              <TouchableOpacity onPress={() => playVocabSound(item.audioFile!)} style={styles.soundBtn}>
+                <Text style={styles.soundBtnText}>🔊</Text>
+              </TouchableOpacity>
+            )}
           </TouchableOpacity>
         )}
         contentContainerStyle={{ paddingBottom: 40 }}
@@ -57,6 +63,11 @@ export default function FoodScreen() {
         <View style={styles.overlay}>
           <View style={styles.modal}>
             <Text style={styles.modalKazakh}>{selected?.kazakh}</Text>
+            {selected?.audioFile && (
+              <TouchableOpacity onPress={() => playVocabSound(selected!.audioFile!)} style={styles.modalSoundBtn}>
+                <Text style={styles.soundBtnText}>🔊</Text>
+              </TouchableOpacity>
+            )}
             <Text style={styles.modalLatin}>{selected?.latin}</Text>
             <Text style={styles.modalEnglish}>{language === 'ru' ? (selected?.russian ?? selected?.english) : selected?.english}</Text>
             <View style={styles.divider} />
@@ -111,4 +122,7 @@ const styles = StyleSheet.create({
     paddingVertical: 13, alignItems: 'center' as const, borderWidth: 1, borderColor: '#a78bfa',
   },
   quizBtnText: { color: '#a78bfa', fontWeight: '600' as const, fontSize: 13 },
+  soundBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: '#2a2a4a', justifyContent: 'center', alignItems: 'center', marginLeft: 8 },
+  modalSoundBtn: { width: 48, height: 48, borderRadius: 24, backgroundColor: '#2a2a4a', justifyContent: 'center', alignItems: 'center', marginVertical: 10 },
+  soundBtnText: { fontSize: 20 },
 });

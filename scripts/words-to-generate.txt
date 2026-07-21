@@ -1,0 +1,130 @@
+# Kazakh vocabulary audio — 115 words
+# Format: filename | Kazakh Cyrillic text to paste into ttsmp3.com
+# Save each file to assets/sounds/vocabulary/{filename}
+
+# ── GREETINGS (20) ──────────────────────────────────────────
+greetings/salem.mp3 | Сәлем
+greetings/salemetsiz_be.mp3 | Сәлеметсіз бе
+greetings/qalaysyz.mp3 | Қалайсыз?
+greetings/qalaysyn.mp3 | Қалайсың?
+greetings/jaqsymyn.mp3 | Жақсымын
+greetings/raqmet.mp3 | Рақмет
+greetings/ote_jaqsy.mp3 | Өте жақсы
+greetings/ia.mp3 | Иә
+greetings/joq.mp3 | Жоқ
+greetings/keshiriniz.mp3 | Кешіріңіз
+greetings/sau_bolinyz.mp3 | Сау болыңыз
+greetings/sau_bol.mp3 | Сау бол
+greetings/qayyrly_tan.mp3 | Қайырлы таң
+greetings/qayyrly_kun.mp3 | Қайырлы күн
+greetings/qayyrly_kesh.mp3 | Қайырлы кеш
+greetings/qayyrly_tun.mp3 | Қайырлы түн
+greetings/atin_kim.mp3 | Атың кім?
+greetings/menin_atym.mp3 | Менің атым
+greetings/tanysqanyma_quanyshtymyn.mp3 | Танысқаныма қуаныштымын
+greetings/jaraydy.mp3 | Жарайды
+
+# ── NUMBERS (21) ────────────────────────────────────────────
+numbers/nol.mp3 | Нөл
+numbers/bir.mp3 | Бір
+numbers/eki.mp3 | Екі
+numbers/ush.mp3 | Үш
+numbers/tort.mp3 | Төрт
+numbers/bes.mp3 | Бес
+numbers/alty.mp3 | Алты
+numbers/jeti.mp3 | Жеті
+numbers/segiz.mp3 | Сегіз
+numbers/togyz.mp3 | Тоғыз
+numbers/on.mp3 | Он
+numbers/jiyrma.mp3 | Жиырма
+numbers/otyz.mp3 | Отыз
+numbers/qyryq.mp3 | Қырық
+numbers/elu.mp3 | Елу
+numbers/alpys.mp3 | Алпыс
+numbers/jetpis.mp3 | Жетпіс
+numbers/seksen.mp3 | Сексен
+numbers/toqsan.mp3 | Тоқсан
+numbers/juz.mp3 | Жүз
+numbers/myn.mp3 | Мың
+
+# ── COLORS (15) ─────────────────────────────────────────────
+colors/qyzyl.mp3 | Қызыл
+colors/jasyl.mp3 | Жасыл
+colors/kok.mp3 | Көк
+colors/sary.mp3 | Сары
+colors/qara.mp3 | Қара
+colors/aq.mp3 | Ақ
+colors/sur.mp3 | Сұр
+colors/qonyr.mp3 | Қоңыр
+colors/qyzgylt.mp3 | Қызғылт
+colors/kulgin.mp3 | Күлгін
+colors/qyzgyl_sary.mp3 | Қызғыл сары
+colors/altyn.mp3 | Алтын
+colors/kumis.mp3 | Күміс
+colors/aspan_kok.mp3 | Аспан көк
+colors/qoyu_jasyl.mp3 | Қою жасыл
+
+# ── FAMILY (19) ─────────────────────────────────────────────
+family/otbasy.mp3 | Отбасы
+family/ana.mp3 | Ана
+family/ake.mp3 | Әке
+family/aga.mp3 | Аға
+family/apa.mp3 | Апа
+family/ini.mp3 | Іні
+family/qaryndas.mp3 | Қарындас
+family/ata.mp3 | Ата
+family/aje.mp3 | Әже
+family/ul.mp3 | Ұл
+family/qyz.mp3 | Қыз
+family/bala.mp3 | Бала
+family/kuyew.mp3 | Күйеу
+family/ayel.mp3 | Әйел
+family/nemere.mp3 | Немере
+family/nagashy.mp3 | Нағашы
+family/jiyen.mp3 | Жиен
+family/tuys.mp3 | Туыс
+family/jubay.mp3 | Жұбай
+
+# ── FOOD (20) ───────────────────────────────────────────────
+food/tamaq.mp3 | Тамақ
+food/su.mp3 | Су
+food/nan.mp3 | Нан
+food/et.mp3 | Ет
+food/sorpa.mp3 | Сорпа
+food/beshbarmaq.mp3 | Бешбармақ
+food/qymyz.mp3 | Қымыз
+food/shay.mp3 | Шай
+food/sut.mp3 | Сүт
+food/jumyrtqa.mp3 | Жұмыртқа
+food/kartop.mp3 | Картоп
+food/kokonis.mp3 | Көкөніс
+food/jemis.mp3 | Жеміс
+food/tuz.mp3 | Тұз
+food/qant.mp3 | Қант
+food/may.mp3 | Май
+food/pisiru.mp3 | Пісіру
+food/jeu.mp3 | Жеу
+food/ishu.mp3 | Ішу
+food/damdi.mp3 | Дәмді
+
+# ── ANIMALS (20) ────────────────────────────────────────────
+animals/januar.mp3 | Жануар
+animals/it.mp3 | Ит
+animals/mysyq.mp3 | Мысық
+animals/at.mp3 | Ат
+animals/syyr.mp3 | Сиыр
+animals/qoy.mp3 | Қой
+animals/eshki.mp3 | Ешкі
+animals/tuye.mp3 | Түйе
+animals/qasqyr.mp3 | Қасқыр
+animals/arystan.mp3 | Арыстан
+animals/ayu.mp3 | Аю
+animals/tulki.mp3 | Түлкі
+animals/qoyan.mp3 | Қоян
+animals/burkit.mp3 | Бүркіт
+animals/balyq.mp3 | Балық
+animals/qus.mp3 | Құс
+animals/jylan.mp3 | Жылан
+animals/qabylan.mp3 | Қабылан
+animals/shoshqa.mp3 | Шошқа
+animals/maymyl.mp3 | Маймыл

@@ -6,6 +6,7 @@ import {
 import { useRouter } from 'expo-router';
 import { greetings } from '../data/greetings';
 import { useLanguage } from '../utils/i18n';
+import { playVocabSound } from '../utils/vocabAudio';
 
 export default function GreetingsScreen() {
   const router = useRouter();
@@ -40,6 +41,11 @@ export default function GreetingsScreen() {
               <Text style={styles.rowLatin}>{item.latin}</Text>
             </View>
             <Text style={styles.rowEnglish}>{language === 'ru' ? item.russian : item.english}</Text>
+            {item.audioFile && (
+              <TouchableOpacity onPress={() => playVocabSound(item.audioFile!)} style={styles.soundBtn}>
+                <Text style={styles.soundBtnText}>🔊</Text>
+              </TouchableOpacity>
+            )}
           </TouchableOpacity>
         )}
       />
@@ -56,6 +62,11 @@ export default function GreetingsScreen() {
             {selected && (
               <>
                 <Text style={styles.modalKazakh}>{selected.kazakh}</Text>
+                {selected.audioFile && (
+                  <TouchableOpacity onPress={() => playVocabSound(selected!.audioFile!)} style={styles.modalSoundBtn}>
+                    <Text style={styles.soundBtnText}>🔊</Text>
+                  </TouchableOpacity>
+                )}
                 <Text style={styles.modalLatin}>{selected.latin}</Text>
                 <Text style={styles.modalEnglish}>{language === 'ru' ? selected.russian : selected.english}</Text>
 
@@ -209,5 +220,26 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  soundBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#2a2a4a',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 8,
+  },
+  modalSoundBtn: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#2a2a4a',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  soundBtnText: {
+    fontSize: 20,
   },
 });

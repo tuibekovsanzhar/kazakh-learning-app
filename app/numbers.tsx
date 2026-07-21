@@ -15,8 +15,8 @@ import {
 import { useRouter } from 'expo-router';
 import { numbers } from '../data/numbers';
 import { useLanguage } from '../utils/i18n';
+import { playVocabSound } from '../utils/vocabAudio';
 
-// TypeScript type — describes what shape each number object has
 type NumberItem = {
   id: string;
   cyrillic: string;
@@ -24,6 +24,7 @@ type NumberItem = {
   english: string;
   russian?: string;
   digit: string;
+  audioFile?: string;
 };
 
 export default function NumbersScreen() {
@@ -43,20 +44,19 @@ export default function NumbersScreen() {
     setSelectedNumber(null);
   };
 
-  // Renders each row in the list
   const renderItem = ({ item }: { item: NumberItem }) => (
     <TouchableOpacity style={styles.row} onPress={() => handlePress(item)}>
-      {/* Left: the digit (0, 1, 2...) */}
       <Text style={styles.digit}>{item.digit}</Text>
-
-      {/* Middle: Kazakh word */}
       <View style={styles.kazakhContainer}>
         <Text style={styles.cyrillic}>{item.cyrillic}</Text>
         <Text style={styles.latin}>{item.latin}</Text>
       </View>
-
-      {/* Right: translation */}
       <Text style={styles.english}>{language === 'ru' ? (item.russian ?? item.english) : item.english}</Text>
+      {item.audioFile && (
+        <TouchableOpacity onPress={() => playVocabSound(item.audioFile!)} style={styles.soundBtn}>
+          <Text style={styles.soundBtnText}>🔊</Text>
+        </TouchableOpacity>
+      )}
     </TouchableOpacity>
   );
 
@@ -115,8 +115,12 @@ export default function NumbersScreen() {
             {/* Big digit display */}
             <Text style={styles.modalDigit}>{selectedNumber?.digit}</Text>
 
-            {/* Kazakh word in big text */}
             <Text style={styles.modalCyrillic}>{selectedNumber?.cyrillic}</Text>
+            {selectedNumber?.audioFile && (
+              <TouchableOpacity onPress={() => playVocabSound(selectedNumber.audioFile!)} style={styles.modalSoundBtn}>
+                <Text style={styles.soundBtnText}>🔊</Text>
+              </TouchableOpacity>
+            )}
             <Text style={styles.modalLatin}>{selectedNumber?.latin}</Text>
             <Text style={styles.modalEnglish}>{language === 'ru' ? (selectedNumber?.russian ?? selectedNumber?.english) : selectedNumber?.english}</Text>
 
@@ -291,5 +295,26 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  soundBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#2a2a4a',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 8,
+  },
+  modalSoundBtn: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#2a2a4a',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  soundBtnText: {
+    fontSize: 20,
   },
 });
