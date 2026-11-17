@@ -20,7 +20,7 @@ export default function PrivacyPolicyScreen() {
       </View>
 
       <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-        <Text style={styles.updated}>Last updated: March 2026</Text>
+        <Text style={styles.updated}>Last updated: 17 November 2026</Text>
 
         <Section title="1. Overview">
           Qazaq Tili ("the App", "we", "us") is a Kazakh language learning application.
@@ -35,6 +35,10 @@ export default function PrivacyPolicyScreen() {
           • <Text style={styles.bold}>Learning progress data</Text> — includes your
           streak count, flashcard mastery marks, and quiz scores. This data is stored
           so your progress is preserved across sessions and synced across your devices.{'\n\n'}
+          • <Text style={styles.bold}>AI exercises (optional, 16+)</Text> — your one-time
+          confirmation that you are 16 or older and agree to AI processing, and how many
+          answers were checked each day. The answers you type are checked and then
+          discarded; we do not store them.{'\n\n'}
           We do not collect your name, phone number, location, contacts, or any other
           personal information.
         </Section>
@@ -54,13 +58,21 @@ export default function PrivacyPolicyScreen() {
           • <Text style={styles.bold}>Cloud Firestore</Text> — stores your learning
           progress data. Data is stored in Google's cloud infrastructure.{'\n\n'}
           Google's privacy practices are governed by Google's Privacy Policy at
-          policies.google.com/privacy.
+          policies.google.com/privacy.{'\n\n'}
+          • <Text style={styles.bold}>Qazaq Tili server (Vercel)</Text> — AI exercises
+          go through our own server, which checks your account, applies daily limits and
+          calls the AI. The App itself contains no AI keys.{'\n\n'}
+          • <Text style={styles.bold}>Anthropic (Claude)</Text> — writes the exercises and
+          checks your answers. It receives the topic, level, exercise and the answer you
+          type, never your email or account ID. Under Anthropic’s commercial terms this
+          data is not used to train its models. AI can make mistakes; you can report any
+          exercise, and a reported exercise is withdrawn until a teacher checks it.
         </Section>
 
         <Section title="5. Data Sharing">
           We do not sell, rent, or share your personal data with any third parties
-          for their own purposes. Your data is shared only with Firebase/Google as
-          described above, solely to operate the App.
+          for their own purposes. Your data is shared only with the services described
+          above, solely to operate the App.
         </Section>
 
         <Section title="6. Data Retention">
@@ -77,10 +89,11 @@ export default function PrivacyPolicyScreen() {
         </Section>
 
         <Section title="8. Children's Privacy">
-          The App is not directed at children under the age of 13. We do not knowingly
-          collect personal information from children under 13. If you believe a child
-          has provided us with personal information, please contact us and we will
-          delete it promptly.
+          The App’s lessons are for people aged 13 and over. AI exercises are for people
+          aged 16 and over: before the first one, the App asks you once to confirm your age
+          and to agree to AI processing. We do not knowingly collect personal information
+          from children under 13, or let anyone under 16 use AI features. If you believe
+          this has happened, please contact us and we will delete the data promptly.
         </Section>
 
         <Section title="9. Changes to This Policy">

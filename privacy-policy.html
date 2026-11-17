@@ -133,7 +133,7 @@
 
 <main>
 
-  <p class="meta">Last updated: March 28, 2026</p>
+  <p class="meta">Last updated: November 17, 2026</p>
 
   <!-- ── ACCOUNT DELETION — prominent, near top ── -->
   <div class="deletion-box" id="account-deletion">
@@ -196,6 +196,7 @@
   <ul>
     <li><strong>Email address</strong> — collected when you create an account, used solely for authentication.</li>
     <li><strong>Learning progress</strong> — your streak count, flashcard mastery marks, and quiz scores. This data is stored so your progress syncs across devices.</li>
+    <li><strong>AI exercises (optional, 16+)</strong> — your one-time confirmation that you are 16 or older and agree to AI processing, and how many answers were checked each day. The answers you type are checked and then discarded; we do not store them.</li>
   </ul>
   <p>We do <strong>not</strong> collect your name, phone number, location, payment information, or any other personal data.</p>
 
@@ -212,6 +213,8 @@
   <ul>
     <li><strong>Firebase Authentication</strong> — manages sign-in with email and password.</li>
     <li><strong>Cloud Firestore</strong> — stores your learning progress securely in the cloud.</li>
+    <li><strong>Qazaq Tili server (hosted on Vercel)</strong> — AI exercises go through our own server, which checks your account, applies daily limits and calls the AI. The App itself contains no AI keys.</li>
+    <li><strong>Anthropic (Claude)</strong> — writes the exercises and checks your answers. It receives the topic, level, exercise and the answer you type, never your email or account ID. Under Anthropic's commercial terms this data is not used to train its models. AI can make mistakes; you can report any exercise in the App, and a reported exercise is withdrawn until a teacher checks it.</li>
   </ul>
   <p>
     You can review Google's privacy policy at
@@ -240,9 +243,11 @@
 
   <h2>8. Children's Privacy</h2>
   <p>
-    The App is not directed at children under the age of 13. We do not knowingly collect
-    personal information from children under 13. If you believe a child has provided us
-    with personal data, please contact us and we will delete it promptly.
+    The App's lessons are for people aged 13 and over. AI exercises are for people aged 16
+    and over: before the first one, the App asks you once to confirm your age and to agree to
+    AI processing. We do not knowingly collect personal information from children under 13,
+    or let anyone under 16 use AI features. If you believe this has happened, please contact
+    us and we will delete the data promptly.
   </p>
 
   <h2>9. Your Rights</h2>
